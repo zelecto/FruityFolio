@@ -11,6 +11,8 @@ import iconoProducto from "../Icons/iconoProducto.png";
 
 
 function Principal() {
+  const usuario = JSON.parse(localStorage.getItem('user'));
+  
   return (
     <div className="bg-[#F5F5F5] h-screen">
       <Header
@@ -18,7 +20,7 @@ function Principal() {
         logoRightSrc="ruta-a-la-imagen-derecha.jpg"
         logoAlt="FruityFolio logo"
         title="¡Bienvenido a FruityFolio!"
-        subtitle="Gestiona tu negocio de frutas con facilidad."
+        subtitle={`${usuario.username} gestiona tu negocio de frutas con facilidad.`}
       />
 
       <div className="mx-auto my-2">

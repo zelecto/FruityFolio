@@ -5,10 +5,11 @@ import validarNombre, {
 } from "../Tools/Validadores";
 import Header from "./Header";
 import {
-  ListaPoductos,
   ProductDetail,
   ProductList,
 } from "../Logic/ConsultarProductos";
+import { ConsultarProductos } from "../Base/BdProductos";
+import { GuardarFactura } from "../Base/BdFactura";
 
 const CrearFacturaForm = () => {
   const [mensaje, setMensaje] = useState({
@@ -33,32 +34,35 @@ const CrearFacturaForm = () => {
 
   return (
     <div className="h-screen w-screen bg-[#F5F5F5]">
+
       {showAlert && (
-        <MensajeAlert
-          message={mensaje.Mensaje}
-          onClose={handleCloseAlert}
-          isError={mensaje.isError}
-          buttonColor={mensaje.colorBoton}
-          textColor={mensaje.colorText}
-          buttonText={mensaje.textBoton}
-        />
+        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+          <MensajeAlert
+            message={mensaje.Mensaje}
+            onClose={handleCloseAlert}
+            isError={mensaje.isError}
+            buttonColor={mensaje.colorBoton}
+            textColor={mensaje.colorText}
+            buttonText={mensaje.textBoton}
+          />
+        </div>
       )}
+
       <Header
         link="/paginaPrincipal"
-        logoRightSrc="ruta-a-la-imagen-derecha.jpg"
         logoAlt="FruityFolio logo"
         title="FruityFolio"
         subtitle="Añade un producto a tu catálogo."
       />
-      <div className="flex justify-center items-center mx-auto mt-20 ">
-        <TarjetaFactura />
+      <div className="flex justify-center items-center mx-auto mt-16 ">
+        <TarjetaFactura handelOpenAlert={handelOpenAlert} handelSetMensaje={handelSetMensaje} />
       </div>
     </div>
   );
 };
 export default CrearFacturaForm;
 
-const TarjetaFactura = () => {
+const TarjetaFactura = ({ handelOpenAlert, handelSetMensaje }) => {
   //Datos para el cliente
   const [cedula, setCedula] = useState("");
   const [nombre, setNombre] = useState("");
@@ -75,27 +79,27 @@ const TarjetaFactura = () => {
       setCedula(newValue);
       setErrorMessageCedula(null);
     } else if (newValue >= 9999999999) {
-      console.log("Aqui estoy");
+      setCedula(newValue);
       setErrorMessageCedula("No se admiten mas de 10 nuemros");
     } else if (/^[a-zA-Z]+$/.test(newValue)) {
-      setCedula("");
+
       setErrorMessageCedula("No se admiten letras");
     }
   };
 
   const handleNombre = (newValue) => {
-    if (validarNombre(newValue)) {
-      setNombre(newValue);
+    setNombre(newValue);
+    if (validarNombre(newValue) || newValue == "") {
+
       setErrorMessageNombre(null);
     } else {
-      setNombre("");
       setErrorMessageNombre("No se admite numeros");
     }
   };
 
   const handleCorreo = (newValue) => {
     setCorreo(newValue);
-    setErrorMessagCorreo("");
+    setErrorMessagCorreo(null);
   };
   const handleOnBulrCorreo = (newValue) => {
     // Expresión regular para validar un correo electrónico
@@ -108,7 +112,7 @@ const TarjetaFactura = () => {
     } else {
       // Si el correo electrónico es válido, actualiza el estado con el nuevo valor
       setCorreo(newValue);
-      setErrorMessagCorreo("");
+      setErrorMessagCorreo(null);
     }
   };
 
@@ -128,6 +132,19 @@ const TarjetaFactura = () => {
     const fechaFormateada = `${diaStr}/${mesStr}/${año}`;
     return fechaFormateada;
   };
+  const handelFechaActualGuardar = () => {
+    const dia = fechaActual.getDate();
+    const mes = fechaActual.getMonth() + 1; // Sumamos 1 porque los meses son indexados desde 0
+    const año = fechaActual.getFullYear();
+
+    // Aseguramos que los números tengan dos dígitos
+    const diaStr = dia < 10 ? "0" + dia : dia.toString();
+    const mesStr = mes < 10 ? "0" + mes : mes.toString();
+
+    const fechaFormateada = `${año}-${mesStr}-${diaStr}`;
+    return fechaFormateada;
+  };
+
 
   //Lista Ventas
   const [listVentas, setListVentas] = useState([]);
@@ -240,12 +257,70 @@ const TarjetaFactura = () => {
     handelshowActualizarProducto(false);
   };
 
+  const [loading, setLoading] = useState(false); // Estado para controlar la carga
+  const [successMessage, setSuccessMessage] = useState(false); // Estado para mostrar el mensaje de éxito
+
+  const guardarFactura = async() => {
+    const usuario = JSON.parse(localStorage.getItem('user'));
+    if (errorMessageCedula == null && errorMessageCorreo == null && errorMessageNombre == null && cedula != "" && correo != "" && nombre != "" && listVentas != null) {
+      const cliente = {
+        cedula: cedula,
+        nombre: nombre,
+        correo: correo
+      }
+      const factura = {
+        cliente: cliente,
+        fechaActual: handelFechaActualGuardar(),
+        listaProductosVendidos: listVentas,
+        total: totalPago,
+        usuarioUsername: usuario.username
+      }
+      const mensaje = {
+        Mensaje: "Datos guardados correctamente",
+        colorBoton: "green",
+        colorText: "text-black-700",
+        isError: true,
+        
+      };
+      handelSetMensaje(mensaje)
+
+      handelOpenAlert();
+      await GuardarFactura(factura);
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    } else {
+      const mensajeError = {
+        Mensaje: "Datos no guardados, verifique la lista de ventas, y los datos del cliente",
+        colorBoton: "red",
+        colorText: "text-black-700",
+        isError: true,
+        textBoton: "Cerrar",
+      };
+      handelSetMensaje(mensajeError)
+      handelOpenAlert();
+      
+    }
+  }
+  //Desarrolar mensaje de error 
+  const [mensaje, setMensaje] = useState({
+    Mensaje: "",
+    colorBoton: "",
+    colorText: "",
+    isError: false,
+    textBoton: "",
+  });
+  
+  
+
   return (
+
     <div className="flex justify-between">
+
       <div className="flex flex-col w-[900px] h-[650px] bg-[#CCE6FF] px-5 items-center rounded-md">
         <div className="flex justify-between rounded-md  w-[800px]">
           <div className="w-[800px]  flex justify-center items-center">
-            <div className="flex justify-between">
+            <div className="flex justify-between mt-4">
               <div className="w-full sm:w-1/3 mb-4 sm:mb-0">
                 <InputField
                   label="Cedula del cliente"
@@ -337,11 +412,18 @@ const TarjetaFactura = () => {
               </div>
             </div>
           </div>
-          <div className="w-full flex justify-end mt-4 px-10 items-center">
+          <div className="w-full flex flex-row justify-end mt-4  items-center">
+
             <p className=" w-1/4 text-center text-lg  font-bold">Total :</p>
             <p className=" w-1/4 text-center text-lg font-bold pl-4">
               $ {totalPago}
             </p>
+            <button
+              className="bg-green-400 font-bold text-white hover:bg-green-700 w-[20%] h-[150%] rounded-lg mx-2"
+              onClick={() => guardarFactura()}
+            >
+              Guardar
+            </button>
           </div>
         </div>
       </div>
@@ -361,6 +443,7 @@ const TarjetaFactura = () => {
         />
       )}
     </div>
+
   );
 };
 
@@ -396,6 +479,9 @@ export const InputField = ({
 };
 
 export const TarjetaVenta = ({ AgregarVenta, ListaProductosVendidos }) => {
+  //Usuario
+  const usuario = JSON.parse(localStorage.getItem('user'));
+
   //Variables para captura de datos
   const [cantidadVender, setCantidadVender] = useState(null);
   const [cobro, setCobro] = useState();
@@ -444,9 +530,10 @@ export const TarjetaVenta = ({ AgregarVenta, ListaProductosVendidos }) => {
     if (value && cantidadVender > 0) {
       setShowListProduct(value);
       setShowDatailProduct(false);
+      setErrorMessageCantidadVender(null);
       AgregarVenta(productSell, cantidadVender, cobro);
-      
-      FiltrarProductosVendidos();
+
+
     } else {
       setshowAlert(true);
       setMensaje({
@@ -484,33 +571,39 @@ export const TarjetaVenta = ({ AgregarVenta, ListaProductosVendidos }) => {
     setproductSell(value);
     setPrecio(value.price);
   };
-
-  //filtrar productos vendidos
-  
-
+  //Lista de productos de la base de datos
   const [listaProductos, setListaProductos] = useState([]);
+
+  const consultarProductos = async () => {
+    const respuesta = await ConsultarProductos(usuario.username);
+    setListaProductos(respuesta.datos.sort((a, b) => a.id - b.id));
+  };
+
+  const FiltrarProductosVendidos = async () => {
+    const respuesta = await ConsultarProductos(usuario.username);
+    const listaProductos1 = respuesta.datos.sort((a, b) => a.id - b.id);
+
+    if (ListaProductosVendidos.length !== 0) {
+      const listaFiltrada = listaProductos1.filter(
+        (producto) =>
+          !ListaProductosVendidos.some(
+            (venta) => venta.producto.id === producto.id
+          )
+      );
+      setListaProductos(listaFiltrada);
+    }
+  };
+
+  useEffect(() => {
+
+    if (ListaProductosVendidos.length == 0) {
+      consultarProductos();
+    }
+  }, [usuario.username]);
 
   useEffect(() => {
     FiltrarProductosVendidos();
-  }, [ListaProductosVendidos]); // Asegúrate de que el efecto se ejecute cada vez que cambie la lista de productos vendidos
-
-  const FiltrarProductosVendidos = () => {
-    const listaDefault = ListaPoductos();
-    if (ListaProductosVendidos && ListaProductosVendidos.length !== 0) {
-      setListaProductos(
-        listaDefault.filter(
-          (producto) =>
-            !ListaProductosVendidos.some(
-              (venta) => venta.producto.id === producto.id
-            )
-        )
-      );
-    } else {
-      setListaProductos(listaDefault);
-    }
-    console.clear();
-    console.log(ListaProductosVendidos);
-  };
+  }, [ListaProductosVendidos]);
 
   return (
     <div className="flex flex-col items-center  mx-20 bg-[#CCE6FF] w-[500px] rounded-md">
@@ -588,7 +681,7 @@ export const TarjetaActualizarVenta = ({
   ActualizarVenta,
   EliminarVenta,
   CancelarActualizacionVenta,
-  
+
 }) => {
   const [cobro, setCobro] = useState();
   const [precio, setPrecio] = useState(productActualizar.price);

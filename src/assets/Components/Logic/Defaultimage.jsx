@@ -134,7 +134,7 @@ export function BuscarImagenDefault(nombre) {
     imagenesFiltradas.length > 0 ? imagenesFiltradas[0] : null;
 
   
-  return imagenSeleccionada.src;
+  return imagenSeleccionada ? imagenSeleccionada.src : null;
 }
 
 export function BuscarImagenNombre(nombre) {

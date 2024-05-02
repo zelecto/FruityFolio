@@ -63,18 +63,23 @@ export const TarjetaCrearProducto = ({
   ActualizarProducto
 }) => {
   //variables
- const [nombre, setNombre] = useState(
-   ActualizarProducto ? ActualizarProducto.name : ""
- );
- const [stock, setStock] = useState(
-   ActualizarProducto ? ActualizarProducto.stock : ""
- );
- const [precio, setPrecio] = useState(
-   ActualizarProducto ? ActualizarProducto.price : ""
- );
- const [descripcion, setDescripcion] = useState(
-   ActualizarProducto ? ActualizarProducto.description : ""
- );
+  const [nombre, setNombre] = useState(
+    ActualizarProducto ? ActualizarProducto.name : ""
+  );
+  const [stock, setStock] = useState(
+    ActualizarProducto ? ActualizarProducto.stock : ""
+  );
+  const [precio, setPrecio] = useState(
+    ActualizarProducto ? ActualizarProducto.price : ""
+  );
+  const [descripcion, setDescripcion] = useState(
+    ActualizarProducto ? ActualizarProducto.description : ""
+  );
+
+  const [img, setImg] = useState(ActualizarProducto ? BuscarImagenNombre(ActualizarProducto.img) : null);
+  const handelImg = (img) => {
+    setImg(img);
+  }
 
 
   // mensaje de error respectivamente en los inputs
@@ -83,7 +88,7 @@ export const TarjetaCrearProducto = ({
   const [mensaje2, setMensaje2] = useState(null);
 
   const handleNombreChange = (newValue) => {
-      const mensaje =
+    const mensaje =
       "El nombre no puede contener números ni caracteres especiales";
 
     if (validarNombre(newValue) || newValue === "") {
@@ -101,7 +106,7 @@ export const TarjetaCrearProducto = ({
       setStock(newValue);
       setMensaje1(null);
     } else {
-      
+
       setStock("");
       setMensaje1(mensaje);
     }
@@ -121,30 +126,68 @@ export const TarjetaCrearProducto = ({
 
   const maxLength = 150;
 
-  const handleDescripcionChange = (e) => {
+  const handleDescripcionChange = async (e) => {
     const { value } = e.target;
     if (value.length <= maxLength) {
       setDescripcion(value);
     }
   };
+  const usuario = JSON.parse(localStorage.getItem('user'));
 
-  const handleSubmit = (e) => {
-    if (validarNombre(nombre) && nombre !== "" && stock !== "" && precio) {
-      console.log("Nombre:", nombre);
-      console.log("Stock:", stock);
-      console.log("Precio:", precio);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log(img.nombre);
+    if (validarNombre(nombre) && nombre !== "" && stock !== "" && precio && img) {
+      //Actualizar producto
+      if (ActualizarProducto) {
+        ActualizarProducto.name = nombre;
+        ActualizarProducto.description = descripcion;
+        ActualizarProducto.stock = stock;
+        ActualizarProducto.img = img.nombre;
 
-      const mensajeGuardado = {
-        Mensaje: "Datos guardados correctamente",
-        colorBoton: "green",
-        colorText: "text-black-700",
-        isError: true,
-        textBoton: "Aceptar",
-      };
+        const respuesta = await ActualizarProductos(ActualizarProducto);
 
-      handelSetMensaje(mensajeGuardado);
+        if (respuesta.error == null) {
+          console.log(respuesta)
+          const mensajeActualizacion = {
+            Mensaje: "PRODUCTO ACTUALIZADO CORRECTAMENTE",
+            colorBoton: "green",
+            colorText: "text-black-700",
+            isError: true,
+            textBoton: "ACEPTAR",
+          };
+          handelSetMensaje(mensajeActualizacion);
+          handelOpenAlert();
+
+        }
+      } else {
+        const producto = {
+          name: nombre,
+          description: descripcion,
+          stock: stock,
+          price: precio,
+          img: img.nombre,
+          username: usuario.username,
+          activo: true
+        }
+
+        const mensajeGuardado = {
+          Mensaje: "Datos guardados correctamente",
+          colorBoton: "green",
+          colorText: "text-black-700",
+          isError: true,
+        };
+
+        handelSetMensaje(mensajeGuardado);
+        handelOpenAlert();
+        GuardarProducto(producto);
+        // Recargar la página solo si los datos se guardan correctamente
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000); // Recargar después de 2 segundos
+      }
+
     } else {
-      e.preventDefault();
       const mensajeError = {
         Mensaje: "Datos no guardados, verifique y reintente",
         colorBoton: "red",
@@ -154,11 +197,12 @@ export const TarjetaCrearProducto = ({
       };
 
       handelSetMensaje(mensajeError);
+      handelOpenAlert();
     }
-    handelOpenAlert();
-  };
 
-  
+  }
+
+
   return (
     <div className=" flex">
       <div className="w-[450px] h-[700px] overflow-auto max-h-[650px] mx-10">
@@ -227,9 +271,14 @@ export const TarjetaCrearProducto = ({
       </div>
 
       <div className=" w-[400px] h-[500px] overflow-y-auto bg-[#CCE6FF]  p-2 rounded-lg  mx-10 shadow-xl">
-        {Gallery(
-          ActualizarProducto ? BuscarImagenNombre(ActualizarProducto.img) : null
-        )}
+        <Gallery
+          imagen={ActualizarProducto ? BuscarImagenNombre(ActualizarProducto.img) : null}
+          handelImg={handelImg}
+        >
+
+        </Gallery>
+
+
       </div>
     </div>
   );
@@ -270,39 +319,42 @@ export const InputField = ({
 };
 
 import iconoGaleria from "../Icons/IconoGaleria.png";
+import { ActualizarProductos, GuardarProducto } from "../Base/BdProductos";
 const Defaultimage = ImagenDefecto();
 
-const Gallery = (imagen) => {
-  const [imagenes, setImagenes]=useState(null);
+const Gallery = ({ imagen, handelImg }) => {
+  const [imagenes, setImagenes] = useState(null);
   const [showSelecionImaganes, setSelecionImaganes] = useState(true);
   const [imagenSelecionada, setimagenSelecionada] = useState(imagen ? imagen : null);
   const [activeButtons, setActiveButtons] = useState(
     Array(Defaultimage.length).fill(false)
   );
-  console.clear()
-  console.log(imagenSelecionada)
+
+  //console.log(imagenSelecionada)
 
   const handleClick = (index) => {
-    
-    const newActiveButtons = Array(Defaultimage.length).fill(false);
-    
-    newActiveButtons[index] = true; 
-    setActiveButtons(newActiveButtons);
-   };
 
-  const ShowImagenes=(Show)=>{
+    const newActiveButtons = Array(Defaultimage.length).fill(false);
+
+    newActiveButtons[index] = true;
+    setActiveButtons(newActiveButtons);
+  };
+
+  const ShowImagenes = (Show) => {
     const image = ImagenDefecto();
-    if(Show){
+    if (Show) {
       setImagenes(image);
       setSelecionImaganes(false);
-    }else{
+    } else {
       setImagenes(null);
       setSelecionImaganes(true);
     }
   }
-  const handleOpenSelecionImagen=()=>{
+  const handleOpenSelecionImagen = () => {
     setSelecionImaganes(true)
     setImagenes(false)
+    handelImg(imagenSelecionada);
+
   }
 
   const handelImagenSelecionada = (value, index) => {
@@ -310,7 +362,7 @@ const Gallery = (imagen) => {
     handleClick(index);
   };
 
-  
+
   return (
     <div className="flex flex-col justify-center items-center ">
       <h1 className=" text-4xl font-bold mb-2 text-center">IMAGENES</h1>

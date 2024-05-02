@@ -113,7 +113,7 @@ const RegistroUsuarioForm = ({ cerrar }) => {
         cerrar();
     }
 
-
+    //Reguistrar Usuario
     const handleSubmit = (e) => {
         e.preventDefault();
         const nuevoUsuario = {
@@ -137,26 +137,20 @@ const RegistroUsuarioForm = ({ cerrar }) => {
 
             setMensaje(mensajeError);
         } else {
-
-
             GuardarUsuarioNuevo(nuevoUsuario);
-
         }
-
-
 
     };
 
     const GuardarUsuarioNuevo = async (usuario) => {
 
-
-        const error = GuardarUsuario(usuario);
-        if (!error.data) {
+        const respuesta = await GuardarUsuario(usuario);
+        if (!respuesta.error) {
             const mensajeGuardado = {
                 Mensaje: "Datos guardados correctamente",
                 colorBoton: "green",
                 colorText: "text-black-700",
-                isError: true,
+                
                 textBoton: "Aceptar",
             };
 
@@ -167,13 +161,11 @@ const RegistroUsuarioForm = ({ cerrar }) => {
                 Mensaje: "¡Error al guardar datos!. No se puede reguistrar con el mismo nombre de usuario, cedula o correo",
                 colorBoton: "red",
                 colorText: "text-black-700",
-                isError: true,
+                
                 textBoton: "Cerrar",
             };
             setMensaje(mensajeError);
         }
-
-        
 
         handleShowMensaje(true);
     }
@@ -235,10 +227,10 @@ const RegistroUsuarioForm = ({ cerrar }) => {
                 </div>
                 <div className="mb-4">
                     <InputField
-                        label="UserName"
+                        label="Nombre usuario"
                         id="UserName"
                         type="text"
-                        placeholder="UserName"
+                        placeholder="Nombre usuario"
                         value={username}
                         onChange={(e) => handelUserName(e.target.value)}
                         errorMessage={mensajeErroUsername}

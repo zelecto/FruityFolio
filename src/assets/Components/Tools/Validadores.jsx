@@ -49,12 +49,15 @@ export let MensajeAlert = ({
         <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-900 bg-opacity-50 z-50">
           <div className="bg-gray-100 p-8 rounded-lg flex flex-col items-end relative">
             <p className={`text-xl ${textColor}`}>{message}</p>
-            <button
-              onClick={handleClose}
-              className={`mt-4 text-white font-bold py-2 px-4 rounded ${colorClasses[buttonColor]}`}
-            >
-              {buttonText}
-            </button>
+            {buttonText &&
+              <button
+                onClick={handleClose}
+                className={`mt-4 text-white font-bold py-2 px-4 rounded ${colorClasses[buttonColor]}`}
+              >
+                {buttonText}
+              </button>
+            }
+            
           </div>
         </div>
       )}

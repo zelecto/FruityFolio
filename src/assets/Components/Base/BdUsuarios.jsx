@@ -5,9 +5,9 @@ const url = "https://localhost:7208";
 export async function GuardarUsuario(nuevoUsuario) {
     try {
         const respuesta = await axios.post('https://localhost:7208/api/Usuarios', nuevoUsuario);
-        
+        return { datos: respuesta.data, error: null };
     } catch (error) {
-        return error;
+        return { datos: null, error: error };
         
     }
 }
