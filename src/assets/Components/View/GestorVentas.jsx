@@ -93,7 +93,7 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
     const { numero: id, fecha, cliente, preciototal } = factura;
     const [ListaProductosVendidos, setListaProductosVendidos] =
         useState([]);
-    const [totalPago, setTotalPago] = useState(null);
+    const [totalPago, setTotalPago] = useState(preciototal);
     const [showActualizarVenta, setShowActualizarProducto] = useState(false);
     const [showAgregarVenta, setShowAgregarVenta] = useState(false);
 
@@ -133,14 +133,15 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
     const actualizarOEliminarVenta = async (Producto, Cantidad, Total, isEliminacion) => {
         console.clear();
         const nuevaListaVentas = [...ListaProductosVendidos];
-        let nuevoPrecio = totalPago;
-        
+        let nuevoPrecio;
         const index = nuevaListaVentas.findIndex((venta) => venta.producto.id === Producto.id);
         
         if (index !== -1) {
             
             if (isEliminacion) {
-                
+                console.log("Esta es la lista");
+                console.log(nuevaListaVentas[index].subprecio);
+                console.log(totalPago);
                 nuevoPrecio = totalPago - nuevaListaVentas[index].subprecio
                 if ((nuevoPrecio)<0){
                     nuevoPrecio*=-1;
@@ -148,7 +149,6 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
                 await EliminarDetalleFactura(nuevaListaVentas[index].id);
                 nuevaListaVentas.splice(index, 1); // Eliminar la venta de la lista
                 if (nuevaListaVentas.length == 0) {
-                    console.log("dentro");
                     await EliminarFactura(factura.id);
                     window.location.reload();
                     return;
@@ -172,7 +172,8 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
             
 
             await ActualizarFactura(factura);
-            await consultarFactura();
+            
+            
             if (!isEliminacion) {
                 await ActualizarDetallesFactura(nuevaListaVentas[index]);
             }
@@ -199,8 +200,6 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
 
             };
         });
-        console.clear()
-        
         
         
         factura.preciototal = totalPago;
@@ -215,6 +214,13 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
         await Promise.all(promesasVentas);
         setIsLoading(false);
         setShowAgregarVenta(false);
+        showDetallesFactura();
+        
+    }
+
+    const eliminarFactra = async (idFactura) =>{
+        const respuesta = await EliminarFactura(idFactura);
+        console.log(respuesta);
     }
 
     return (
@@ -223,7 +229,7 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
             {isLoading && <Loading message={mensajeEmergente}></Loading>}
             <div className="detalles-factura flex flex-col items-center bg-[#CCE6FF] rounded-lg shadow-md p-6 w-[600px]">
                 <h2 className="text-3xl font-bold mb-4 p-4">
-                    Detalles de la factura #{id}
+                    Detalles de la factura #{factura.id}
                 </h2>
                 <div className="flex flex-col justify-center  rounded-lg shadow-md w-full  p-4 bg-white">
                     <div className="flex justify-between px-5">
@@ -320,7 +326,7 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
 
                         <button
                             className="bg-red-400 font-bold text-white hover:bg-red-700 rounded-lg mx-2 p-2"
-                        //onClick={() => EliminarVenta(productActualizar.id)}
+                            onClick={() => eliminarFactra(factura.id)}
                         >
                             ELIMINAR
                         </button>

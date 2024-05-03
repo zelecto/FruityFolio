@@ -584,8 +584,6 @@ export const TarjetaVenta = ({ AgregarVenta, ListaProductosVendidos }) => {
     const listaProductos1 = respuesta.datos.sort((a, b) => a.id - b.id);
 
     if (ListaProductosVendidos.length !== 0) {
-      console.log("Aqui")
-      console.log(ListaProductosVendidos)
       const listaFiltrada = listaProductos1.filter(
         (producto) =>
           !ListaProductosVendidos.some(
