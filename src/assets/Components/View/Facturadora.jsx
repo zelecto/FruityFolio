@@ -228,11 +228,12 @@ const TarjetaFactura = ({ handelOpenAlert, handelSetMensaje }) => {
 
   const EliminarVenta = (ProductoId) => {
     // Copia la lista de ventas actual
+    
     const nuevaListaVentas = [...listVentas];
 
     // Encuentra el índice del objeto de venta que deseas eliminar
     const index = nuevaListaVentas.findIndex(
-      (venta) => venta.producto.id === ProductoId
+      (venta) => venta.producto.id === ProductoId.id
     );
 
     if (index !== -1) {
@@ -249,7 +250,8 @@ const TarjetaFactura = ({ handelOpenAlert, handelSetMensaje }) => {
       // Actualiza el estado totalPago con el nuevo valor
       setTotalPago(nuevoPrecio);
     } else {
-      console.error("Venta no encontrada en la lista.");
+      console.error("aqui Venta no encontrada en la lista.");
+      console.log(ProductoId);
     }
     handelshowActualizarProducto(false);
   };
@@ -795,7 +797,8 @@ export const TarjetaActualizarVenta = ({
           </button>
           <button
             className="bg-red-400 font-bold text-white hover:bg-red-700 w-[40%] h-[200%] rounded-lg mx-2"
-            onClick={() => EliminarVenta(productActualizar,null,null,true)}
+            onClick={() => 
+               EliminarVenta(productActualizar, null, null, true)}
           >
             ELIMINAR
           </button>
