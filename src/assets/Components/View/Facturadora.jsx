@@ -260,7 +260,7 @@ const TarjetaFactura = ({ handelOpenAlert, handelSetMensaje }) => {
   const [loading, setLoading] = useState(false); // Estado para controlar la carga
   const [successMessage, setSuccessMessage] = useState(false); // Estado para mostrar el mensaje de éxito
 
-  const guardarFactura = async() => {
+  const guardarFactura = async () => {
     const usuario = JSON.parse(localStorage.getItem('user'));
     if (errorMessageCedula == null && errorMessageCorreo == null && errorMessageNombre == null && cedula != "" && correo != "" && nombre != "" && listVentas != null) {
       const cliente = {
@@ -280,7 +280,7 @@ const TarjetaFactura = ({ handelOpenAlert, handelSetMensaje }) => {
         colorBoton: "green",
         colorText: "text-black-700",
         isError: true,
-        
+
       };
       handelSetMensaje(mensaje)
 
@@ -299,7 +299,7 @@ const TarjetaFactura = ({ handelOpenAlert, handelSetMensaje }) => {
       };
       handelSetMensaje(mensajeError)
       handelOpenAlert();
-      
+
     }
   }
   //Desarrolar mensaje de error 
@@ -310,8 +310,8 @@ const TarjetaFactura = ({ handelOpenAlert, handelSetMensaje }) => {
     isError: false,
     textBoton: "",
   });
-  
-  
+
+
 
   return (
 
@@ -584,6 +584,8 @@ export const TarjetaVenta = ({ AgregarVenta, ListaProductosVendidos }) => {
     const listaProductos1 = respuesta.datos.sort((a, b) => a.id - b.id);
 
     if (ListaProductosVendidos.length !== 0) {
+      console.log("Aqui")
+      console.log(ListaProductosVendidos)
       const listaFiltrada = listaProductos1.filter(
         (producto) =>
           !ListaProductosVendidos.some(
@@ -705,7 +707,7 @@ export const TarjetaActualizarVenta = ({
 
   const handelActualizarVenta = () => {
     if (cantidadVender > 0) {
-      ActualizarVenta(productActualizar, cantidadVender, cobro);
+      ActualizarVenta(productActualizar, cantidadVender, cobro,false);
     } else {
       setshowAlert(true);
       setMensaje({
@@ -795,7 +797,7 @@ export const TarjetaActualizarVenta = ({
           </button>
           <button
             className="bg-red-400 font-bold text-white hover:bg-red-700 w-[40%] h-[200%] rounded-lg mx-2"
-            onClick={() => EliminarVenta(productActualizar.id)}
+            onClick={() => EliminarVenta(productActualizar,null,null,true)}
           >
             ELIMINAR
           </button>

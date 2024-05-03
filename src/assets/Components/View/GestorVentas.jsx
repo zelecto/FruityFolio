@@ -1,27 +1,32 @@
 import React, { useEffect, useState } from "react";
 import Header from "./Header";
 import { TarjetaActualizarVenta, TarjetaVenta } from "./Facturadora";
-import { consultarDetallesFactura, consultarFactura } from "../Base/BdFactura";
+import { ActualizarDetallesFactura, ActualizarFactura, EliminarDetalleFactura, EliminarFactura, consultarDetallesFactura, consultarFactura, guardarVentas } from "../Base/BdFactura";
+import Loading from "./LoadingScreen";
 
 function GestorVentasView() {
     const usuario = JSON.parse(localStorage.getItem('user'));
     const [listaFacturas, setListaFacturas] = useState([]);
     const consultaFacturas = async () => {
-        //setLoading(true);
-        const respuesta = await consultarFactura(usuario.username);
-        //setLoading(false);
+        
+        try {
+            //setLoading(true);
+            const respuesta = await consultarFactura(usuario.username);
+            //setLoading(false);
 
-        if (respuesta.datos) {
-            setListaFacturas(respuesta.datos.sort((a, b) => a.id - b.id));
-        } else {
-            setListaFacturas([]);
-
+            if (respuesta.datos) {
+                setListaFacturas(respuesta.datos.sort((a, b) => a.id - b.id));
+            } else {
+                
+            }
+        } catch (error) {
+            
         }
 
     }
     useEffect(() => {
         consultaFacturas();
-    }, []);
+    }, [listaFacturas]);
 
     return (
         //Div principal
@@ -34,7 +39,7 @@ function GestorVentasView() {
                 subtitle="Consulta tus ventas"
             />
             <div className="">
-                <ConsultarFactura listaFacturas={listaFacturas}></ConsultarFactura>
+                <ConsultarFactura listaFacturas={listaFacturas} consultarFactura={ConsultarFactura}></ConsultarFactura>
             </div>
         </div>
     );
@@ -66,12 +71,13 @@ const FacturaBasica = ({ factura, onFacturaClick }) => {
     );
 };
 
-const DetallesFactura = ({ factura, showDetallesFactura }) => {
-    
+const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => {
+
     const consultaDetalle = async () => {
-        //setLoading(true);
+        setIsLoading(true);
+        setMensajeEmergente("Cargando factura...");
         const respuesta = await consultarDetallesFactura(factura.id);
-        //setLoading(false);
+        setIsLoading(false);
         if (respuesta.datos) {
             setListaProductosVendidos(respuesta.datos.sort((a, b) => a.id - b.id));
         } else {
@@ -82,8 +88,8 @@ const DetallesFactura = ({ factura, showDetallesFactura }) => {
     }
     useEffect(() => {
         consultaDetalle();
-    }, [factura.id]); 
-   
+    }, [factura.id]);
+
     const { numero: id, fecha, cliente, preciototal } = factura;
     const [ListaProductosVendidos, setListaProductosVendidos] =
         useState([]);
@@ -94,8 +100,7 @@ const DetallesFactura = ({ factura, showDetallesFactura }) => {
     const [productoActualizar, setProductoActualizar] = useState(null);
 
     const handelShowAgregarProducto = (mostrar) => {
-        console.clear()
-        console.log(factura)
+        setShowActualizarProducto(false);
         setShowAgregarVenta(mostrar);
 
     };
@@ -105,12 +110,12 @@ const DetallesFactura = ({ factura, showDetallesFactura }) => {
             ...ListaProductosVendidos,
             {
                 producto: Producto,
-                cantidad: Cantida,
-                total: Total,
+                cantidadvendida: parseFloat(Cantida),
+                subprecio: Total,
             },
         ];
 
-        const nuevoPrecio = totalPago + Total;
+        const nuevoPrecio = preciototal + Total;
 
         // Actualiza el estado de totalPago con el nuevo valor
         setTotalPago(nuevoPrecio);
@@ -120,78 +125,102 @@ const DetallesFactura = ({ factura, showDetallesFactura }) => {
     };
 
     const handelShowActualizarVenta = (mostrar, producto) => {
+        setShowAgregarVenta(false);
         setShowActualizarProducto(mostrar);
         setProductoActualizar(producto);
     };
 
-    const ActualizarVenta = (Producto, Cantidad, Total) => {
-        // Crea una copia de la lista de ventas
+    const actualizarOEliminarVenta = async (Producto, Cantidad, Total, isEliminacion) => {
+        console.clear();
         const nuevaListaVentas = [...ListaProductosVendidos];
-        console.log(productoActualizar);
-        console.log("Lista de productos a actualizar");
-        console.log(ListaProductosVendidos);
-
-        // Encuentra la posición del objeto de venta que deseas actualizar
-        const index = nuevaListaVentas.findIndex(
-            (venta) => venta.id === Producto.id
-        );
-
+        let nuevoPrecio = totalPago;
+        
+        const index = nuevaListaVentas.findIndex((venta) => venta.producto.id === Producto.id);
+        
         if (index !== -1) {
-            // Si se encuentra el objeto en la lista
-            // Actualiza el objeto de venta en la lista con los nuevos valores
-            nuevaListaVentas[index] = {
-                ...nuevaListaVentas[index],
-                cantidad: Cantidad,
-                total: Total,
+            
+            if (isEliminacion) {
+                
+                nuevoPrecio = totalPago - nuevaListaVentas[index].subprecio
+                if ((nuevoPrecio)<0){
+                    nuevoPrecio*=-1;
+                }
+                await EliminarDetalleFactura(nuevaListaVentas[index].id);
+                nuevaListaVentas.splice(index, 1); // Eliminar la venta de la lista
+                if (nuevaListaVentas.length == 0) {
+                    console.log("dentro");
+                    await EliminarFactura(factura.id);
+                    window.location.reload();
+                    return;
+                }
+                // Eliminar el detalle de factura asociado
+                
+            } else {
+                nuevaListaVentas[index] = {
+                    ...nuevaListaVentas[index],
+                    cantidadvendida: Cantidad,
+                    subprecio: Total,
+                };
+                nuevoPrecio = nuevaListaVentas.reduce((acumulador, venta) => acumulador + venta.subprecio, 0);
+            }
+
+            setTotalPago(nuevoPrecio);
+            setListaProductosVendidos(nuevaListaVentas);
+            handelShowActualizarVenta(false, null);
+
+            factura.preciototal = nuevoPrecio;
+            
+
+            await ActualizarFactura(factura);
+            await consultarFactura();
+            if (!isEliminacion) {
+                await ActualizarDetallesFactura(nuevaListaVentas[index]);
+            }
+        } else {
+            console.error("Venta no encontrada en la lista.");
+        }
+    };
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [mensajeEmergente, setMensajeEmergente] = useState("");
+
+
+    const GuardarCambios = async (detallesVentas) => {
+        // Filtrar los detalles de ventas que no tienen un id
+        let detallesSinId = detallesVentas.filter(venta => !venta.id);
+
+        // Crear nuevas instancias de objetos con los detalles requeridos
+        let nuevosDetalles = detallesSinId.map(venta => {
+            return {
+                cantidadvendida: venta.cantidadvendida,
+                subprecio: venta.subprecio,
+                idfactura: factura.id,
+                idproducto: venta.producto.id
+
             };
-
-            // Calcula el nuevo totalPago sumando el total de todas las ventas en la lista
-            const nuevoPrecio = nuevaListaVentas.reduce(
-                (acumulador, venta) => acumulador + venta.total,
-                0
-            );
-
-            // Actualiza el estado totalPago con el nuevo valor
-
-            // Actualiza el estado listVentas con la nueva lista actualizada
-            setTotalPago(nuevoPrecio);
-            setListaProductosVendidos(nuevaListaVentas);
-        } else {
-            console.error("Venta no encontrada en la lista.");
-        }
-        handelShowActualizarVenta(false, null);
-    };
-
-    const EliminarVenta = (ProductoId) => {
-        // Copia la lista de ventas actual
-        const nuevaListaVentas = [...ListaProductosVendidos];
-
-        // Encuentra el índice del objeto de venta que deseas eliminar
-        const index = nuevaListaVentas.findIndex(
-            (venta) => venta.id === ProductoId
-        );
-
-        if (index !== -1) {
-            // Elimina el objeto de la lista
-            nuevaListaVentas.splice(index, 1);
-
-            // Actualiza el estado de listVentas con la lista actualizada
-            setListaProductosVendidos(nuevaListaVentas);
-            const nuevoPrecio = nuevaListaVentas.reduce(
-                (acumulador, venta) => acumulador + venta.total,
-                0
-            );
-
-            setTotalPago(nuevoPrecio);
-        } else {
-            console.error("Venta no encontrada en la lista.");
-        }
-        handelShowActualizarVenta(false, null);
-    };
+        });
+        console.clear()
+        
+        
+        
+        factura.preciototal = totalPago;
+        await ActualizarFactura(factura);
+        let promesasVentas = nuevosDetalles.map(async (venta) => {
+            return await guardarVentas(venta);
+        });
+        setIsLoading(true);
+        
+        setMensajeEmergente("Actualizando la factura.....")
+        // Esperamos a que se completen todas las promesas de guardado de ventas
+        await Promise.all(promesasVentas);
+        setIsLoading(false);
+        setShowAgregarVenta(false);
+    }
 
     return (
-        
+
         <div className="flex my-5">
+            {isLoading && <Loading message={mensajeEmergente}></Loading>}
             <div className="detalles-factura flex flex-col items-center bg-[#CCE6FF] rounded-lg shadow-md p-6 w-[600px]">
                 <h2 className="text-3xl font-bold mb-4 p-4">
                     Detalles de la factura #{id}
@@ -274,7 +303,7 @@ const DetallesFactura = ({ factura, showDetallesFactura }) => {
                         </button>
                         <button
                             className="bg-green-400 font-bold text-white hover:bg-green-700 rounded-lg mx-2 p-2"
-                        //onClick={() => }
+                            onClick={() => GuardarCambios(ListaProductosVendidos)}
                         >
                             CONFIRMAR ACTUALIZACION
                         </button>
@@ -305,13 +334,13 @@ const DetallesFactura = ({ factura, showDetallesFactura }) => {
             {showActualizarVenta && (
                 <TarjetaActualizarVenta
                     productActualizar={productoActualizar}
-                    ActualizarVenta={ActualizarVenta}
+                    ActualizarVenta={actualizarOEliminarVenta}
                     CancelarActualizacionVenta={handelShowActualizarVenta}
-                    EliminarVenta={EliminarVenta}
+                    EliminarVenta={actualizarOEliminarVenta}
                 ></TarjetaActualizarVenta>
             )}
             {showAgregarVenta && (
-                <TarjetaVenta AgregarVenta={AgregarVenta} ListaProductosVendidos={factura}></TarjetaVenta>
+                <TarjetaVenta AgregarVenta={AgregarVenta} ListaProductosVendidos={ListaProductosVendidos}></TarjetaVenta>
             )}
 
 
@@ -319,12 +348,16 @@ const DetallesFactura = ({ factura, showDetallesFactura }) => {
     );
 };
 
-const ConsultarFactura = ({ listaFacturas }) => {
+const ConsultarFactura = ({ listaFacturas, consultarFactura }) => {
     const [facturaSeleccionada, setFacturaSeleccionada] = useState(null);
 
     const handleFacturaClick = (factura) => {
         setFacturaSeleccionada(factura);
     };
+
+    useEffect(() => {
+
+    }, [facturaSeleccionada]);
 
     return (
         <div className="consultar-factura justify-between items-center h-screen w-full overflow-hidden ">
@@ -346,7 +379,7 @@ const ConsultarFactura = ({ listaFacturas }) => {
                     </div>
                 </div>
                 {facturaSeleccionada && (
-                    <DetallesFactura factura={facturaSeleccionada} showDetallesFactura={handleFacturaClick} />
+                    <DetallesFactura factura={facturaSeleccionada} showDetallesFactura={handleFacturaClick} consultarFactura={consultarFactura} />
                 )}
             </div>
         </div>
