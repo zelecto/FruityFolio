@@ -75,3 +75,27 @@ async function guardarVentas(ventas) {
         return { datos: null, error: error }; // Retornar un objeto con las variables
     }
 }
+
+export async function consultarFactura(usuario) {
+
+    try {
+        const respuesta = await axios.get(`https://localhost:7208/api/Facturas/ByUser/${usuario}`);
+
+        return { datos: respuesta.data, error: null }; // Retornar un objeto con las variables
+    } catch (error) {
+        return { datos: null, error: error }; // Retornar un objeto con las variables
+    }
+}
+export async function consultarDetallesFactura(facturaID) {
+
+    try {
+        const respuesta = await axios.get(`https://localhost:7208/api/DetallesProductosVendidos/ByFactura/${facturaID}`);
+
+        return { datos: respuesta.data, error: null }; // Retornar un objeto con las variables
+    } catch (error) {
+        return { datos: null, error: error }; // Retornar un objeto con las variables
+    }
+}
+
+
+

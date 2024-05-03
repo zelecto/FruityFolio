@@ -1,231 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "./Header";
 import { TarjetaActualizarVenta, TarjetaVenta } from "./Facturadora";
-
+import { consultarDetallesFactura, consultarFactura } from "../Base/BdFactura";
 
 function GestorVentasView() {
-    const listaFacturas = [
-        {
-            id: "1",
-            numero: "1001",
-            fecha: "2024-03-17",
-            cliente: {
-                nombre: "Juan Perez",
-                cedula: "1234567890",
-                correo: "juan@example.com",
-            },
-            productos: [
-                {
-                    id: 1,
-                    name: "fruta y mas fruta",
-                    description:
-                        "Descubre la nueva colección de productos que te sorprenderán. ¡Calidad, estilo y funcionalidad en cada artículo!",
-                    img: "Granadillas",
-                    stock: 5000,
-                    price: 2000000,
-                    cantidad: 2,
-                    total: 4000000,
-                },
-                {
-                    id: 2,
-                    name: "Producto 2",
-                    description: "Descripción del Producto 2",
-                    img: "Granadillas",
-                    stock: 5000,
-                    price: 200,
-                    cantidad: 1,
-                    total: 200,
-                },
-                {
-                    id: 3,
-                    name: "Producto 3",
-                    description: "Descripción del Producto 3",
-                    img: "Granadillas",
-                    stock: 5000,
-                    price: 300,
-                    cantidad: 1,
-                    total: 300,
-                },
-            ],
-            total: 4020000,
-        },
-        {
-            id: "1",
-            numero: "1001",
-            fecha: "2024-03-17",
-            cliente: {
-                nombre: "Juan Perez",
-                cedula: "1234567890",
-                correo: "juan@example.com",
-            },
-            productos: [
-                {
-                    id: 1,
-                    name: "fruta y mas fruta",
-                    description:
-                        "Descubre la nueva colección de productos que te sorprenderán. ¡Calidad, estilo y funcionalidad en cada artículo!",
-                    img: "Granadillas",
-                    stock: 5000,
-                    price: 2000000,
-                    cantidad: 2,
-                    total: 4000000,
-                },
-                {
-                    id: 2,
-                    name: "Producto 2",
-                    description: "Descripción del Producto 2",
-                    img: "Granadillas",
-                    stock: 5000,
-                    price: 200,
-                    cantidad: 1,
-                    total: 200,
-                },
-                {
-                    id: 3,
-                    name: "Producto 3",
-                    description: "Descripción del Producto 3",
-                    img: "Granadillas",
-                    stock: 5000,
-                    price: 300,
-                    cantidad: 1,
-                    total: 300,
-                },
-            ],
-            total: 4020000,
-        },
-        {
-            id: "1",
-            numero: "1001",
-            fecha: "2024-03-17",
-            cliente: {
-                nombre: "Juan Perez",
-                cedula: "1234567890",
-                correo: "juan@example.com",
-            },
-            productos: [
-                {
-                    id: 1,
-                    name: "fruta y mas fruta",
-                    description:
-                        "Descubre la nueva colección de productos que te sorprenderán. ¡Calidad, estilo y funcionalidad en cada artículo!",
-                    img: "Granadillas",
-                    stock: 5000,
-                    price: 2000000,
-                    cantidad: 2,
-                    total: 4000000,
-                },
-                {
-                    id: 2,
-                    name: "Producto 2",
-                    description: "Descripción del Producto 2",
-                    img: "Granadillas",
-                    stock: 5000,
-                    price: 200,
-                    cantidad: 1,
-                    total: 200,
-                },
-                {
-                    id: 3,
-                    name: "Producto 3",
-                    description: "Descripción del Producto 3",
-                    img: "Granadillas",
-                    stock: 5000,
-                    price: 300,
-                    cantidad: 1,
-                    total: 300,
-                },
-            ],
-            total: 4020000,
-        },
-        {
-            id: "1",
-            numero: "1001",
-            fecha: "2024-03-17",
-            cliente: {
-                nombre: "Juan Perez",
-                cedula: "1234567890",
-                correo: "juan@example.com",
-            },
-            productos: [
-                {
-                    id: 1,
-                    name: "fruta y mas fruta",
-                    description:
-                        "Descubre la nueva colección de productos que te sorprenderán. ¡Calidad, estilo y funcionalidad en cada artículo!",
-                    img: "Granadillas",
-                    stock: 5000,
-                    price: 2000000,
-                    cantidad: 2,
-                    total: 4000000,
-                },
-                {
-                    id: 2,
-                    name: "Producto 2",
-                    description: "Descripción del Producto 2",
-                    img: "Granadillas",
-                    stock: 5000,
-                    price: 200,
-                    cantidad: 1,
-                    total: 200,
-                },
-                {
-                    id: 3,
-                    name: "Producto 3",
-                    description: "Descripción del Producto 3",
-                    img: "Granadillas",
-                    stock: 5000,
-                    price: 300,
-                    cantidad: 1,
-                    total: 300,
-                },
-            ],
-            total: 4020000,
-        },
-        {
-            id: "1",
-            numero: "1001",
-            fecha: "2024-03-17",
-            cliente: {
-                nombre: "Juan Perez",
-                cedula: "1234567890",
-                correo: "juan@example.com",
-            },
-            productos: [
-                {
-                    id: 1,
-                    name: "fruta y mas fruta",
-                    description:
-                        "Descubre la nueva colección de productos que te sorprenderán. ¡Calidad, estilo y funcionalidad en cada artículo!",
-                    img: "Granadillas",
-                    stock: 5000,
-                    price: 2000000,
-                    cantidad: 2,
-                    total: 4000000,
-                },
-                {
-                    id: 2,
-                    name: "Producto 2",
-                    description: "Descripción del Producto 2",
-                    img: "Granadillas",
-                    stock: 5000,
-                    price: 200,
-                    cantidad: 1,
-                    total: 200,
-                },
-                {
-                    id: 3,
-                    name: "Producto 3",
-                    description: "Descripción del Producto 3",
-                    img: "Granadillas",
-                    stock: 5000,
-                    price: 300,
-                    cantidad: 1,
-                    total: 300,
-                },
-            ],
-            total: 4020000,
-        },
-    ];
+    const usuario = JSON.parse(localStorage.getItem('user'));
+    const [listaFacturas, setListaFacturas] = useState([]);
+    const consultaFacturas = async () => {
+        //setLoading(true);
+        const respuesta = await consultarFactura(usuario.username);
+        //setLoading(false);
+
+        if (respuesta.datos) {
+            setListaFacturas(respuesta.datos.sort((a, b) => a.id - b.id));
+        } else {
+            setListaFacturas([]);
+
+        }
+
+    }
+    useEffect(() => {
+        consultaFacturas();
+    }, []);
 
     return (
         //Div principal
@@ -247,7 +43,7 @@ function GestorVentasView() {
 export default GestorVentasView;
 
 const FacturaBasica = ({ factura, onFacturaClick }) => {
-    const { numero, fecha, cliente, total } = factura;
+    const { id, fecha, cliente, preciototal } = factura;
 
     const handleClick = () => {
         onFacturaClick(factura);
@@ -259,33 +55,49 @@ const FacturaBasica = ({ factura, onFacturaClick }) => {
             onClick={handleClick}
         >
             <div className="flex justify-between items-center">
-                <h3>Factura #{numero}</h3>
+                <h3>Factura #{id}</h3>
                 <p>Fecha: {fecha}</p>
             </div>
             <div className="bg-white rounded-lg p-5 flex justify-between items-center">
                 <p>Cliente: {cliente.nombre}</p>
-                <p>Total: ${total}</p>
+                <p>Total: ${preciototal}</p>
             </div>
         </div>
     );
 };
 
 const DetallesFactura = ({ factura, showDetallesFactura }) => {
-    const { numero, fecha, cliente, productos, total } = factura;
-    const [ListaProductosVendidos, setListaProductosVendidos] =
-        useState(productos);
+    
+    const consultaDetalle = async () => {
+        //setLoading(true);
+        const respuesta = await consultarDetallesFactura(factura.id);
+        //setLoading(false);
+        if (respuesta.datos) {
+            setListaProductosVendidos(respuesta.datos.sort((a, b) => a.id - b.id));
+        } else {
+            setListaProductosVendidos([]);
 
+        }
+
+    }
+    useEffect(() => {
+        consultaDetalle();
+    }, [factura.id]); 
+   
+    const { numero: id, fecha, cliente, preciototal } = factura;
+    const [ListaProductosVendidos, setListaProductosVendidos] =
+        useState([]);
     const [totalPago, setTotalPago] = useState(null);
     const [showActualizarVenta, setShowActualizarProducto] = useState(false);
     const [showAgregarVenta, setShowAgregarVenta] = useState(false);
-    
+
     const [productoActualizar, setProductoActualizar] = useState(null);
-    
+
     const handelShowAgregarProducto = (mostrar) => {
         console.clear()
         console.log(factura)
         setShowAgregarVenta(mostrar);
-        
+
     };
     const AgregarVenta = (Producto, Cantida, Total) => {
         // Crea una nueva copia del array listVentas y agrega el nuevo objeto de venta
@@ -378,10 +190,11 @@ const DetallesFactura = ({ factura, showDetallesFactura }) => {
     };
 
     return (
+        
         <div className="flex my-5">
             <div className="detalles-factura flex flex-col items-center bg-[#CCE6FF] rounded-lg shadow-md p-6 w-[600px]">
                 <h2 className="text-3xl font-bold mb-4 p-4">
-                    Detalles de la factura #{numero}
+                    Detalles de la factura #{id}
                 </h2>
                 <div className="flex flex-col justify-center  rounded-lg shadow-md w-full  p-4 bg-white">
                     <div className="flex justify-between px-5">
@@ -420,23 +233,23 @@ const DetallesFactura = ({ factura, showDetallesFactura }) => {
                             <div className="max-h-[340px] overflow-auto bg-[#CCE6FF]">
                                 {/* PRODUCTO VENDIDO */}
                                 <div>
-                                    {ListaProductosVendidos.map((producto, index) => (
+                                    {ListaProductosVendidos.map((detalle, index) => (
                                         <div
                                             key={index}
                                             className="flex flex-row justify-between border-t border-black p-4 hover:bg-slate-300 cursor-pointer"
-                                            onClick={() => handelShowActualizarVenta(true, producto)}
+                                            onClick={() => handelShowActualizarVenta(true, detalle.producto)}
                                         >
                                             <p className="w-1/4 text-center border-black pl-4">
-                                                {producto.name}
+                                                {detalle.producto.name}
                                             </p>
                                             <p className="w-1/4 text-center border-l border-black pl-4">
-                                                {producto.cantidad} kg
+                                                {detalle.cantidadvendida} kg
                                             </p>
                                             <p className="w-1/4 text-center border-l border-black pl-4">
-                                                ${producto.price}
+                                                ${detalle.producto.price}
                                             </p>
                                             <p className="w-1/4 text-center border-l border-black pl-4">
-                                                ${producto.total}
+                                                ${detalle.subprecio}
                                             </p>
                                         </div>
                                     ))}
@@ -446,7 +259,7 @@ const DetallesFactura = ({ factura, showDetallesFactura }) => {
                         <div className="w-full flex justify-end mt-4 px-10 items-center">
                             <p className="w-1/4 text-center text-lg font-bold">Total :</p>
                             <p className="w-1/4 text-center text-lg font-bold pl-4">
-                                ${totalPago ? totalPago : total}
+                                ${totalPago ? totalPago : preciototal}
                             </p>
                         </div>
                     </div>
@@ -471,7 +284,7 @@ const DetallesFactura = ({ factura, showDetallesFactura }) => {
                     <div className="w-1/2  flex flex-col justify-between">
                         <button
                             className="bg-blue-400 font-bold text-white hover:bg-blue-700  rounded-lg mx-2 p-2 mb-2"
-                        onClick={() => handelShowAgregarProducto(true)}
+                            onClick={() => handelShowAgregarProducto(true)}
                         >
                             AGREGAR VENTA
                         </button>
@@ -487,8 +300,8 @@ const DetallesFactura = ({ factura, showDetallesFactura }) => {
                 </div>
             </div>
             <div>
-                
-            </div>                           
+
+            </div>
             {showActualizarVenta && (
                 <TarjetaActualizarVenta
                     productActualizar={productoActualizar}
@@ -533,7 +346,7 @@ const ConsultarFactura = ({ listaFacturas }) => {
                     </div>
                 </div>
                 {facturaSeleccionada && (
-                    <DetallesFactura factura={facturaSeleccionada} showDetallesFactura={handleFacturaClick}  />
+                    <DetallesFactura factura={facturaSeleccionada} showDetallesFactura={handleFacturaClick} />
                 )}
             </div>
         </div>
