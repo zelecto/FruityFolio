@@ -92,18 +92,18 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
             setListaProductosVendidos(respuesta.datos.sort((a, b) => a.id - b.id));
         } else {
             setListaProductosVendidos([]);
-
         }
-
     }
     useEffect(() => {
         consultaDetalle();
+        setTotalPago(factura.preciototal)
     }, [factura.id]);
 
-    const { numero: id, fecha, cliente, preciototal } = factura;
-    const [ListaProductosVendidos, setListaProductosVendidos] =
-        useState([]);
-    const [totalPago, setTotalPago] = useState(preciototal);
+    
+
+    const { numero: id, fecha, cliente } = factura;
+    const [ListaProductosVendidos, setListaProductosVendidos] = useState([]);
+    const [totalPago, setTotalPago] = useState(factura.preciototal);
     const [showActualizarVenta, setShowActualizarProducto] = useState(false);
     const [showAgregarVenta, setShowAgregarVenta] = useState(false);
 
@@ -114,6 +114,7 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
         setShowAgregarVenta(mostrar);
 
     };
+
     const AgregarVenta = (Producto, Cantida, Total) => {
         // Crea una nueva copia del array listVentas y agrega el nuevo objeto de venta
         const nuevaListaVentas = [
@@ -124,8 +125,7 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
                 subprecio: Total,
             },
         ];
-
-        const nuevoPrecio = preciototal + Total;
+        const nuevoPrecio = totalPago + Total;
 
         // Actualiza el estado de totalPago con el nuevo valor
         setTotalPago(nuevoPrecio);
@@ -139,8 +139,10 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
         setShowActualizarProducto(mostrar);
         setProductoActualizar(producto);
     };
+
+    const [listaDetallesEliminados, setListaDetallesEliminados]= useState([]);
+    const [listaDetallesActulizados, setListaDetallesActulizados]= useState([]);
     const actualizarOEliminarVenta = async (Producto, Cantidad, Total, isEliminacion) => {
-        console.clear();
         const nuevaListaVentas = [...ListaProductosVendidos];
         let nuevoPrecio;
         const index = nuevaListaVentas.findIndex((venta) => venta.producto.id === Producto.id);
@@ -148,12 +150,18 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
         if (index !== -1) {
 
             if (isEliminacion) {
-                const subprecioEliminado = nuevaListaVentas[index].subprecio;
-                nuevoPrecio = preciototal - subprecioEliminado;
+                console.clear()
+                console.log(nuevaListaVentas[index].subprecio)
+                nuevoPrecio = totalPago - nuevaListaVentas[index].subprecio;
                 if (nuevoPrecio < 0) {
                     nuevoPrecio = 0;
                 }
-                await EliminarDetalleFactura(nuevaListaVentas[index].id);
+                const nuevaListaDetallesEliminados = [
+                    ...listaDetallesEliminados,
+                    nuevaListaVentas[index].id
+                ];
+                setListaDetallesEliminados(nuevaListaDetallesEliminados);
+                
                 nuevaListaVentas.splice(index, 1); // Eliminar la venta de la lista
                 if (nuevaListaVentas.length === 0) {
                     await EliminarFactura(factura.id);
@@ -175,10 +183,12 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
 
             factura.preciototal = nuevoPrecio;
 
-            await ActualizarFactura(factura);
-
             if (!isEliminacion) {
-                await ActualizarDetallesFactura(nuevaListaVentas[index]);
+                const nuevaListaDetallesEliminados = [
+                    ...listaDetallesEliminados,
+                    nuevaListaVentas[index]
+                ];
+                setListaDetallesActulizados(nuevaListaDetallesEliminados);
             }
         } else {
             console.error("Venta no encontrada en la lista.");
@@ -204,7 +214,22 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
 
             };
         });
-        
+
+        if(listaDetallesEliminados.length>0){
+            let promesasVentas = listaDetallesEliminados.map(async (venta) => {
+                return await EliminarDetalleFactura(venta);
+            });
+            await Promise.all(promesasVentas);
+            setListaDetallesEliminados([]);
+        }
+
+        if(listaDetallesActulizados.length>0){
+            let promesasVentas = listaDetallesActulizados.map(async (venta) => {
+                return await ActualizarDetallesFactura(venta);
+            });
+            await Promise.all(promesasVentas);
+            setListaDetallesActulizados([]);
+        }
         
         factura.preciototal = totalPago;
         await ActualizarFactura(factura);
@@ -212,24 +237,23 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
             return await guardarVentas(venta);
         });
         setIsLoading(true);
-        
+
         setMensajeEmergente("Actualizando la factura.....")
         // Esperamos a que se completen todas las promesas de guardado de ventas
         await Promise.all(promesasVentas);
         setIsLoading(false);
         setShowAgregarVenta(false);
         showDetallesFactura();
-        
+
     }
 
-    const eliminarFactra = async (idFactura) =>{
+    const eliminarFactra = async (idFactura) => {
         setIsLoading(true)
         setMensajeEmergente("Eliminando factura.....")
         const respuesta = await EliminarFactura(idFactura);
         setIsLoading(false)
         showDetallesFactura(false)
         window.location.reload()
-
     }
 
     return (
@@ -303,7 +327,8 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
                         <div className="w-full flex justify-end mt-4 px-10 items-center">
                             <p className="w-1/4 text-center text-lg font-bold">Total :</p>
                             <p className="w-1/4 text-center text-lg font-bold pl-4">
-                                ${totalPago ? totalPago : preciototal}
+
+                                ${totalPago}
                             </p>
                         </div>
                     </div>
@@ -347,12 +372,15 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
 
             </div>
             {showActualizarVenta && (
-                <TarjetaActualizarVenta
-                    productActualizar={productoActualizar}
-                    ActualizarVenta={actualizarOEliminarVenta}
-                    CancelarActualizacionVenta={handelShowActualizarVenta}
-                    EliminarVenta={actualizarOEliminarVenta}
-                ></TarjetaActualizarVenta>
+                <div>
+                    <TarjetaActualizarVenta
+                        productActualizar={productoActualizar}
+                        ActualizarVenta={actualizarOEliminarVenta}
+                        CancelarActualizacionVenta={handelShowActualizarVenta}
+                        EliminarVenta={actualizarOEliminarVenta}
+                    ></TarjetaActualizarVenta>
+                </div>
+
             )}
             {showAgregarVenta && (
                 <TarjetaVenta AgregarVenta={AgregarVenta} ListaProductosVendidos={ListaProductosVendidos}></TarjetaVenta>
@@ -365,36 +393,94 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
 
 const ConsultarFactura = ({ listaFacturas, consultarFactura }) => {
     const [facturaSeleccionada, setFacturaSeleccionada] = useState(null);
+    const [fechaSeleccionada, setFechaSeleccionada] = useState(getFechaActual());
+    const [filtroPorMesAnio, setFiltroPorMesAnio] = useState(true);
+    const [facturasFiltradas, setFacturasFiltradas] = useState([]);
+
+    function getFechaActual() {
+        const fechaActual = new Date();
+        const dia = fechaActual.getDate().toString().padStart(2, '0');
+        const mes = (fechaActual.getMonth() + 1).toString().padStart(2, '0');
+        const año = fechaActual.getFullYear();
+        return `${año}-${mes}-${dia}`;
+    }
+
+    useEffect(() => {
+        // Limpieza de factura seleccionada cuando cambia la lista de facturas filtradas
+        setFacturaSeleccionada(null);
+    }, [facturasFiltradas]);
 
     const handleFacturaClick = (factura) => {
         setFacturaSeleccionada(factura);
     };
 
-    useEffect(() => {
+    const handleFechaSeleccionada = (event) => {
+        setFechaSeleccionada(event.target.value);
+    };
 
-    }, [facturaSeleccionada]);
+    const handleFiltrarPorMesAnio = () => {
+        setFiltroPorMesAnio(true);
+        setFechaSeleccionada(getFechaActual());
+    };
+
+    const handleFiltrarPorDiaMesAnio = () => {
+        setFiltroPorMesAnio(false);
+    };
+
+    const filtrarPorFechaSeleccionada = (facturas) => {
+        if (filtroPorMesAnio) {
+            const [añoSeleccionado, mesSeleccionado] = fechaSeleccionada.split('-');
+            return facturas.filter((factura) => {
+                const fecha = new Date(factura.fecha);
+                const añoFactura = fecha.getFullYear().toString();
+                const mesFactura = (fecha.getMonth() + 1).toString().padStart(2, '0');
+                return añoSeleccionado === añoFactura && mesSeleccionado === mesFactura;
+            });
+        } else {
+            return facturas.filter((factura) => {
+                const fecha = new Date(factura.fecha);
+                const fechaSeleccionadaDate = new Date(fechaSeleccionada);
+                return fecha.getFullYear() === fechaSeleccionadaDate.getFullYear() &&
+                    fecha.getMonth() === fechaSeleccionadaDate.getMonth() &&
+                    fecha.getDate() === fechaSeleccionadaDate.getDate();
+            });
+        }
+    };
+
+    // Actualizar la lista de facturas filtradas cuando cambian las condiciones de filtrado
+    useEffect(() => {
+        setFacturasFiltradas(filtrarPorFechaSeleccionada(listaFacturas));
+    }, [listaFacturas, fechaSeleccionada, filtroPorMesAnio]);
 
     return (
         <div className="consultar-factura justify-between items-center h-screen w-full overflow-hidden ">
             <div className="flex justify-center px-8">
                 <div className="mx-20 my-5">
-                    <div className="flex flex-col justify-center items-center  bg-[#CCE6FF] rounded-lg  shadow-md w-[500px]">
-                        <div className="w-full text-3xl text-gold text-black font-bold  text-center rounded-t-lg p-4">
-                            <h1>Lista de Facturas</h1>
-                        </div>
-                        {listaFacturas.length > 0 ? <div className="max-h-[600px] overflow-y-auto">
+                    <div className="flex flex-col justify-center items-center bg-blue-200 rounded-lg shadow-md w-[500px] p-4">
+                        <h1 className="text-3xl text-gold text-black font-bold text-center">Lista de Facturas</h1>
 
-                            {listaFacturas.map((factura) => (
-                                <FacturaBasica
-                                    key={factura.id}
-                                    factura={factura}
-                                    onFacturaClick={handleFacturaClick}
-                                />
-                            ))}
-                        </div> :
-                            NoFacturasFound()
-                        }
-                        
+                        <div className="mt-4 mb-2">
+                            <input type="date" id="fecha" name="fecha" value={fechaSeleccionada} onChange={handleFechaSeleccionada} className="rounded-lg border-2 border-gray-300 p-1 " />
+                        </div>
+                        <div className="my-4">
+                            <button className={`mr-4 px-4 py-2 rounded-lg ${filtroPorMesAnio ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-600'}`} onClick={handleFiltrarPorMesAnio}>Filtrar por Mes y Año</button>
+                            <button className={`px-4 py-2 rounded-lg ${!filtroPorMesAnio ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-600'}`} onClick={handleFiltrarPorDiaMesAnio}>Filtrar por Día, Mes y Año</button>
+                        </div>
+
+                        {facturasFiltradas.length > 0 ? (
+                            <div className="max-h-[600px] overflow-y-auto">
+                                {facturasFiltradas.map((factura) => (
+                                    <FacturaBasica
+                                        key={factura.id}
+                                        factura={factura}
+                                        onFacturaClick={handleFacturaClick}
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            <p>No se encontraron facturas.</p>
+                        )}
+
                     </div>
                 </div>
                 {facturaSeleccionada && (

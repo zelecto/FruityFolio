@@ -593,8 +593,6 @@ export const TarjetaVenta = ({ AgregarVenta, ListaProductosVendidos }) => {
   
 
   const FiltrarProductosVendidos = () => {
-    console.clear()
-    console.log(ListaProductosVendidos)
     if (ListaProductosVendidos.length !== 0) {
       const listaFiltrada = listaProductosBD.filter(
         (producto) =>
@@ -624,7 +622,7 @@ export const TarjetaVenta = ({ AgregarVenta, ListaProductosVendidos }) => {
 
   return (
     <div className="flex flex-col items-center  mx-20 bg-[#CCE6FF] w-[500px] rounded-md">
-      <div>
+      <div >
         <h2 className="text-black text-2xl font-bold mb-2 text-center">
           Selecione un producto a vender
         </h2>
