@@ -575,18 +575,28 @@ export const TarjetaVenta = ({ AgregarVenta, ListaProductosVendidos }) => {
   };
   //Lista de productos de la base de datos
   const [listaProductos, setListaProductos] = useState([]);
+  const [listaProductosBD, setListaProductosBD] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      await consultarProductos(); // Espera a que se complete la consulta de productos
+    };
+    fetchData();
+    FiltrarProductosVendidos()
+  }, []);
 
   const consultarProductos = async () => {
     const respuesta = await ConsultarProductos(usuario.username);
     setListaProductos(respuesta.datos.sort((a, b) => a.id - b.id));
+    setListaProductosBD(respuesta.datos.sort((a, b) => a.id - b.id))
   };
 
-  const FiltrarProductosVendidos = async () => {
-    const respuesta = await ConsultarProductos(usuario.username);
-    const listaProductos1 = respuesta.datos.sort((a, b) => a.id - b.id);
+  
 
+  const FiltrarProductosVendidos = () => {
+    console.clear()
+    console.log(ListaProductosVendidos)
     if (ListaProductosVendidos.length !== 0) {
-      const listaFiltrada = listaProductos1.filter(
+      const listaFiltrada = listaProductosBD.filter(
         (producto) =>
           !ListaProductosVendidos.some(
             (venta) => venta.producto.id === producto.id
@@ -597,7 +607,6 @@ export const TarjetaVenta = ({ AgregarVenta, ListaProductosVendidos }) => {
   };
 
   useEffect(() => {
-
     if (ListaProductosVendidos.length == 0) {
       consultarProductos();
     }
@@ -606,6 +615,12 @@ export const TarjetaVenta = ({ AgregarVenta, ListaProductosVendidos }) => {
   useEffect(() => {
     FiltrarProductosVendidos();
   }, [ListaProductosVendidos]);
+
+  useEffect(() => {
+    FiltrarProductosVendidos();
+  }, [listaProductos]);
+
+  
 
   return (
     <div className="flex flex-col items-center  mx-20 bg-[#CCE6FF] w-[500px] rounded-md">

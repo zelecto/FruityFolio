@@ -7,43 +7,53 @@ import Loading from "./LoadingScreen";
 function GestorVentasView() {
     const usuario = JSON.parse(localStorage.getItem('user'));
     const [listaFacturas, setListaFacturas] = useState([]);
+    const [loading, setLoading] = useState(false);
+
     const consultaFacturas = async () => {
-        
         try {
-            //setLoading(true);
+            setLoading(true);
             const respuesta = await consultarFactura(usuario.username);
-            //setLoading(false);
+            setLoading(false);
 
             if (respuesta.datos) {
                 setListaFacturas(respuesta.datos.sort((a, b) => a.id - b.id));
             } else {
-                
+                setListaFacturas([]);
             }
         } catch (error) {
-            
+            setLoading(false);
+            // Manejar el error si es necesario
         }
+    };
 
-    }
     useEffect(() => {
         consultaFacturas();
-    }, [listaFacturas]);
+    }, []); // Ejecutar solo una vez al cargar el componente
+
+
+    useEffect(() => {
+        console.log("Lista de facturas actualizada:", listaFacturas);
+    }, [listaFacturas]);// Ejecutar solo una vez al cargar el componente
 
     return (
-        //Div principal
-        <div className="bg-[#F5F5F5] h-screen overflow-hidden">
-            <Header
-                link="/paginaPrincipal"
-                logoRightSrc="ruta-a-la-imagen-derecha.jpg"
-                logoAlt="FruityFolio logo"
-                title="FruityFolio"
-                subtitle="Consulta tus ventas"
-            />
-            <div className="">
-                <ConsultarFactura listaFacturas={listaFacturas} consultarFactura={ConsultarFactura}></ConsultarFactura>
+        <div>
+            {loading && <Loading message={"Cargando Facturas...."} />}
+            <div className="bg-[#F5F5F5] h-screen overflow-hidden">
+                <Header
+                    link="/paginaPrincipal"
+                    logoRightSrc="ruta-a-la-imagen-derecha.jpg"
+                    logoAlt="FruityFolio logo"
+                    title="FruityFolio"
+                    subtitle="Consulta tus ventas"
+                />
+                <div className="">
+                    <ConsultarFactura listaFacturas={listaFacturas} consultarFactura={ConsultarFactura} />
+                </div>
             </div>
         </div>
     );
 }
+
 
 export default GestorVentasView;
 
@@ -129,32 +139,27 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
         setShowActualizarProducto(mostrar);
         setProductoActualizar(producto);
     };
-
     const actualizarOEliminarVenta = async (Producto, Cantidad, Total, isEliminacion) => {
         console.clear();
         const nuevaListaVentas = [...ListaProductosVendidos];
         let nuevoPrecio;
         const index = nuevaListaVentas.findIndex((venta) => venta.producto.id === Producto.id);
-        
+
         if (index !== -1) {
-            
+
             if (isEliminacion) {
-                console.log("Esta es la lista");
-                console.log(nuevaListaVentas[index].subprecio);
-                console.log(totalPago);
-                nuevoPrecio = totalPago - nuevaListaVentas[index].subprecio
-                if ((nuevoPrecio)<0){
-                    nuevoPrecio*=-1;
+                const subprecioEliminado = nuevaListaVentas[index].subprecio;
+                nuevoPrecio = preciototal - subprecioEliminado;
+                if (nuevoPrecio < 0) {
+                    nuevoPrecio = 0;
                 }
                 await EliminarDetalleFactura(nuevaListaVentas[index].id);
                 nuevaListaVentas.splice(index, 1); // Eliminar la venta de la lista
-                if (nuevaListaVentas.length == 0) {
+                if (nuevaListaVentas.length === 0) {
                     await EliminarFactura(factura.id);
                     window.location.reload();
                     return;
                 }
-                // Eliminar el detalle de factura asociado
-                
             } else {
                 nuevaListaVentas[index] = {
                     ...nuevaListaVentas[index],
@@ -169,11 +174,9 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
             handelShowActualizarVenta(false, null);
 
             factura.preciototal = nuevoPrecio;
-            
 
             await ActualizarFactura(factura);
-            
-            
+
             if (!isEliminacion) {
                 await ActualizarDetallesFactura(nuevaListaVentas[index]);
             }
@@ -181,6 +184,7 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
             console.error("Venta no encontrada en la lista.");
         }
     };
+
 
     const [isLoading, setIsLoading] = useState(false);
     const [mensajeEmergente, setMensajeEmergente] = useState("");
@@ -219,8 +223,13 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
     }
 
     const eliminarFactra = async (idFactura) =>{
+        setIsLoading(true)
+        setMensajeEmergente("Eliminando factura.....")
         const respuesta = await EliminarFactura(idFactura);
-        console.log(respuesta);
+        setIsLoading(false)
+        showDetallesFactura(false)
+        window.location.reload()
+
     }
 
     return (
@@ -373,7 +382,8 @@ const ConsultarFactura = ({ listaFacturas, consultarFactura }) => {
                         <div className="w-full text-3xl text-gold text-black font-bold  text-center rounded-t-lg p-4">
                             <h1>Lista de Facturas</h1>
                         </div>
-                        <div className="max-h-[600px] overflow-y-auto">
+                        {listaFacturas.length > 0 ? <div className="max-h-[600px] overflow-y-auto">
+
                             {listaFacturas.map((factura) => (
                                 <FacturaBasica
                                     key={factura.id}
@@ -381,13 +391,25 @@ const ConsultarFactura = ({ listaFacturas, consultarFactura }) => {
                                     onFacturaClick={handleFacturaClick}
                                 />
                             ))}
-                        </div>
+                        </div> :
+                            NoFacturasFound()
+                        }
+                        
                     </div>
                 </div>
                 {facturaSeleccionada && (
                     <DetallesFactura factura={facturaSeleccionada} showDetallesFactura={handleFacturaClick} consultarFactura={consultarFactura} />
                 )}
             </div>
+        </div>
+    );
+};
+
+const NoFacturasFound = () => {
+    return (
+        <div className="flex flex-col items-center w-[500px] h-[600px] pt-14">
+            <img src="https://freepngtransparent.com/wp-content/uploads/2023/03/X-Png-138.png" alt="No products found" className="w-48 h-48 mb-8" />
+            <h2 className="text-2xl font-semibold text-gray-800">No hay facturas encontradas</h2>
         </div>
     );
 };

@@ -43,7 +43,6 @@ function ConsultaCatalogo() {
 
     const respuesta = await BorrarProducto(selectedProduct);
 
-    console.log(respuesta);
     consultarProductos();
     setLoading(false);
 
@@ -93,7 +92,7 @@ function ConsultaCatalogo() {
         subtitle="Gestiona tu negocio de frutas con facilidad."
       />
 
-      {loading && <LoadingScreen message="Cargando datos..." />}
+      {loading && <LoadingScreen message="Cargando productos..." />}
       {showActualizar && (
 
         <div className="fixed top-6 left-0 w-full h-full flex flex-col justify-center items-center bg-gray-900 bg-opacity-50 z-50">
