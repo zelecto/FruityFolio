@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { InputField } from './Facturadora';
-import validarNombre, { MensajeAlert } from '../Tools/Validadores';
+import validarNombre, { MensajeAlert } from '../Tools/Validadores.jsx';
 import { GuardarUsuario } from '../Base/BdUsuarios.jsx';
 const RegistroUsuarioForm = ({ cerrar }) => {
 

@@ -23,8 +23,8 @@ function Principal() {
         subtitle={`${usuario.username} gestiona tu negocio de frutas con facilidad.`}
       />
 
-      <div className="mx-auto my-2">
-        <main className="flex justify-center items-center my-[100px]">
+      <div className="mx-auto my-2 max-w-[1200px] items-center">
+        <main className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 justify-center items-center my-[100px]">
           <Card
             title="Crea y Guarda tu Producto para Vender"
             description="¡Construye tu catálogo y aumenta tus ventas hoy!"
@@ -53,8 +53,24 @@ function Principal() {
             to="/ConsultarVentas"
             img={iconoConsulta}
           />
+          <Card
+            title="Consultar Ventas"
+            description="Consulta el historial de ventas."
+            buttonText="Consultar Ventas"
+            to="/ConsultarVentas"
+            img={iconoConsulta}
+          />
+          <Card
+            title="Consultar Ventas"
+            description="Consulta el historial de ventas."
+            buttonText="Consultar Ventas"
+            to="/ConsultarVentas"
+            img={iconoConsulta}
+          />
         </main>
       </div>
+
+
     </div>
   );
 }

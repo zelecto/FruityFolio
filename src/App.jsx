@@ -6,7 +6,7 @@ import  CrearProductoForm  from "./assets/Components/View/CrearProducto";
 import CrearFacturaForm from "./assets/Components/View/Facturadora";
 import ConsultaCatalogo from "./assets/Components/View/Catalogo";
 import GestorVentasView from "./assets/Components/View/GestorVentas";
-
+import ViewClient from "./assets/Components/View/Cliente";
 function App() {
   return (
     <>
@@ -27,7 +27,12 @@ function App() {
         />
         <Route path="/ConsultarVentas"
         element={<GestorVentasView></GestorVentasView>}
-        
+        />
+        <Route path="/ConsultarVentas"
+        element={<GestorVentasView></GestorVentasView>}
+        />
+        <Route path="/cliente"
+          element={<ViewClient></ViewClient>}
         />
       </Routes>
     </>
