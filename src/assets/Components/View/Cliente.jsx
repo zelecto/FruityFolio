@@ -43,7 +43,7 @@ const Product = ({ product, addToCart, isInCart }) => {
             <div className="flex flex-col items-center text-center mb-4">
                 <h3 className="text-xl font-bold text-gray-800">{product.name.toUpperCase()}</h3>
                 <p className="text-gray-500 mt-2 font-bold">Disponible: <span className="text-green-500 font-semibold">{product.stock} kg</span></p>
-                <p className="text-lg font-bold text-blue-600 mt-2">{product.price}€/kg</p>
+                <p className="text-lg font-bold text-blue-600 mt-2">{product.price}$/kg</p>
             </div>
             <div className="flex items-center mb-4">
                 <input
@@ -86,7 +86,7 @@ const Cart = ({ cartItems, removeFromCart }) => {
                                 <p className="text-gray-600">Cantidad: {item.quantity} kg</p>
                             </div>
                             <div className="flex flex-col items-end">
-                                <p className="text-blue-600 font-bold mb-1">{item.price * item.quantity}€</p>
+                                <p className="text-blue-600 font-bold mb-1">{item.price * item.quantity}$</p>
                                 <button
                                     className="bg-red-500 text-white py-1 px-2 rounded"
                                     onClick={() => removeFromCart(item.id)}
@@ -102,7 +102,7 @@ const Cart = ({ cartItems, removeFromCart }) => {
                 <>
                     <hr className="my-4" />
                     <div className="flex justify-between items-center">
-                        <p className="text-lg font-bold">Subtotal: {subtotal}€</p>
+                        <p className="text-lg font-bold">Subtotal: {subtotal}$</p>
                         <button className="bg-green-500 text-white py-2 px-4 rounded">
                             Ordenar
                         </button>

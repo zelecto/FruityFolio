@@ -7,6 +7,9 @@ import iconoInventario from "../Icons/iconoInventario.png";
 import iconoFactura from "../Icons/iconoFactura.png";
 import iconoConsulta from "../Icons/IconoConsulta.png";
 import iconoProducto from "../Icons/iconoProducto.png";
+import IconoTienda from "../Icons/IconoTienda.png";
+import IconoGrafica from "../Icons/IconoGrafica.png";
+
 
 
 
@@ -54,19 +57,21 @@ function Principal() {
             img={iconoConsulta}
           />
           <Card
-            title="Consultar Ventas"
-            description="Consulta el historial de ventas."
-            buttonText="Consultar Ventas"
-            to="/ConsultarVentas"
-            img={iconoConsulta}
+            title="Administra tu Tienda Virtual"
+            description="Recibe y elimina los pedidos de tus clientes."
+            buttonText="Gestionar Pedidos"
+            to="/GestionarPedidos"
+            img={IconoTienda}
           />
+
           <Card
-            title="Consultar Ventas"
-            description="Consulta el historial de ventas."
-            buttonText="Consultar Ventas"
-            to="/ConsultarVentas"
-            img={iconoConsulta}
+            title="Reportes y Gráficas"
+            description="Visualiza el rendimiento de tu tienda con gráficas detalladas."
+            buttonText="Ver Reportes"
+            to="/ReportesGraficos"
+            img={IconoGrafica}
           />
+
         </main>
       </div>
 
@@ -92,7 +97,7 @@ function Card({ title, description, buttonText, to, img }) {
       <img className="h-20" src={img} alt="No encontrada" />
       <Link
         to={to}
-        className="w-40 text-center mt-4 bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md"
+        className="w-40 text-center mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md"
       >
         {buttonText}
       </Link>
