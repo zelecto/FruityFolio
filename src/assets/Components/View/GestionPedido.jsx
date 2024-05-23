@@ -7,15 +7,10 @@ import IconoTienda from "../Icons/IconoTienda.png";
 import IconoRepartidor from "../Icons/IconoRepartidor.png";
 import LoadingModerno from "../Photo/loadinModerno.gif";
 import fondo from "../Photo/fondo.png";
+import { GetTiendaVirtualUsernameDetail } from '../Base/BdtiendaVirtual';
 
 const TiendaPage = () => {
-    const [storeData, setStoreData] = useState({
-        nombre: '',
-        imagen: '',
-        cantidadVentas: 0,
-        cobroTotal: 0,
-        direccion: ''
-    });
+    const [storeData, setStoreData] = useState(null);
     const [orders, setOrders] = useState([]);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [orderDetails, setOrderDetails] = useState({});
@@ -58,7 +53,7 @@ const TiendaPage = () => {
             backgroundRepeat: "no-repeat",
         }}>
             <Header
-                link="/"
+                link="/paginaPrincipal"
                 logoRightSrc="ruta-a-la-imagen-derecha.jpg"
                 logoAlt="FruityFolio logo"
                 title="¡Bienvenido a FruityFolio!"
@@ -84,12 +79,17 @@ const TiendaPage = () => {
 const TiendaInfo = ({ storeData }) => {
     return (
         <div className="w-96 h-[420px] bg-white p-4 rounded-lg shadow-md my-10">
-            <h2 className='font-bold text-center'>Reporte del dia</h2>
-            <img src={IconoTienda} alt="Logo de la tienda" className="w-40 h-40 object-cover mb-4 mx-auto my-5" />
-            <h3 className="text-xl font-bold text-center mb-2">{storeData.nombre}</h3>
-            <p className="font-bold text-center mb-2">Pedido atendido: <span className="font-semibold">{storeData.cantidadVentas}</span></p>
-            <p className="font-bold text-center mb-2">Cobro Total: <span className="font-semibold">{storeData.cobroTotal}$</span></p>
-            <p className="font-bold text-center mb-2">{storeData.direccion}</p>
+            {storeData && (
+                <div>
+                    <h2 className='font-bold text-center'>Reporte del dia</h2>
+                    <img src={IconoTienda} alt="Logo de la tienda" className="w-40 h-40 object-cover mb-4 mx-auto my-5" />
+                    <h3 className="text-xl font-bold text-center mb-2">{storeData.tienda.nombre}</h3>
+                    <p className="font-bold text-center mb-2">Pedidos atendido: <span className="font-semibold">{storeData.totalPedidos}</span></p>
+                    <p className="font-bold text-center mb-2">Cobro Total: <span className="font-semibold">{storeData.sumaTotalCobros}$</span></p>
+                    <p className="font-bold text-center mb-2">{storeData.tienda.direccion}</p>
+
+                </div>
+            )} 
         </div>
     );
 };
@@ -199,25 +199,23 @@ const EnvioSection = ({ orderId }) => {
 
 async function fetchData() {
     const tiendaData = await fetchStoreData();
-    const pedidosData = await fetchOrders();
+    const pedidosData = await fetchOrders(tiendaData.tienda.id);
     return { tiendaData, pedidosData };
 }
 
 async function fetchStoreData() {
-    // Aquí debes realizar una llamada a tu backend para obtener los datos de la tienda virtual.
-    // Simulación de datos:
-    return {
-        nombre: 'Nombre de la tienda',
-        imagen: 'ruta-a-la-imagen.jpg',
-        cantidadVentas: 10,
-        cobroTotal: 500,
-        direccion: 'Dirección de la tienda'
-    };
+    const usuario = JSON.parse(localStorage.getItem('user'));
+    const fecha = new Date().toISOString().split('T')[0]; // Obtiene la fecha actual en formato YYYY-MM-DD
+    const estado = 'pendiente';
+
+    const response = await GetTiendaVirtualUsernameDetail(usuario.username,fecha, estado);
+    console.log(response)
+    return response.datos;
 }
 
-async function fetchOrders() {
+async function fetchOrders(idtienda) {
     //TODO: PONER PENDIENTE
-    const respuesta = await getPedidos(2);
+    const respuesta = await getPedidos(idtienda);
     const listaPedidos = respuesta.data;
     return listaPedidos;
 }

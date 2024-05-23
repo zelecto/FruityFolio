@@ -83,12 +83,12 @@ const Cart = ({ cartItems, removeFromCart }) => {
                         <div key={item.id} className="flex justify-between items-center border border-gray-200 rounded p-2">
                             <div className="flex flex-col">
                                 <p className="text-gray-800 font-bold mb-1">{item.name}</p>
-                                <p className="text-gray-600">Cantidad: {item.quantity} kg</p>
+                                <p className="text-gray-500 font-semibold">Cantidad: {item.quantity} kg</p>
                             </div>
                             <div className="flex flex-col items-end">
-                                <p className="text-blue-600 font-bold mb-1">{item.price * item.quantity}$</p>
+                                <p className="text-blue-600 font-bold mb-1">{item.price * item.quantity} $</p>
                                 <button
-                                    className="bg-red-500 text-white py-1 px-2 rounded"
+                                    className="bg-red-500 text-white font-bold py-1 px-2 rounded"
                                     onClick={() => removeFromCart(item.id)}
                                 >
                                     Eliminar
@@ -102,10 +102,11 @@ const Cart = ({ cartItems, removeFromCart }) => {
                 <>
                     <hr className="my-4" />
                     <div className="flex justify-between items-center">
-                        <p className="text-lg font-bold">Subtotal: {subtotal}$</p>
-                        <button className="bg-green-500 text-white py-2 px-4 rounded">
+                        
+                        <button className="bg-green-400 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
                             Ordenar
                         </button>
+                        <p className="text-lg font-bold">TOTAL: {subtotal}$</p>
                     </div>
                 </>
             )}
