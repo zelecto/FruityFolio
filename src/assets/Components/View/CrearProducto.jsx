@@ -142,6 +142,7 @@ export const TarjetaCrearProducto = ({
       if (ActualizarProducto) {
         ActualizarProducto.name = nombre;
         ActualizarProducto.description = descripcion;
+        ActualizarProducto.price=precio;
         ActualizarProducto.stock = stock;
         ActualizarProducto.img = img.nombre;
 

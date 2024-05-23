@@ -7,6 +7,8 @@ import CrearFacturaForm from "./assets/Components/View/Facturadora";
 import ConsultaCatalogo from "./assets/Components/View/Catalogo";
 import GestorVentasView from "./assets/Components/View/GestorVentas";
 import ViewClient from "./assets/Components/View/Cliente";
+import TiendaPage from "./assets/Components/View/GestionPedido";
+
 function App() {
   return (
     <>
@@ -33,6 +35,9 @@ function App() {
         />
         <Route path="/cliente"
           element={<ViewClient></ViewClient>}
+        />
+        <Route path="/GestionarPedidos"
+          element={<TiendaPage></TiendaPage>}
         />
       </Routes>
     </>

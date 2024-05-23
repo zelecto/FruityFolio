@@ -27,7 +27,7 @@ function Principal() {
       />
 
       <div className="mx-auto my-2 max-w-[1200px] items-center">
-        <main className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 justify-center items-center my-[100px]">
+        <main className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 justify-center items-center my-8">
           <Card
             title="Crea y Guarda tu Producto para Vender"
             description="¡Construye tu catálogo y aumenta tus ventas hoy!"
