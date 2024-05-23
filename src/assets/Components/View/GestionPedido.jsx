@@ -8,21 +8,47 @@ import IconoRepartidor from "../Icons/IconoRepartidor.png";
 import LoadingModerno from "../Photo/loadinModerno.gif";
 import fondo from "../Photo/fondo.png";
 import { GetTiendaVirtualUsernameDetail } from '../Base/BdtiendaVirtual';
-
+import TiendaFormulario from './formularioTienda';
+import 'react-loading-skeleton/dist/skeleton.css'
+import { SkeletonPedidosSection, SkeletonTiendaInfo } from './Loading/Skeleton';
 const TiendaPage = () => {
     const [storeData, setStoreData] = useState(null);
     const [orders, setOrders] = useState([]);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [orderDetails, setOrderDetails] = useState({});
 
+    //REGUISTRAR UNA TIENDA
+    const [showReguistrarTienda, setShowReguistrarTienda] = useState(false);
+
+    const handelshowReguistrarTienda = (mostrar) => {
+        setShowReguistrarTienda(mostrar)
+    }
+
+    //Loading
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handelIsLoading = (estado) => {
+        setIsLoading(estado);
+    }
+
     useEffect(() => {
         async function getData() {
-            const { tiendaData, pedidosData } = await fetchData();
-            setStoreData(tiendaData);
-            setOrders(pedidosData);
+            handelIsLoading(true)
+            const respuesta = await fetchData();
+            if (respuesta != null) {
+                const { tiendaData, pedidosData } = respuesta;
+                setStoreData(tiendaData);
+                setOrders(pedidosData);
+            } else {
+                setShowReguistrarTienda(true)
+            }
+            handelIsLoading(false)
+
         }
         getData();
     }, []);
+
+
 
     const toggleOrderDetails = async (orderId, facturaId) => {
         if (selectedOrder === orderId) {
@@ -44,6 +70,7 @@ const TiendaPage = () => {
         }
     };
 
+
     return (
         <div className='bg-[#F5F5F5] min-h-screen' style={{
             //backgroundImage: `url(${fondo})`,
@@ -52,6 +79,12 @@ const TiendaPage = () => {
             backgroundAttachment: "fixed",
             backgroundRepeat: "no-repeat",
         }}>
+            {
+                showReguistrarTienda && (
+                    <TiendaFormulario handelshowReguistrarTienda={handelshowReguistrarTienda}></TiendaFormulario>
+                )
+            }
+
             <Header
                 link="/paginaPrincipal"
                 logoRightSrc="ruta-a-la-imagen-derecha.jpg"
@@ -59,22 +92,38 @@ const TiendaPage = () => {
                 title="¡Bienvenido a FruityFolio!"
                 subtitle={`Administra tu tienda virtual y pedidos`}
             />
+
+
+
             <div className="container p-4 flex justify-center text-lg" >
                 <div className="w-1/3 flex justify-center">
-                    <TiendaInfo storeData={storeData} />
+                    {isLoading ? (
+                        <SkeletonTiendaInfo></SkeletonTiendaInfo>
+                    ) : (
+                        <TiendaInfo storeData={storeData} />
+                    )}
                 </div>
                 <div className="flex-grow ml-4">
+                    {isLoading ? (
+                        <SkeletonPedidosSection></SkeletonPedidosSection>
+                    ) : (
+                    
                     <PedidosSection
                         orders={orders}
                         toggleOrderDetails={toggleOrderDetails}
                         selectedOrder={selectedOrder}
                         orderDetails={orderDetails}
                     />
+                    )}
                 </div>
             </div>
+
         </div>
     );
 };
+
+
+
 
 const TiendaInfo = ({ storeData }) => {
     return (
@@ -89,7 +138,7 @@ const TiendaInfo = ({ storeData }) => {
                     <p className="font-bold text-center mb-2">{storeData.tienda.direccion}</p>
 
                 </div>
-            )} 
+            )}
         </div>
     );
 };
@@ -97,7 +146,7 @@ const TiendaInfo = ({ storeData }) => {
 const PedidosSection = ({ orders, toggleOrderDetails, selectedOrder, orderDetails }) => {
     return (
         <div className=" mx-4">
-            <h2 className="text-xl font-bold mb-4 text-center">Administrar Pedidos</h2>
+            <h2 className="text-xl font-bold mb-4">Pedidos pendientes</h2>
             {orders.map((order) => (
                 <div key={order.id} className="flex mb-4">
                     <PedidoCard order={order} toggleOrderDetails={toggleOrderDetails} selectedOrder={selectedOrder} orderDetails={orderDetails} />
@@ -199,17 +248,19 @@ const EnvioSection = ({ orderId }) => {
 
 async function fetchData() {
     const tiendaData = await fetchStoreData();
-    const pedidosData = await fetchOrders(tiendaData.tienda.id);
-    return { tiendaData, pedidosData };
+    console.log(tiendaData)
+    if (tiendaData != null) {
+        const pedidosData = await fetchOrders(tiendaData.tienda.id);
+        return { tiendaData, pedidosData };
+    }
+    return null;
 }
 
 async function fetchStoreData() {
     const usuario = JSON.parse(localStorage.getItem('user'));
     const fecha = new Date().toISOString().split('T')[0]; // Obtiene la fecha actual en formato YYYY-MM-DD
     const estado = 'pendiente';
-
-    const response = await GetTiendaVirtualUsernameDetail(usuario.username,fecha, estado);
-    console.log(response)
+    const response = await GetTiendaVirtualUsernameDetail(usuario.username, fecha, estado);
     return response.datos;
 }
 
