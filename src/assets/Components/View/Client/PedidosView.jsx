@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Header from "./Header";
-import { BuscarImagenDefault } from '../Logic/Defaultimage';
-import { ConsultarProductos } from '../Base/BdProductos';
+import Header from "../Header";
+import { BuscarImagenDefault } from '../../Logic/Defaultimage';
+import { ConsultarProductos } from '../../Base/BdProductos';
 
 
 const ProductGrid = ({ addToCart, cartItems }) => {
@@ -115,7 +115,7 @@ const Cart = ({ cartItems, removeFromCart }) => {
 };
 
 
-const ViewClient = () => {
+const PedidosView = () => {
     const [cartItems, setCartItems] = useState([]);
 
     const addToCart = (product, quantity) => {
@@ -150,4 +150,4 @@ const ViewClient = () => {
 };
 
 
-export default ViewClient;
+export default PedidosView;

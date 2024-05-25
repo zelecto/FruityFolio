@@ -6,9 +6,11 @@ import  CrearProductoForm  from "./assets/Components/View/CrearProducto";
 import CrearFacturaForm from "./assets/Components/View/Facturadora";
 import ConsultaCatalogo from "./assets/Components/View/Catalogo";
 import GestorVentasView from "./assets/Components/View/GestorVentas";
-import ViewClient from "./assets/Components/View/Cliente";
+import PedidosView from "./assets/Components/View/Client/PedidosView";
 import TiendaPage from "./assets/Components/View/GestionPedido";
 import { LoginScreen } from "./assets/Components/View/LoginPrincipal";
+import { ViewPaginaPrincipalClient } from "./assets/Components/View/Client/paginaPrincipalCliente";
+
 
 function App() {
   return (
@@ -34,8 +36,8 @@ function App() {
         <Route path="/ConsultarVentas"
         element={<GestorVentasView></GestorVentasView>}
         />
-        <Route path="/cliente"
-          element={<ViewClient></ViewClient>}
+        <Route path="/PedidosView"
+          element={<PedidosView></PedidosView>}
         />
         <Route path="/GestionarPedidos"
           element={<TiendaPage></TiendaPage>}
