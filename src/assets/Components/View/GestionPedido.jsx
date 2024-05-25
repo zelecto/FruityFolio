@@ -7,10 +7,12 @@ import IconoTienda from "../Icons/IconoTienda.png";
 import IconoRepartidor from "../Icons/IconoRepartidor.png";
 import LoadingModerno from "../Photo/loadinModerno.gif";
 import fondo from "../Photo/fondo.png";
+import SignoPregunta from "../Photo/SignoPregunta.png";
 import { GetTiendaVirtualUsernameDetail } from '../Base/BdtiendaVirtual';
 import TiendaFormulario from './formularioTienda';
-import 'react-loading-skeleton/dist/skeleton.css'
+
 import { SkeletonPedidosSection, SkeletonTiendaInfo } from './Loading/Skeleton';
+
 const TiendaPage = () => {
     const [storeData, setStoreData] = useState(null);
     const [orders, setOrders] = useState([]);
@@ -19,9 +21,14 @@ const TiendaPage = () => {
 
     //REGUISTRAR UNA TIENDA
     const [showReguistrarTienda, setShowReguistrarTienda] = useState(false);
+    const [showFormularioTienda, setShowFormularioTienda] = useState(false);
 
     const handelshowReguistrarTienda = (mostrar) => {
         setShowReguistrarTienda(mostrar)
+    }
+
+    const handelShowFormularioTienda = (mostrar) => {
+        setShowFormularioTienda(mostrar)
     }
 
     //Loading
@@ -38,7 +45,7 @@ const TiendaPage = () => {
             if (respuesta != null) {
                 const { tiendaData, pedidosData } = respuesta;
                 setStoreData(tiendaData);
-                setOrders(pedidosData);
+                setOrders(pedidosData ? pedidosData : null);
             } else {
                 setShowReguistrarTienda(true)
             }
@@ -72,19 +79,8 @@ const TiendaPage = () => {
 
 
     return (
-        <div className='bg-[#F5F5F5] min-h-screen' style={{
-            //backgroundImage: `url(${fondo})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundAttachment: "fixed",
-            backgroundRepeat: "no-repeat",
-        }}>
-            {
-                showReguistrarTienda && (
-                    <TiendaFormulario handelshowReguistrarTienda={handelshowReguistrarTienda}></TiendaFormulario>
-                )
-            }
-
+        <div className='bg-[#F5F5F5] min-h-screen' >
+           
             <Header
                 link="/paginaPrincipal"
                 logoRightSrc="ruta-a-la-imagen-derecha.jpg"
@@ -92,38 +88,64 @@ const TiendaPage = () => {
                 title="¡Bienvenido a FruityFolio!"
                 subtitle={`Administra tu tienda virtual y pedidos`}
             />
-
-
-
-            <div className="container p-4 flex justify-center text-lg" >
-                <div className="w-1/3 flex justify-center">
-                    {isLoading ? (
-                        <SkeletonTiendaInfo></SkeletonTiendaInfo>
-                    ) : (
-                        <TiendaInfo storeData={storeData} />
-                    )}
-                </div>
-                <div className="flex-grow ml-4">
-                    {isLoading ? (
-                        <SkeletonPedidosSection></SkeletonPedidosSection>
-                    ) : (
+            {showFormularioTienda && <TiendaFormulario handelshowReguistrarTienda={handelShowFormularioTienda}></TiendaFormulario>}
+            {
+                showReguistrarTienda ? (
                     
-                    <PedidosSection
-                        orders={orders}
-                        toggleOrderDetails={toggleOrderDetails}
-                        selectedOrder={selectedOrder}
-                        orderDetails={orderDetails}
-                    />
-                    )}
-                </div>
-            </div>
+                    <div className="flex w-screen justify-center items-center overflow-hidden my-10">
+                        <div className="flex flex-col items-center">
+                            <h2 className="font-bold text-center text-4xl my-2">¿No tienes tienda?</h2>
+                            <img className="w-80" src={SignoPregunta} alt="Signo Pregunta" />
+                            <button
+                                className="bg-green-400 hover:bg-green-600 w-30 p-2 rounded-md my-2"
+                                onClick={() => handelShowFormularioTienda(true)}
+                            >
+                                <p className="text-white font-bold">CREA UNA</p>
+                            </button>
+                        </div>
+                    </div>
+
+                )
+                    :
+                    (
+                        //Contenedor de informacion general 
+                        <div className="container p-4 flex justify-center text-lg" >
+                            <div className="w-1/3 flex justify-center">
+                                {isLoading ? (
+                                    <SkeletonTiendaInfo></SkeletonTiendaInfo>
+                                ) : (
+                                    <TiendaInfo storeData={storeData} />
+                                )}
+                            </div>
+                            <div className="flex-grow ml-4">
+                                {isLoading ? (
+                                    <SkeletonPedidosSection></SkeletonPedidosSection>
+                                ) : (
+                                        orders ? (<PedidosSection
+                                            orders={orders}
+                                            toggleOrderDetails={toggleOrderDetails}
+                                            selectedOrder={selectedOrder}
+                                            orderDetails={orderDetails}
+                                        />
+                                        )
+                                        :
+                                        (
+                                            <div className='flex flex-col justify-center items-center'>
+                                                <h1 className='text-center text-2xl font-bold'>No hay pedidos pendientes</h1>
+                                                    <img className='w-1/2' src="https://images.vexels.com/media/users/3/199917/isolated/preview/bb4a24c88a1633c7fb4bae097e5e7172-caja-vacia-isometrica.png" alt="" />
+                                            </div>
+                                        ) 
+                                    
+                                )}
+                            </div>
+                        </div>
+                    )
+            }
+            
 
         </div>
     );
 };
-
-
-
 
 const TiendaInfo = ({ storeData }) => {
     return (
@@ -238,7 +260,8 @@ const EnvioSection = ({ orderId }) => {
                     value={envioPrice}
                     onChange={(e) => setEnvioPrice(e.target.value)}
                 />
-                <button className="w-35 h-10 bg-green-500 text-white text-sm px-4 py-2 rounded" onClick={handleEnviarPedido}>
+                <button className="w-35 h-10 bg-green-400 hover:bg-green-600 text-white text-sm px-4 py-2 rounded" 
+                onClick={handleEnviarPedido}>
                     Confirmar Envío
                 </button>
             </div>
@@ -266,9 +289,13 @@ async function fetchStoreData() {
 
 async function fetchOrders(idtienda) {
     //TODO: PONER PENDIENTE
-    const respuesta = await getPedidos(idtienda);
-    const listaPedidos = respuesta.data;
-    return listaPedidos;
+    const respuesta = await getPedidos(idtienda,"pendiente");
+    if(respuesta){
+        const listaPedidos = respuesta.data;
+        return listaPedidos;
+
+    }
+    return null;
 }
 
 export default TiendaPage;

@@ -2,9 +2,14 @@ import axios from 'axios';
 const url = "https://localhost:7208";
 
 export const getPedidos = async (tiendaId, estado = null) => {
-    const url = estado ? `https://localhost:7208/api/Pedidos/FullDetails/tienda/${tiendaId}?estado=${estado}` : `https://localhost:7208/api/Pedidos/FullDetails/tienda/${tiendaId}`;
-    const response = await axios.get(url);
-    return response;
+    try {
+        const url = estado ? `https://localhost:7208/api/Pedidos/FullDetails/tienda/${tiendaId}?estado=${estado}` : `https://localhost:7208/api/Pedidos/FullDetails/tienda/${tiendaId}`;
+        const response = await axios.get(url);
+        return response;    
+    } catch (error) {
+        return null;
+    }
+    
 };
 
 export async function ConsultarUsuario(username) {

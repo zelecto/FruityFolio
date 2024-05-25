@@ -171,9 +171,9 @@ const RegistroUsuarioForm = ({ cerrar }) => {
     }
 
     return (
-        <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
+        <div className=" w-1/2 p-6 bg-white shadow-md rounded-md">
             {showMensaje && (
-                <div className="fixed top-0 left-0 w-full h-full flex flex-col-reverse justify-center items-center bg-gray-900 bg-opacity-50 z-50">
+                <div className="">
 
                     <MensajeAlert
                         message={mensaje.Mensaje}
@@ -185,7 +185,7 @@ const RegistroUsuarioForm = ({ cerrar }) => {
                     />
                 </div>
             )}
-            <h2 className="text-2xl font-semibold mb-4">Registro de Usuario</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-center">Registrar Usuario</h2>
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
 
@@ -250,14 +250,27 @@ const RegistroUsuarioForm = ({ cerrar }) => {
                     />
 
                 </div>
-                <div className="flex items-center justify-center">
-                    <button
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                        type="submit"
-                    >
-                        Registrar
-                    </button>
+                
+
+                <div className='flex justify-between my-5 px-2'>
+                    <div className="flex items-center justify-center">
+                        <button
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            type="submit"
+                        >
+                            Registrar
+                        </button>
+                    </div>
+                    <div className="flex items-center justify-center">
+                        <button
+                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            onClick={(e) => { cerrar() }}
+                        >
+                            Cancelar
+                        </button>
+                    </div>
                 </div>
+                
             </form>
         </div>
     );

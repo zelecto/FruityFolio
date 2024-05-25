@@ -11,13 +11,14 @@ export async function GetTiendaVirtualUsernameDetail(username,fecha,estado) {
     }
 }
 
-export async function ConsultarUsuario(username) {
+export async function GuardarTienda(tienda) {
 
     try {
-        const respuesta = await axios.get(`https://localhost:7208/api/Usuarios/${username}`);
+        const respuesta = await axios.post(`https://localhost:7208/api/TiendaVirtuals`,tienda);
 
         return { datos: respuesta.data, error: null }; // Retornar un objeto con las variables
     } catch (error) {
         return { datos: null, error: error }; // Retornar un objeto con las variables
     }
 }
+

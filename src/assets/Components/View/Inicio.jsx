@@ -76,12 +76,10 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="">
       {showReguistrar && (
-          <div className="fixed top-0 left-0 w-full h-full flex flex-col-reverse justify-center items-center bg-gray-900 bg-opacity-50 z-50">
-            <div className="w-[800px]">
+          <div className="flex justify-center items-center">
               <RegistroUsuarioForm cerrar={handelShowReguistrar}></RegistroUsuarioForm>
-            </div>
           </div>
           
       )}

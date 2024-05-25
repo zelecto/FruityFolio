@@ -8,12 +8,13 @@ import ConsultaCatalogo from "./assets/Components/View/Catalogo";
 import GestorVentasView from "./assets/Components/View/GestorVentas";
 import ViewClient from "./assets/Components/View/Cliente";
 import TiendaPage from "./assets/Components/View/GestionPedido";
+import { LoginScreen } from "./assets/Components/View/LoginPrincipal";
 
 function App() {
   return (
     <>
       <Routes>
-        <Route path="*" element={<Login></Login>} />
+        <Route path="*" element={<LoginScreen></LoginScreen>} />
         <Route path="paginaPrincipal" element={<Principal />} />
         <Route
           path="inventario"
@@ -38,6 +39,9 @@ function App() {
         />
         <Route path="/GestionarPedidos"
           element={<TiendaPage></TiendaPage>}
+        />
+        <Route path="/Login"
+          element={<LoginScreen></LoginScreen>}
         />
       </Routes>
     </>

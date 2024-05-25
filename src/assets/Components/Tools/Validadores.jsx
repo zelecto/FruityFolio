@@ -30,6 +30,7 @@ export const ErrorMensaje = (mensaje,w) => {
 
 export let MensajeAlert = ({
   message,
+  title,
   onClose,
   isError,
   buttonColor,
@@ -47,15 +48,19 @@ export let MensajeAlert = ({
     <>
       {show && (
         <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-900 bg-opacity-50 z-50">
-          <div className="bg-gray-100 p-8 rounded-lg flex flex-col items-end relative">
+          <div className="bg-gray-100 p-8 rounded-lg flex flex-col relative">
+            {title && <h1 className="text-3xl font-bold my-2">{title}</h1> }
             <p className={`text-xl ${textColor}`}>{message}</p>
             {buttonText &&
-              <button
-                onClick={handleClose}
-                className={`mt-4 text-white font-bold py-2 px-4 rounded ${colorClasses[buttonColor]}`}
-              >
-                {buttonText}
-              </button>
+              <div className="flex justify-end">
+                <button
+                  onClick={handleClose}
+                  className={`mt-4 text-white font-bold py-2 px-4 rounded ${colorClasses[buttonColor]}`}
+                >
+                  {buttonText}
+                </button>
+              </div>
+              
             }
             
           </div>

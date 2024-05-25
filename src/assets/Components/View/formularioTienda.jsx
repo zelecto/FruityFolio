@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { GuardarTienda } from '../Base/BdtiendaVirtual';
 const ciudadesColombia = [
     "Bogotá",
     "Medellín",
@@ -13,16 +14,26 @@ const TiendaFormulario = ({  handelshowReguistrarTienda }) => {
     const [direccion, setDireccion] = useState('');
     const [errores, setErrores] = useState({});
 
-    const onGuardarTienda=()=>{
-        console.log("Guardar")
-    }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (validarFormulario()) {
-            onGuardarTienda({ nombre, ciudad, direccion });
-            handelshowReguistrarTienda(false);
-            window.location.reload()
+            const usuario = JSON.parse(localStorage.getItem('user'));
+            const tienda=
+            {
+                "username": usuario.username,
+                "nombre": nombre,
+                "ciudad": ciudad,
+                "direccion": direccion
+            }
+            const respuesta = await GuardarTienda(tienda);
+            if(respuesta.error==null){
+                handelshowReguistrarTienda(false);
+                window.location.reload()
+            }else{
+                console.log("a ocurrido un error")
+            }
+
         }
     };
 
@@ -90,7 +101,7 @@ const TiendaFormulario = ({  handelshowReguistrarTienda }) => {
                         <button className="bg-red-400 hover:bg-red-600 font-bold text-white py-2 px-4 rounded-md"
                             onClick={(e)=> handelshowReguistrarTienda(false)}
                         >
-                            Crear Tienda
+                            Cancelar
                         </button>
                     </div>
 
