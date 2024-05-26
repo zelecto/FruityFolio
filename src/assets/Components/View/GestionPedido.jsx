@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Header from './Header';
-import { getPedidos } from '../Base/BdPedido';
+import { ActualizarEstadoYPrecioEnvio, getPedidos } from '../Base/BdPedido';
 import { consultarDetallesFactura } from '../Base/BdFactura';
 import { BuscarImagenDefault } from '../Logic/Defaultimage';
 import IconoTienda from "../Icons/IconoTienda.png";
@@ -10,6 +10,7 @@ import fondo from "../Photo/fondo.png";
 import SignoPregunta from "../Photo/SignoPregunta.png";
 import { GetTiendaVirtualUsernameDetail } from '../Base/BdtiendaVirtual';
 import TiendaFormulario from './formularioTienda';
+import { Select, SelectSection, SelectItem } from "@nextui-org/select";
 
 import { SkeletonPedidosSection, SkeletonTiendaInfo } from './Loading/Skeleton';
 
@@ -37,11 +38,13 @@ const TiendaPage = () => {
     const handelIsLoading = (estado) => {
         setIsLoading(estado);
     }
+    const [estado, setEstado] = useState("Pendiente");
+    //Mostrar secion de consulta
 
     useEffect(() => {
         async function getData() {
             handelIsLoading(true)
-            const respuesta = await fetchData();
+            const respuesta = await fetchData(estado);
             if (respuesta != null) {
                 const { tiendaData, pedidosData } = respuesta;
                 setStoreData(tiendaData);
@@ -52,7 +55,7 @@ const TiendaPage = () => {
             handelIsLoading(false)
         }
         getData();
-    }, []);
+    }, [estado]);
 
 
 
@@ -75,10 +78,15 @@ const TiendaPage = () => {
             setSelectedOrder(orderId);
         }
     };
-
+    
+    // Función para cambiar la opción seleccionada
+    const handleEstadoChange = (event,set) => {
+        set(event.target.value);
+        setEstado(event.target.value);
+    };
 
     return (
-        <div className='bg-[#F5F5F5] min-h-screen' >
+        <div className='bg-[#F5F5F5] min-w-screen min-h-screen overflow-x-hidden ' >
            
             <Header
                 link="/paginaPrincipal"
@@ -108,36 +116,55 @@ const TiendaPage = () => {
                     :
                     (
                         //Contenedor de informacion general 
-                        <div className="container p-4 flex justify-center text-lg" >
-                            <div className="w-1/3 flex justify-center">
-                                {isLoading ? (
-                                    <SkeletonTiendaInfo></SkeletonTiendaInfo>
-                                ) : (
-                                    <TiendaInfo storeData={storeData} />
-                                )}
+                        <div className='flex flex-col items-center'>
+                            <div className='w-80'>
+                                <Select
+                                    labelPlacement='inside'
+                                    label="pedidos"
+                                    size='md'
+                                    className='bg-white shadow-md'
+                                >
+                                    <SelectItem>
+                                        pedido pendiente
+                                    </SelectItem>
+                                </Select>
                             </div>
-                            <div className="flex-grow ml-4">
-                                {isLoading ? (
-                                    <SkeletonPedidosSection></SkeletonPedidosSection>
-                                ) : (
-                                        orders ? (<PedidosSection
-                                            orders={orders}
-                                            toggleOrderDetails={toggleOrderDetails}
-                                            selectedOrder={selectedOrder}
-                                            orderDetails={orderDetails}
-                                        />
+                            
+                            <div className="w-screen flex p-4 justify-between text-lg" >
+
+                                <div className="w-[18%] flex justify-center">
+                                    {isLoading ? (
+                                        <SkeletonTiendaInfo></SkeletonTiendaInfo>
+                                    ) : (
+                                        <TiendaInfo storeData={storeData} />
+                                    )}
+                                </div>
+                                <div className="flex-grow mx-4 w-[60%]">
+                                    {isLoading ? (
+                                        <SkeletonPedidosSection></SkeletonPedidosSection>
+                                    ) : (
+                                        orders ? (
+                                            <PedidosSection
+                                                orders={orders}
+                                                toggleOrderDetails={toggleOrderDetails}
+                                                selectedOrder={selectedOrder}
+                                                orderDetails={orderDetails}
+                                                handleOptionChange={handleEstadoChange}
+                                            />
                                         )
-                                        :
-                                        (
-                                            <div className='flex flex-col justify-center items-center'>
-                                                <h1 className='text-center text-2xl font-bold'>No hay pedidos pendientes</h1>
+                                            :
+                                            (
+                                                <div className='flex flex-col justify-center items-center'>
+                                                    <h1 className='text-center text-2xl font-bold'>No hay pedidos pendientes</h1>
                                                     <img className='w-1/2' src="https://images.vexels.com/media/users/3/199917/isolated/preview/bb4a24c88a1633c7fb4bae097e5e7172-caja-vacia-isometrica.png" alt="" />
-                                            </div>
-                                        ) 
-                                    
-                                )}
+                                                </div>
+                                            )
+
+                                    )}
+                                </div>
                             </div>
                         </div>
+                        
                     )
             }
             
@@ -164,12 +191,13 @@ const TiendaInfo = ({ storeData }) => {
     );
 };
 
-const PedidosSection = ({ orders, toggleOrderDetails, selectedOrder, orderDetails }) => {
+const PedidosSection = ({ orders, toggleOrderDetails, selectedOrder, orderDetails, handleOptionChange }) => {
+    const [selectedOption, setSelectedOption] = useState("Pedido Pendiente");
+
     return (
-        <div className=" mx-4">
-            <h2 className="text-xl font-bold mb-4">Pedidos pendientes</h2>
+        <div className="mx-4">
             {orders.map((order) => (
-                <div key={order.id} className="flex mb-4">
+                <div key={order.id} className="flex  mb-4">
                     <PedidoCard order={order} toggleOrderDetails={toggleOrderDetails} selectedOrder={selectedOrder} orderDetails={orderDetails} />
                     {selectedOrder === order.id && orderDetails[order.id] && (
                         <EnvioSection orderId={order.id} />
@@ -243,12 +271,22 @@ const PedidoCard = ({ order, toggleOrderDetails, selectedOrder, orderDetails }) 
 const EnvioSection = ({ orderId }) => {
     const [envioPrice, setEnvioPrice] = useState(null);
 
-    const handleEnviarPedido = () => {
-        console.log("Pedido", orderId, "enviado con precio de envío:", envioPrice);
+    const handelEnvioPrice=(value)=>{
+        if (value>0 && value<1000000) {
+            setEnvioPrice(value)
+        } else{
+            setEnvioPrice(4000)
+        }
+    }
+
+    const handleEnviarPedido = async () => {
+        console.clear();
+        console.log(await ActualizarEstadoYPrecioEnvio(orderId, "Enviado", envioPrice)); 
+        
     };
 
     return (
-        <div className="max-h-[400px] w-80 bg-white shadow-lg  flex flex-col items-center justify-between p-5">
+        <div className=" max-h-[400px] w-[350px] bg-white shadow-lg  flex flex-col items-center justify-between p-5">
             <p className='font-bold text-center'>Asignar Precio de Envío</p>
             <img src={IconoRepartidor} alt="Envío" className="w-48" />
             <div className="flex items-center justify-center space-x-4">
@@ -257,9 +295,9 @@ const EnvioSection = ({ orderId }) => {
                     className="w-24 h-10 border-gray-300 border rounded-lg px-2 py-1 text-center"
                     placeholder="Precio"
                     value={envioPrice}
-                    onChange={(e) => setEnvioPrice(e.target.value)}
+                    onChange={(e) => handelEnvioPrice(e.target.value)}
                 />
-                <button className="w-35 h-10 bg-green-400 hover:bg-green-600 text-white text-sm px-4 py-2 rounded" 
+                <button className="w-35 h-10 bg-green-500 hover:bg-green-700 text-white font-bold text-sm px-4 py-2 rounded" 
                 onClick={handleEnviarPedido}>
                     Confirmar Envío
                 </button>
@@ -268,11 +306,11 @@ const EnvioSection = ({ orderId }) => {
     );
 };
 
-async function fetchData() {
+async function fetchData(estado) {
     const tiendaData = await fetchStoreData();
     console.log(tiendaData)
     if (tiendaData != null) {
-        const pedidosData = await fetchOrders(tiendaData.tienda.id);
+        const pedidosData = await fetchOrders(tiendaData.tienda.id,estado);
         return { tiendaData, pedidosData };
     }
     return null;
@@ -286,13 +324,11 @@ async function fetchStoreData() {
     return response.datos;
 }
 
-async function fetchOrders(idtienda) {
-    //TODO: PONER PENDIENTE
-    const respuesta = await getPedidos(idtienda,"Pendiente");
-    if(respuesta){
+async function fetchOrders(idtienda, estado) {
+    const respuesta = await getPedidos(idtienda, estado);
+    if (respuesta) {
         const listaPedidos = respuesta.data;
         return listaPedidos;
-
     }
     return null;
 }

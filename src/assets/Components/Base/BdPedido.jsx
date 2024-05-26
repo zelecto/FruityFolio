@@ -22,3 +22,17 @@ export async function postPedido(pedido) {
         return { datos: null, error: error }; // Retornar un objeto con las variables
     }
 }
+
+
+export async function ActualizarEstadoYPrecioEnvio(pedidoId, estado, precioEnvio) {
+    try {
+        const respuesta = await axios.patch(`https://localhost:7208/api/pedidos/${pedidoId}/ActualizarEstadoYPrecioEnvio`, {
+            estado: estado,
+            precioEnvio: precioEnvio
+        });
+
+        return { datos: respuesta.data, error: null }; // Retornar un objeto con las variables
+    } catch (error) {
+        return { datos: null, error: error }; // Retornar un objeto con las variables
+    }
+}
