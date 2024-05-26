@@ -12,10 +12,10 @@ export const getPedidos = async (tiendaId, estado = null) => {
     
 };
 
-export async function ConsultarUsuario(username) {
+export async function postPedido(pedido) {
 
     try {
-        const respuesta = await axios.get(`${url}/api/Usuarios/${username}`);
+        const respuesta = await axios.post(`https://localhost:7208/api/Pedidos`,pedido);
 
         return { datos: respuesta.data, error: null }; // Retornar un objeto con las variables
     } catch (error) {

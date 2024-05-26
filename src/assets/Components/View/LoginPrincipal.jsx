@@ -44,12 +44,12 @@ export const LoginScreen = () => {
                 case "Usuario":
                     console.log("Entre");
                     window.location.href = '/paginaPrincipal';
-                    localStorage.setItem('user', JSON.stringify(datos));
+                    localStorage.setItem('user', JSON.stringify(datos.cuenta));
                     setMensaje({});
                     break;
                 case "ClienteUsuario":
-                    window.location.href = '/PedidosView';
-                    localStorage.setItem('user', JSON.stringify(datos));
+                    window.location.href = '/PaginaPrincipalClient';
+                    localStorage.setItem('user', JSON.stringify(datos.cuenta));
                     setMensaje({});
                     break;
                 default:

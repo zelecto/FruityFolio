@@ -50,7 +50,6 @@ const TiendaPage = () => {
                 setShowReguistrarTienda(true)
             }
             handelIsLoading(false)
-
         }
         getData();
     }, []);
@@ -289,7 +288,7 @@ async function fetchStoreData() {
 
 async function fetchOrders(idtienda) {
     //TODO: PONER PENDIENTE
-    const respuesta = await getPedidos(idtienda,"pendiente");
+    const respuesta = await getPedidos(idtienda,"Pendiente");
     if(respuesta){
         const listaPedidos = respuesta.data;
         return listaPedidos;

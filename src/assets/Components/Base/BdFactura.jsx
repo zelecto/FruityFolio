@@ -32,6 +32,7 @@ export async function GuardarFactura(factura) {
             await Promise.all(promesasVentas);
             console.log(promesasVentas);
         }
+        return respuestaFactura.datos;
     } catch (error) {
         console.log(error);
         return error;

@@ -22,3 +22,14 @@ export async function GuardarTienda(tienda) {
     }
 }
 
+
+export async function GetTiendasCiudad(ciudad) {
+
+    try {
+        const respuesta = await axios.get(`https://localhost:7208/api/TiendaVirtuals/TopFrutasDisponiblesByCity/${ciudad}`);
+
+        return { datos: respuesta.data, error: null }; // Retornar un objeto con las variables
+    } catch (error) {
+        return { datos: null, error: error }; // Retornar un objeto con las variables
+    }
+}

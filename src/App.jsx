@@ -45,6 +45,9 @@ function App() {
         <Route path="/Login"
           element={<LoginScreen></LoginScreen>}
         />
+        <Route path="/PaginaPrincipalClient"
+          element={<ViewPaginaPrincipalClient></ViewPaginaPrincipalClient>}
+        />
       </Routes>
     </>
   );
