@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Header from './Header';
-import { ActualizarEstadoYPrecioEnvio, getPedidos } from '../Base/BdPedido';
+import { ActualizarEstadoYPrecioEnvio, EliminarPedido, getPedidos } from '../Base/BdPedido';
 import { consultarDetallesFactura } from '../Base/BdFactura';
 import { BuscarImagenDefault } from '../Logic/Defaultimage';
 import IconoTienda from "../Icons/IconoTienda.png";
@@ -13,6 +13,8 @@ import TiendaFormulario from './formularioTienda';
 import { Select, SelectSection, SelectItem } from "@nextui-org/select";
 
 import { SkeletonPedidosSection, SkeletonTiendaInfo } from './Loading/Skeleton';
+import { BaggageClaim, Ban, CarFront, CircleDollarSignIcon, Eraser, Loader, PackageCheck, Trash2 } from 'lucide-react';
+import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Input, Spacer, Tooltip } from '@nextui-org/react';
 
 const TiendaPage = () => {
     const [storeData, setStoreData] = useState(null);
@@ -38,13 +40,15 @@ const TiendaPage = () => {
     const handelIsLoading = (estado) => {
         setIsLoading(estado);
     }
-    const [estado, setEstado] = useState("Pendiente");
+    const [estado, setEstado] = React.useState(new Set([]));
     //Mostrar secion de consulta
 
     useEffect(() => {
         async function getData() {
+            console.clear()
+            console.log(estado);
             handelIsLoading(true)
-            const respuesta = await fetchData(estado);
+            const respuesta = await fetchData(estado.anchorKey);
             if (respuesta != null) {
                 const { tiendaData, pedidosData } = respuesta;
                 setStoreData(tiendaData);
@@ -56,6 +60,14 @@ const TiendaPage = () => {
         }
         getData();
     }, [estado]);
+
+    const handelOrder = (orderId) => {
+        setOrders(prevOrders => prevOrders.filter(order => order.id !== orderId));
+    }
+
+    useEffect(()=>{
+
+    }, [orders])
 
 
 
@@ -78,16 +90,16 @@ const TiendaPage = () => {
             setSelectedOrder(orderId);
         }
     };
-    
+
     // Función para cambiar la opción seleccionada
-    const handleEstadoChange = (event,set) => {
+    const handleEstadoChange = (event, set) => {
         set(event.target.value);
         setEstado(event.target.value);
     };
 
     return (
         <div className='bg-[#F5F5F5] min-w-screen min-h-screen overflow-x-hidden ' >
-           
+
             <Header
                 link="/paginaPrincipal"
                 logoRightSrc="ruta-a-la-imagen-derecha.jpg"
@@ -98,7 +110,7 @@ const TiendaPage = () => {
             {showFormularioTienda && <TiendaFormulario handelshowReguistrarTienda={handelShowFormularioTienda}></TiendaFormulario>}
             {
                 showReguistrarTienda ? (
-                    
+
                     <div className="flex w-screen justify-center items-center overflow-hidden my-10">
                         <div className="flex flex-col items-center">
                             <h2 className="font-bold text-center text-4xl my-2">¿No tienes tienda?</h2>
@@ -117,45 +129,65 @@ const TiendaPage = () => {
                     (
                         //Contenedor de informacion general 
                         <div className='flex flex-col items-center'>
-                            <div className='w-80'>
+                            <div className='w-80 my-5'>
                                 <Select
                                     labelPlacement='inside'
-                                    label="pedidos"
-                                    size='md'
-                                    className='bg-white shadow-md'
+                                    label="Filtra tus pedidos"
+                                    size='lg'
+                                    selectedKeys={estado}
+                                    onSelectionChange={setEstado}
+                                    color='primary'
+                                    className=' text-xl font-semibold text-black'
                                 >
-                                    <SelectItem>
-                                        pedido pendiente
+                                    <SelectItem key={"Sinfiltro"}
+                                        startContent={<Ban></Ban>}
+                                    >
+                                        Sin filtro
+                                    </SelectItem>
+                                    <SelectItem key={"Pendiente"}
+                                        startContent={<Loader></Loader>}
+                                    >
+                                        Pedidos pendiente
+                                    </SelectItem>
+                                    <SelectItem key={"Enviado"}
+                                        startContent={<BaggageClaim ></BaggageClaim>}
+                                    >
+                                        Pedidos enviado
+                                    </SelectItem>
+                                    <SelectItem key={"Entregado"}
+                                        startContent={<PackageCheck></PackageCheck>}
+                                    >
+                                        Pedidos Entregado
                                     </SelectItem>
                                 </Select>
                             </div>
-                            
+
                             <div className="w-screen flex p-4 justify-between text-lg" >
 
-                                <div className="w-[18%] flex justify-center">
+                                <div className="w-[25%] flex justify-center">
                                     {isLoading ? (
                                         <SkeletonTiendaInfo></SkeletonTiendaInfo>
                                     ) : (
                                         <TiendaInfo storeData={storeData} />
                                     )}
                                 </div>
-                                <div className="flex-grow mx-4 w-[60%]">
+                                <div className="flex-grow mx-4 w-4/5">
                                     {isLoading ? (
                                         <SkeletonPedidosSection></SkeletonPedidosSection>
                                     ) : (
-                                        orders ? (
+                                        orders && orders.length>0 ? (
                                             <PedidosSection
                                                 orders={orders}
                                                 toggleOrderDetails={toggleOrderDetails}
                                                 selectedOrder={selectedOrder}
                                                 orderDetails={orderDetails}
-                                                handleOptionChange={handleEstadoChange}
+                                                handelOrder={handelOrder}
                                             />
                                         )
                                             :
                                             (
                                                 <div className='flex flex-col justify-center items-center'>
-                                                    <h1 className='text-center text-2xl font-bold'>No hay pedidos pendientes</h1>
+                                                    <h1 className='text-center text-2xl font-bold'>No hay pedidos {estado}</h1>
                                                     <img className='w-1/2' src="https://images.vexels.com/media/users/3/199917/isolated/preview/bb4a24c88a1633c7fb4bae097e5e7172-caja-vacia-isometrica.png" alt="" />
                                                 </div>
                                             )
@@ -164,26 +196,30 @@ const TiendaPage = () => {
                                 </div>
                             </div>
                         </div>
-                        
+
                     )
             }
-            
-
         </div>
     );
 };
 
 const TiendaInfo = ({ storeData }) => {
     return (
-        <div className="w-96 h-[420px] bg-white p-4 rounded-lg shadow-md my-10">
+        <div className="w-96 h-[420px] mx-10 bg-white px-4 rounded-lg shadow-xl ">
             {storeData && (
                 <div>
                     <h2 className='font-bold text-center'>Reporte del dia</h2>
                     <img src={IconoTienda} alt="Logo de la tienda" className="w-40 h-40 object-cover mb-4 mx-auto my-5" />
                     <h3 className="text-xl font-bold text-center mb-2">{storeData.tienda.nombre}</h3>
-                    <p className="font-bold text-center mb-2">Pedidos atendido: <span className="font-semibold">{storeData.totalPedidos}</span></p>
-                    <p className="font-bold text-center mb-2">Cobro Total: <span className="font-semibold">{storeData.sumaTotalCobros}$</span></p>
-                    <p className="font-bold text-center mb-2">{storeData.tienda.direccion}</p>
+                    <div className='font-bold text-center mb-2 flex flex-col items-center justify-center'>
+                        <p className= "">Pedidos Entregados: <span className="font-semibold"> {storeData.totalPedidos}</span></p>
+                        <p className="flex">Cobro Total:
+                            <span className="font-semibold flex justify-center items-center mx-2">
+                                {storeData.sumaTotalCobros} <CircleDollarSignIcon className='mx-2'></CircleDollarSignIcon>
+                            </span></p>
+                        <p className="font-bold text-center mb-2">{storeData.tienda.direccion}</p>
+                    </div>
+                    
 
                 </div>
             )}
@@ -191,16 +227,15 @@ const TiendaInfo = ({ storeData }) => {
     );
 };
 
-const PedidosSection = ({ orders, toggleOrderDetails, selectedOrder, orderDetails, handleOptionChange }) => {
-    const [selectedOption, setSelectedOption] = useState("Pedido Pendiente");
+const PedidosSection = ({ orders, toggleOrderDetails, selectedOrder, orderDetails, handelOrder }) => {
 
     return (
-        <div className="mx-4">
+        <div className="">
             {orders.map((order) => (
                 <div key={order.id} className="flex  mb-4">
-                    <PedidoCard order={order} toggleOrderDetails={toggleOrderDetails} selectedOrder={selectedOrder} orderDetails={orderDetails} />
+                    <PedidoCard order={order} toggleOrderDetails={toggleOrderDetails} selectedOrder={selectedOrder} orderDetails={orderDetails} removerOrden={handelOrder} />
                     {selectedOrder === order.id && orderDetails[order.id] && (
-                        <EnvioSection orderId={order.id} />
+                        <EnvioSection orderId={order.id} estado={order.estado} precio={order.precioTransporte} handelOrder={handelOrder} />
                     )}
                 </div>
             ))}
@@ -208,99 +243,198 @@ const PedidosSection = ({ orders, toggleOrderDetails, selectedOrder, orderDetail
     );
 };
 
-const PedidoCard = ({ order, toggleOrderDetails, selectedOrder, orderDetails }) => {
+const PedidoCard = ({ order, toggleOrderDetails, selectedOrder, orderDetails, removerOrden }) => {
     const [isLoading, setIsLoading] = useState(false);
-
     const handleToggleOrderDetails = async () => {
         setIsLoading(true);
         await toggleOrderDetails(order.id, order.factura.id);
         setIsLoading(false);
     };
 
+    const selecionIcono = () => {
+        switch (order.estado) {
+            case "Pendiente":
+                return <Loader></Loader>
+                break;
+            case "Enviado":
+                return <BaggageClaim></BaggageClaim>
+            case "Entregado":
+                return <PackageCheck></PackageCheck>
+                break
+        }
+    }
+    const AsignarColor = () => {
+        switch (order.estado) {
+            case "Pendiente":
+                return "bg-slate-400"
+                break;
+            case "Enviado":
+                return "bg-green-400"
+            case "Entregado":
+                return "bg-blue-400"
+                break
+            
+        }
+    }
+
+    const fechEliminar= async()=>{
+        setIsLoading(true);
+        await EliminarPedido(order.id);
+        setIsLoading(false);
+        removerOrden(order.id);
+        
+    }
     return (
-        <div className="w-2/3 p-4 mr-5 bg-white border-gray-200 rounded shadow-md">
-            <div className="p-4">
-                <div className="flex justify-between items-center cursor-pointer" onClick={handleToggleOrderDetails}>
+        <Card className='w-2/3 p-5'>
+            <CardHeader className='flex justify-between items-center p-0'>
+                <p className="font-bold">{order.factura.fecha}</p>
+                <div className='flex justify-center items-center'>
+                    <Chip endContent={selecionIcono()}
+                        className={`${AsignarColor()} text-white `}
+                        variant="Flat"
+                        size='lg'
+                    ><p className='font-bold'>{order.estado}</p></Chip>
+                    <Tooltip content="Eliminar" color='danger'>
+                        {
+                            !isLoading ? (
+                                <Button
+                                    onClick={() => fechEliminar()}
+                                    size='sm'
+                                    className='mx-6'
+                                    color='danger'
+                                >
+                                    {<Trash2></Trash2>}
+                                </Button>
+                            ):(
+                                    <Button
+                                        onClick={() => fechEliminar()}
+                                        size='sm'
+                                        className='mx-6'
+                                        color='danger'
+                                        isLoading
+                                    >
+                                    </Button>
+                            )
+                        }
+                        
+                    </Tooltip>
+                    
+                </div>
+                
+            </CardHeader>
+            <CardBody className='p-0' >
+
+                <div className="flex w-full justify-between items-end cursor-pointer" onClick={handleToggleOrderDetails}>
                     <div>
-                        <p className="font-bold">{order.factura.fecha}</p>
                         <p className="font-bold">Cliente: <span className="text-gray-600 font-semibold">{order.factura.cliente.nombre}</span></p>
                         <p className="font-bold">Total: <span className="text-gray-600 font-semibold">{order.factura.preciototal}$</span></p>
                         <p className="font-bold">Dirección: <span className="text-gray-600 font-semibold">{order.clienteUsuario.direccionResidencia}</span></p>
                     </div>
-                    <div className='mb-[5px]'>
-                        <div className='bg-gray-300 rounded-full ml-5 mb-10 w-[120px] p-1'>
-                            <p className='text-black text-center'>{order.estado}</p>
-                        </div>
-                        <button
-                            className={`ml-5 px-3 py-1 rounded transition-colors w-[120px] ${selectedOrder === order.id ? ' bg-gray-500 text-white' : 'bg-blue-500 text-white'}`}
+
+                    {isLoading ? (
+                        <Button color="primary" isLoading>
+                            Loading
+                        </Button>
+                    ) : (
+                        <Button
+                            className={`ml-5 px-3 py-1 rounded transition-colors text-white w-[120px] font-semibold 
+                                    ${selectedOrder === order.id ? ' transition-colors duration-300  bg-gray-500 ' : 'bg-blue-500'}`}
                             onClick={(e) => { e.stopPropagation(); handleToggleOrderDetails(); }}>
                             {selectedOrder === order.id ? 'Recoger' : 'Ver Detalles'}
-                        </button>
-                    </div>
+                        </Button>
+                    )}
+
                 </div>
-                {isLoading ? (
-                    <div className="flex justify-center items-center">
-                        <img src={LoadingModerno} alt="Cargando..." className="" />
-                    </div>
-                ) : (
+                {!isLoading && (
                     <div>
                         {selectedOrder === order.id && (
-                            <div className="mt-4">
+                            <div className="">
                                 <h3 className="text-lg font-bold mb-2 text-center">Productos del Pedido</h3>
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-4 gap-4">
                                     {orderDetails[order.id].map((venta) => (
-                                        <div key={venta.id} className="bg-gradient-to-b from-white to-blue-100 shadow-lg p-4 rounded-lg flex items-center">
-                                            <img src={BuscarImagenDefault(venta.producto.img)} alt={venta.producto.name} className="w-24 h-24 object-cover mr-4" />
-                                            <div>
-                                                <p className="font-bold">{venta.producto.name}</p>
-                                                <p className='font-bold'>{venta.cantidadvendida} KG</p>
-                                                <p className='font-bold'>{venta.subprecio} $</p>
-                                            </div>
-                                        </div>
+                                        <Tooltip color='primary' showArrow={true} placement='bottom' size='lg' 
+                                            content={ 
+                                            <p className='flex'>{venta.subprecio} <CircleDollarSignIcon className='ml-2'></CircleDollarSignIcon></p>
+                                            }>
+                                        <Card key={venta.id} className="bg-black flex items-center">
+                                            <CardBody className='bg-blue-400 rounded-lg flex justify-center items-center overflow-hidden'>
+                                              
+                                                <img src={BuscarImagenDefault(venta.producto.img)} alt={venta.producto.name} className="w-32 h-28 object-cover" />
+                                                
+                                            </CardBody>
+
+                                            <CardFooter className='font-bold flex justify-between text-white'>
+                                                <p>{venta.producto.name}</p>
+                                                <p>{venta.cantidadvendida} KG</p>
+                                            </CardFooter>
+                                        </Card>
+                                        </Tooltip>
+
                                     ))}
                                 </div>
                             </div>
                         )}
                     </div>
                 )}
-            </div>
-        </div>
+            </CardBody>
+        </Card>
+
     );
 };
 
-const EnvioSection = ({ orderId }) => {
-    const [envioPrice, setEnvioPrice] = useState(null);
+const EnvioSection = ({ orderId, estado, precio, handelOrder }) => {
+    const [envioPrice, setEnvioPrice] = useState(precio ? precio:null);
 
-    const handelEnvioPrice=(value)=>{
-        if (value>0 && value<1000000) {
+    const handelEnvioPrice = (value) => {
+        if (value > 0 && value < 1000000) {
             setEnvioPrice(value)
-        } else{
+        } else {
             setEnvioPrice(4000)
         }
     }
 
-    const handleEnviarPedido = async () => {
+    const fechActualizacion = async (estado) => {
         console.clear();
-        console.log(await ActualizarEstadoYPrecioEnvio(orderId, "Enviado", envioPrice)); 
-        
+        console.log(await ActualizarEstadoYPrecioEnvio(orderId, estado, envioPrice));
+        handelOrder(orderId);
+
     };
 
     return (
-        <div className=" max-h-[400px] w-[350px] bg-white shadow-lg  flex flex-col items-center justify-between p-5">
+        <div className=" max-h-[400px] w-[350px] bg-white shadow-lg  flex flex-col items-center justify-between p-5 mx-5">
             <p className='font-bold text-center'>Asignar Precio de Envío</p>
             <img src={IconoRepartidor} alt="Envío" className="w-48" />
             <div className="flex items-center justify-center space-x-4">
-                <input
-                    type="number"
-                    className="w-24 h-10 border-gray-300 border rounded-lg px-2 py-1 text-center"
-                    placeholder="Precio"
+                <Input
+                    isDisabled={estado == "Pendiente" ? false : true}
+                    className='w-35'
+                    type='number'
+                    color='primary'
+                    size='lg'
+                    labelPlacement='outside'
+                    placeholder={precio > 0 ? precio : "Precio"}
                     value={envioPrice}
                     onChange={(e) => handelEnvioPrice(e.target.value)}
                 />
-                <button className="w-35 h-10 bg-green-500 hover:bg-green-700 text-white font-bold text-sm px-4 py-2 rounded" 
-                onClick={handleEnviarPedido}>
-                    Confirmar Envío
-                </button>
+                {estado == "Pendiente" ? (
+                    <Button
+                        color='success'
+                        className="w-35 h-10  text-white font-bold text-sm px-4 py-2 rounded"
+                        onClick={()=> fechActualizacion("Enviado")}
+                    >
+                        Confirmar Envío
+                    </Button>
+                ):(
+                        <Button
+                            color='success'
+                            className="w-35 h-10  text-white font-bold text-sm px-6 py-2 rounded"
+                            onClick={() => fechActualizacion("Entregado")}
+                            isDisabled = {estado=="Entregado" ? true:false}
+                        >
+                            Confirmar Recepción
+                        </Button>
+                ) }
+                
             </div>
         </div>
     );
@@ -308,9 +442,8 @@ const EnvioSection = ({ orderId }) => {
 
 async function fetchData(estado) {
     const tiendaData = await fetchStoreData();
-    console.log(tiendaData)
     if (tiendaData != null) {
-        const pedidosData = await fetchOrders(tiendaData.tienda.id,estado);
+        const pedidosData = await fetchOrders(tiendaData.tienda.id, estado);
         return { tiendaData, pedidosData };
     }
     return null;
@@ -318,13 +451,24 @@ async function fetchData(estado) {
 
 async function fetchStoreData() {
     const usuario = JSON.parse(localStorage.getItem('user'));
-    const fecha = new Date().toISOString().split('T')[0]; // Obtiene la fecha actual en formato YYYY-MM-DD
-    const estado = 'pendiente';
+
+    // Obtiene la fecha actual en UTC y la ajusta a medianoche
+    const fechaActual = new Date();
+    const fechaUTC = new Date(Date.UTC(fechaActual.getFullYear(), fechaActual.getMonth(), fechaActual.getDate()));
+    const fecha = fechaUTC.toISOString().split('T')[0]; // Obtiene la fecha en formato YYYY-MM-DD
+
+    console.log(fecha); // Muestra la fecha para verificar
+    const estado = 'Entregado';
     const response = await GetTiendaVirtualUsernameDetail(usuario.username, fecha, estado);
+    console.log(response);
     return response.datos;
 }
 
+
 async function fetchOrders(idtienda, estado) {
+    if (estado =="Sinfiltro") {
+        estado=null;
+    }
     const respuesta = await getPedidos(idtienda, estado);
     if (respuesta) {
         const listaPedidos = respuesta.data;

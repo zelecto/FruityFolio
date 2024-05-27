@@ -36,3 +36,12 @@ export async function ActualizarEstadoYPrecioEnvio(pedidoId, estado, precioEnvio
         return { datos: null, error: error }; // Retornar un objeto con las variables
     }
 }
+export async function EliminarPedido(pedidoId) {
+    try {
+        const respuesta = await axios.delete(`https://localhost:7208/api/Pedidos/${pedidoId}`);
+
+        return { datos: respuesta.data, error: null }; // Retornar un objeto con las variables
+    } catch (error) {
+        return { datos: null, error: error }; // Retornar un objeto con las variables
+    }
+}
