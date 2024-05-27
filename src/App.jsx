@@ -10,6 +10,7 @@ import PedidosView from "./assets/Components/View/Client/PedidosView";
 import TiendaPage from "./assets/Components/View/GestionPedido";
 import { LoginScreen } from "./assets/Components/View/LoginPrincipal";
 import { ViewPaginaPrincipalClient } from "./assets/Components/View/Client/paginaPrincipalCliente";
+import { ReportView } from "./assets/Components/View/Reports/reportes";
 
 
 function App() {
@@ -47,6 +48,9 @@ function App() {
         />
         <Route path="/PaginaPrincipalClient"
           element={<ViewPaginaPrincipalClient></ViewPaginaPrincipalClient>}
+        />
+        <Route path="/Reportes"
+          element={<ReportView></ReportView>}
         />
       </Routes>
     </>

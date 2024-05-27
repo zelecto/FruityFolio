@@ -205,9 +205,9 @@ const TiendaPage = () => {
 
 const TiendaInfo = ({ storeData }) => {
     return (
-        <div className="w-96 h-[420px] mx-10 bg-white px-4 rounded-lg shadow-xl ">
+        <Card className="w-96 h-[420px] mx-10 bg-white px-4 rounded-lg shadow-xl ">
             {storeData && (
-                <div>
+                <CardBody>
                     <h2 className='font-bold text-center'>Reporte del dia</h2>
                     <img src={IconoTienda} alt="Logo de la tienda" className="w-40 h-40 object-cover mb-4 mx-auto my-5" />
                     <h3 className="text-xl font-bold text-center mb-2">{storeData.tienda.nombre}</h3>
@@ -219,11 +219,9 @@ const TiendaInfo = ({ storeData }) => {
                             </span></p>
                         <p className="font-bold text-center mb-2">{storeData.tienda.direccion}</p>
                     </div>
-                    
-
-                </div>
+                </CardBody>
             )}
-        </div>
+        </Card>
     );
 };
 
