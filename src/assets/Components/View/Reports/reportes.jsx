@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, CardFooter, CardHeader, DateRangePicker, Listbox, ListboxItem, Radio, RadioGroup, Spacer, Switch } from "@nextui-org/react";
+import { Button, Card, CardBody, CardFooter, CardHeader, Chip, DateRangePicker, Listbox, ListboxItem, Radio, RadioGroup, Spacer, Spinner, Switch } from "@nextui-org/react";
 import Header from "../Header";
 import { Apple, Package, ReceiptText } from "lucide-react";
 import React, { useEffect, useState } from "react";
@@ -6,7 +6,7 @@ import { parseDate, getLocalTimeZone, today } from "@internationalized/date";
 import { useDateFormatter } from "@react-aria/i18n";
 import LinesChart from "./GraficasChart/lineaChart";
 import GraficaBarra from "./GraficasChart/BarrasChart";
-import { getNumeroVentaProducto } from "../../Base/BdReportes";
+import { getIngresoFacturaDia, getNumeroVentaProducto } from "../../Base/BdReportes";
 
 export const ReportView = () => {
     const [selectedKeys, setSelectedKeys] = React.useState(new Set(["text"]));
@@ -15,6 +15,8 @@ export const ReportView = () => {
         () => Array.from(selectedKeys).join(", "),
         [selectedKeys]
     );
+
+    console.log(opcionMenu);
     return (
         <div className="min-h-screen w-screen bg-[#F5F5F5]">
             <Header
@@ -29,6 +31,7 @@ export const ReportView = () => {
                     <Listbox
                         variant="faded"
                         color="primary"
+                        disallowEmptySelection
                         selectionMode="single"
                         selectedKeys={selectedKeys}
                         onSelectionChange={setSelectedKeys}
@@ -75,6 +78,12 @@ export const ReportView = () => {
                         <ViewReportFactura></ViewReportFactura>
                     </div>
                 }
+                {opcionMenu == "text" &&
+
+                    <div className="w-full h-full my-4">
+                        proximamente
+                    </div>
+                }
 
             </div>
         </div>
@@ -99,6 +108,9 @@ const ViewReportPruduct = () => {
 
     const [selecionGrilla, setSelecionGrilla] = useState("cantidad");
 
+    //Loading
+    const [isLoading, setIsLoading] = useState(true);
+
     useEffect(() => {
         let fechaInicio = new Date();
         fechaInicio.setDate(1);
@@ -111,15 +123,18 @@ const ViewReportPruduct = () => {
 
     useEffect(() => {
         async function fetchData() {
+            setIsLoading(true)
             const fechaInicio = `${rangoFecha.start.year}-${rangoFecha.start.month}-${rangoFecha.start.day}`;
             const fechaFinal = `${rangoFecha.end.year}-${rangoFecha.end.month}-${rangoFecha.end.day}`;
-
+            
+            
             const respuesta = await getNumeroVentaProducto(fechaInicio, fechaFinal, usuario.username);
-
+            
             if (respuesta.datos) {
                 setDatosOriginales(respuesta.datos);
                 updateDataReporteProductos(respuesta.datos, selecionGrilla);
             }
+            setIsLoading(false)
         }
         fetchData();
     }, [rangoFecha]);
@@ -153,7 +168,7 @@ const ViewReportPruduct = () => {
         <div className="w-full h-full flex flex-col items-center">
             <div className="w-1/3 flex flex-col gap-y-2">
                 <DateRangePicker
-                    variant="faded"
+                    variant="flat"
                     size="lg"
                     label="Selecciona la fecha"
                     color="primary"
@@ -172,10 +187,15 @@ const ViewReportPruduct = () => {
                 </p>
             </div>
 
-            {dataReporteProductos.labels.length > 0 &&
+            
                 <Card className="h-[615px] w-4/5 my-4 flex items-center">
                     <CardBody className="w-4/5 h-1/2 flex justify-center">
-                        <GraficaBarra data={dataReporteProductos}></GraficaBarra>
+                        {
+                            isLoading ? (<Spinner label="Loading..." size="lg" color="primary" labelColor="primary"></Spinner>)
+                            :
+                                (<GraficaBarra data={dataReporteProductos}></GraficaBarra>)
+                        }
+                        
                     </CardBody>
                     <CardFooter className="flex justify-end p-5">
                         <RadioGroup
@@ -190,7 +210,7 @@ const ViewReportPruduct = () => {
                         </RadioGroup>
                     </CardFooter>
                 </Card>
-            }
+            
         </div>
     );
 }
@@ -199,57 +219,140 @@ const ViewReportPruduct = () => {
 
 const ViewReportFactura = () => {
     const usuario = JSON.parse(localStorage.getItem('user'));
+    
     const [rangoFecha, setRangoFecha] = useState({
         start: parseDate("2024-05-01"),
         end: parseDate(formatearFecha(new Date())),
     });
+    
+    const [rangoFechaComparacion, setRangoFechaComparacion] = useState({
+        start: parseDate("2024-05-01"),
+        end: parseDate(formatearFecha(new Date())),
+    });
 
-    const [isSelected, setIsSelected] = React.useState(false);
+    const [isSelected, setIsSelected] = useState(false);
 
+    //Loadin
+
+    const [isLoading, setIsLoading] = useState(true);
+    
+    const [dataBase, setDataBase] = useState({
+        nombreEjeX:[],
+        nombreLinea:"",
+        datos:[],
+        datosComparacion:[],
+        nombreLineaComparada:""
+    })
+    
     useEffect(() => {
-        let fechaInicio = new Date();
-        fechaInicio.setDate(1);
+        
+        let fechaActual = new Date();
+        let fechaInicio = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), 1);
 
+        // Establecer el rango de fechas del mes actual
         setRangoFecha({
             start: parseDate(formatearFecha(fechaInicio)),
-            end: parseDate(formatearFecha(new Date())),
+            end: parseDate(formatearFecha(fechaActual)),
+        });
+
+        // Ajustar fechaInicio al primer día del mes anterior
+        fechaInicio.setMonth(fechaInicio.getMonth() - 1);
+
+        // Establecer el rango de fechas del mes anterior
+        setRangoFechaComparacion({
+            start: parseDate(formatearFecha(new Date(fechaInicio.getFullYear(), fechaInicio.getMonth(), 1))),
+            end: parseDate(formatearFecha(new Date(fechaInicio.getFullYear(), fechaInicio.getMonth() + 1, 0))),
         });
 
     }, []);
+
     useEffect(() => {
 
         async function fetchData() {
+            setIsLoading(true);
             const fechaInicio = `${rangoFecha.start.year}-${rangoFecha.start.month}-${rangoFecha.start.day} `
             const fechaFinal = `${rangoFecha.end.year}-${rangoFecha.end.month}-${rangoFecha.end.day} `
 
-            const respuesta = await getNumeroVentaProducto(fechaInicio, fechaFinal, usuario.username);
+            const respuesta = await getIngresoFacturaDia(fechaInicio, fechaFinal, usuario.username);
 
             if (respuesta.datos) {
-                setData(respuesta.datos);
-                console.log(respuesta.datos)
+                let fecha = new Date();
+                setDataBase({
+                    nombreEjeX: respuesta.datos.map(item => item.dia),
+                    nombreLinea: `${fecha.toLocaleString('es-ES', { month: 'long' })}`,
+                    datos: respuesta.datos.map(item => item.totalIngresos),
+                    datosComparacion: isSelected ? dataBase.datosComparacion: [],
+                    nombreLineaComparada: isSelected ? dataBase.nombreLinea : "Sin comparacion"
+                });
+                
             }
+            setIsLoading(false);
         }
         fetchData()
 
     }, [rangoFecha]);
 
-    let formatter = useDateFormatter({ dateStyle: "long" });
 
+    useEffect(() => {
+    async function fetchData() {
+        setIsLoading(true)
+        const fechaInicio = `${rangoFechaComparacion.start.year}-${rangoFechaComparacion.start.month}-${rangoFechaComparacion.start.day}`;
+        const fechaFinal = `${rangoFechaComparacion.end.year}-${rangoFechaComparacion.end.month}-${rangoFechaComparacion.end.day}`;
+
+        const respuesta = await getIngresoFacturaDia(fechaInicio, fechaFinal, usuario.username);
+
+        if (respuesta.datos) {
+            // Crear un objeto que mapee los días a sus ingresos
+            const ingresosPorDia = {};
+            respuesta.datos.forEach(item => {
+                ingresosPorDia[item.dia] = item.totalIngresos;
+            });
+
+            // Obtener los nombres de eje X actuales
+            const nombresEjeXActuales = new Set(dataBase.nombreEjeX);
+            // Crear una lista de ingresos con ceros para los días que faltan
+            const datosComparacionActualizados = Array.from(nombresEjeXActuales, dia => ingresosPorDia[dia] || 0);
+
+            // Actualizar los datos con los nuevos nombres de eje X y la lista de ingresos actualizada
+            setDataBase(prevData => ({
+                ...prevData,
+                nombreEjeX: [...nombresEjeXActuales], // Copiar los nombres de eje X actuales
+                datosComparacion: datosComparacionActualizados,
+                nombreLineaComparada: "Mes de comparacion"
+            }));
+
+            
+            setIsLoading(false)
+        }
+    }
+    if (isSelected) {
+        fetchData();
+    }
+    else{
+        setDataBase(prevData => ({
+            ...prevData,
+            datosComparacion: [],
+            nombreLineaComparada: "Sin comparacion"
+        }));
+    }
+}, [rangoFechaComparacion,isSelected]);
+
+    let formatter = useDateFormatter({ dateStyle: "long" });
     return (
         <div className="w-full h-full flex flex-col items-center">
             <div className="w-4/5 flex justify-between">
                 
                 <div className="">
                     <DateRangePicker
-                        variant="faded"
+                        variant="flat"
                         size="lg"
                         label="Seleciona la fecha"
                         color="primary"
                         value={rangoFecha}
                         onChange={setRangoFecha}
+                        maxValue={today(getLocalTimeZone())}
                     />
                     <p className="text-default-500 text-sm text-center">
-                        Fecha selecionada:{" "}
                         {rangoFecha
                             ? formatter.formatRange(
                                 rangoFecha.start.toDate(getLocalTimeZone()),
@@ -261,20 +364,20 @@ const ViewReportFactura = () => {
                 
                 <div className="">
                     <DateRangePicker
-                        variant="faded"
+                        variant="flat"
                         size="lg"
                         label="Seleciona la fecha"
-                        color="primary"
-                        value={rangoFecha}
-                        onChange={setRangoFecha}
+                        color="danger"
+                        value={rangoFechaComparacion}
+                        onChange={setRangoFechaComparacion}
                         isDisabled={!isSelected}
+                        maxValue={rangoFecha.start}
                     />
                     <p className="text-default-500 text-sm text-center">
-                        Fecha selecionada:{" "}
-                        {rangoFecha
+                        {rangoFechaComparacion
                             ? formatter.formatRange(
-                                rangoFecha.start.toDate(getLocalTimeZone()),
-                                rangoFecha.end.toDate(getLocalTimeZone()),
+                                rangoFechaComparacion.start.toDate(getLocalTimeZone()),
+                                rangoFechaComparacion.end.toDate(getLocalTimeZone()),
                             )
                             : " - "}
                     </p>
@@ -289,11 +392,30 @@ const ViewReportFactura = () => {
 
             </div>
 
-            {rangoFecha &&
+            {dataBase &&
                 <Card className="h-[615px] w-4/5 my-4 flex items-center">
+                    
                     <CardBody className=" w-4/5 h-1/2 flex justify-center ">
-
+                        {
+                            isLoading ? (<Spinner label="Loading..." size="lg" color="primary" labelColor="primary"></Spinner>) 
+                                : 
+                            (<LinesChart datos={dataBase}></LinesChart>)
+                        }
+                            
                     </CardBody>
+
+                    <CardFooter className="flex items-center justify-center font-bold text-xl">
+                        <div className="flex w-10/12 justify-between px-4">
+                            <Chip color="primary" size="lg" className="mx-5">
+                                Ingreso total : {dataBase.datos.reduce((total, current) => total + current, 0)}
+                            </Chip>
+                            {isSelected > 0 && (
+                                <Chip color="danger" size="lg">
+                                    Ingreso total : {dataBase.datosComparacion.reduce((total, current) => total + current, 0)}
+                                </Chip>
+                            )}
+                        </div>  
+                    </CardFooter>
 
                 </Card>
             }
