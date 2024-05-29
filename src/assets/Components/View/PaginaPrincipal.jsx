@@ -9,15 +9,16 @@ import iconoConsulta from "../Icons/IconoConsulta.png";
 import iconoProducto from "../Icons/iconoProducto.png";
 import IconoTienda from "../Icons/IconoTienda.png";
 import IconoGrafica from "../Icons/IconoGrafica.png";
+import { Button, Image } from "@nextui-org/react";
 
 
 
 
 function Principal() {
   const usuario = JSON.parse(localStorage.getItem('user'));
-  
+
   return (
-    <div className="bg-[#F5F5F5] h-screen">
+    <div className="bg-[#F5F5F5] w-screen min-h-screen flex flex-col">
       <Header
         link="/"
         logoRightSrc="ruta-a-la-imagen-derecha.jpg"
@@ -26,8 +27,8 @@ function Principal() {
         subtitle={`${usuario.username} gestiona tu negocio de frutas con facilidad.`}
       />
 
-      <div className="mx-auto my-2 max-w-[1200px] items-center">
-        <main className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 justify-center items-center my-8">
+      <div className="flex-grow flex items-center justify-center">
+        <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 justify-center items-center my-8">
           <Card
             title="Crea y Guarda tu Producto para Vender"
             description="¡Construye tu catálogo y aumenta tus ventas hoy!"
@@ -68,16 +69,14 @@ function Principal() {
             title="Reportes y Gráficas"
             description="Visualiza el rendimiento de tu tienda con gráficas detalladas."
             buttonText="Ver Reportes"
-            to="/ReportesGraficos"
+            to="/reportes"
             img={IconoGrafica}
           />
-
-        </main>
+        </div>
       </div>
-
-
     </div>
   );
+
 }
 
 // Reutilizable Card component
@@ -85,21 +84,23 @@ function Card({ title, description, buttonText, to, img }) {
   const [hovered, setHovered] = React.useState(false);
   return (
     <div
-      className={`bg-white p-6 mx-5 rounded-lg shadow-xl flex flex-col items-center justify-between h-[300px] w-[350px] transition-transform text-center ${
-        hovered ? "transform scale-105" : ""
-      }`}
+      className={`bg-white p-6 mx-5 rounded-lg shadow-xl flex flex-col items-center justify-between h-[300px] w-[350px] transition-transform text-center ${hovered ? "transform scale-105" : ""
+        }`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       <h2 className="text-lg font-semibold mb-4">{title}</h2>
 
       <p className="text-gray-600 mb-2">{description}</p>
-      <img className="h-20" src={img} alt="No encontrada" />
+      <Image className="h-20" src={img} alt="No encontrada" />
       <Link
         to={to}
-        className="w-40 text-center mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md"
+        className="my-2"
       >
-        {buttonText}
+        <Button color="primary">
+          {buttonText}
+        </Button>
+        
       </Link>
     </div>
   );

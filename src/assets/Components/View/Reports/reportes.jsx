@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, CardFooter, CardHeader, Chip, DateRangePicker, Listbox, ListboxItem, Radio, RadioGroup, Spacer, Spinner, Switch } from "@nextui-org/react";
+import { Button, Card, CardBody, CardFooter, CardHeader, Chip, DateRangePicker, Image, Listbox, ListboxItem, Radio, RadioGroup, Spacer, Spinner, Switch } from "@nextui-org/react";
 import Header from "../Header";
 import { Apple, Package, ReceiptText } from "lucide-react";
 import React, { useEffect, useState } from "react";
@@ -6,7 +6,8 @@ import { parseDate, getLocalTimeZone, today } from "@internationalized/date";
 import { useDateFormatter } from "@react-aria/i18n";
 import LinesChart from "./GraficasChart/lineaChart";
 import GraficaBarra from "./GraficasChart/BarrasChart";
-import { getIngresoFacturaDia, getNumeroVentaProducto } from "../../Base/BdReportes";
+import { getCantidadOrdenesMeses, getIngresoFacturaDia, getNumeroVentaProducto } from "../../Base/BdReportes";
+import IconoGrafica from "../../Icons/IconoGrafica.png";
 
 export const ReportView = () => {
     const [selectedKeys, setSelectedKeys] = React.useState(new Set(["text"]));
@@ -22,6 +23,7 @@ export const ReportView = () => {
             <Header
                 title={"Reportes"}
                 subtitle={"Reportes del dia"}
+                link={"/PaginaPrincipal"}
             ></Header>
 
             <div className="w-screen min-h-[750px] flex">
@@ -66,24 +68,46 @@ export const ReportView = () => {
                     </Listbox>
                 </div>
 
+                {opcionMenu == "text" &&
+
+                    <div className="w-full min-h-full flex justify-center items-center">
+                        <div className="w-1/2 h-1/2 flex flex-col justify-center items-center">
+                            <Image
+                                alt="Fondo graficas"
+                                src={IconoGrafica}
+                                width={400}
+                                height={200}
+                            ></Image>
+                            <h2 className="font-bold text-lg">
+                                Seleciona los reportes y graficas que quieras ver 
+                            </h2>
+                        </div>
+                        
+                        
+                    </div>
+                }
+
                 {opcionMenu == "Producto" &&
 
                     <div className="w-full h-full my-4">
                         <ViewReportPruduct></ViewReportPruduct>
                     </div>
                 }
+
                 {opcionMenu == "Factura" &&
 
                     <div className="w-full h-full my-4">
                         <ViewReportFactura></ViewReportFactura>
                     </div>
                 }
-                {opcionMenu == "text" &&
+
+                {opcionMenu == "Pedido" &&
 
                     <div className="w-full h-full my-4">
-                        proximamente
+                        <ViewReportOrder></ViewReportOrder>
                     </div>
                 }
+                
 
             </div>
         </div>
@@ -425,6 +449,126 @@ const ViewReportFactura = () => {
     );
 }
 
+const ViewReportOrder = () => {
+    const usuario = JSON.parse(localStorage.getItem('user'));
+    const [rangoFecha, setRangoFecha] = useState({
+        start: parseDate("2024-05-01"),
+        end: parseDate(formatearFecha(new Date())),
+    });
+    const [fechasInicializadas, setFechasInicializadas] = useState(false);
+
+    const [datosOriginales, setDatosOriginales] = useState([]);
+    const [dataReporteProductos, setDataReporteProductos] = useState({
+        labels: [],
+        valores: [],
+        nombre: "",
+        color: "",
+    });
+
+    const [seleccionGrilla, setSeleccionGrilla] = useState("cantidad");
+
+    // Loading
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fechaInicio = new Date();
+        fechaInicio.setDate(1);
+        fechaInicio.setMonth(fechaInicio.getMonth() - 1);
+
+        setRangoFecha({
+            start: parseDate(formatearFecha(fechaInicio)),
+            end: parseDate(formatearFecha(new Date())),
+        });
+        setFechasInicializadas(true);
+    }, []);
+
+    useEffect(() => {
+        if (!fechasInicializadas) return; // Solo ejecuta fetchData si las fechas han sido inicializadas
+
+        async function fetchData() {
+            setIsLoading(true);
+            const fechaInicio = `${rangoFecha.start.year}-${rangoFecha.start.month}-${rangoFecha.start.day}`;
+            const fechaFinal = `${rangoFecha.end.year}-${rangoFecha.end.month}-${rangoFecha.end.day}`;
+
+            const respuesta = await getCantidadOrdenesMeses(fechaInicio, fechaFinal, usuario.username);
+            console.log(respuesta);
+            if (respuesta.datos) {
+                setDatosOriginales(respuesta.datos);
+                updateDataReporteProductos(respuesta.datos, seleccionGrilla);
+            }
+            setIsLoading(false);
+        }
+        fetchData();
+    }, [rangoFecha, seleccionGrilla, fechasInicializadas]);
+
+    const updateDataReporteProductos = (datos, tipo) => {
+        if (tipo === "cantidad") {
+            setDataReporteProductos({
+                labels: datos.map(item => item.mes),
+                valores: datos.map(item => item.cantidadPedidos),
+                nombre: "Cantidad Vendida",
+                color: "#267bbc",
+            });
+        } else {
+            setDataReporteProductos({
+                labels: datos.map(item => item.mes),
+                valores: datos.map(item => item.cantidadPedidos),
+                nombre: "Ingreso Total",
+                color: "#95eb5e",
+            });
+        }
+    };
+
+    let formatter = useDateFormatter({ dateStyle: "long" });
+    return (
+        <div className="w-full h-full flex flex-col items-center">
+            <div className="w-1/3 flex flex-col gap-y-2">
+                <DateRangePicker
+                    variant="flat"
+                    size="lg"
+                    label="Selecciona la fecha"
+                    color="primary"
+                    value={rangoFecha}
+                    onChange={setRangoFecha}
+                    maxValue={today(getLocalTimeZone())}
+                    visibleMonths={2}
+                />
+                <p className="text-default-500 text-sm text-center">
+                    Fecha seleccionada:{" "}
+                    {rangoFecha
+                        ? formatter.formatRange(
+                            rangoFecha.start.toDate(getLocalTimeZone()),
+                            rangoFecha.end.toDate(getLocalTimeZone())
+                        )
+                        : " - "}
+                </p>
+            </div>
+
+            <Card className="h-[615px] w-4/5 my-4 flex items-center">
+                <CardBody className="w-4/5 h-1/2 flex justify-center">
+                    {
+                        isLoading ? (<Spinner label="Loading..." size="lg" color="primary" labelColor="primary" />)
+                            :
+                            (<GraficaBarra data={dataReporteProductos} />)
+                    }
+                </CardBody>
+                {   //</Card><CardFooter className="flex justify-end p-5">
+                    //</Card><RadioGroup
+                    //</Card>    label="Selecciona los datos a visualizar"
+                    //</Card>    orientation="horizontal"
+                    //</Card>    defaultValue="cantidad"
+                    //</Card>    value={seleccionGrilla}
+                    //</Card>    onValueChange={setSeleccionGrilla}
+                    //</Card>>
+                    //</Card>    <Radio value="cantidad">Cantidad Vendida</Radio>
+                    //</Card>    <Radio value="ingreso">Ingreso Total</Radio>
+                    //</Card></RadioGroup>
+                    //</Card></CardFooter>
+                }
+            </Card>
+        </div>
+    );
+};
 
 
 function formatearFecha(fecha) {

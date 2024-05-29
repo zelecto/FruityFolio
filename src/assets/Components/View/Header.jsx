@@ -1,28 +1,66 @@
 import React from "react";
 import iconoSalida from "../Icons/IconoRetroceder.png";
 import iconoFrutifolio from "../Icons/IconoFrutiFolio.png"
-import { Link } from "react-router-dom";
 
-const Header = ({link, title, subtitle, logoAlt }) => {
+import { Button, Image, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem, Tooltip } from "@nextui-org/react";
+import Logo from "../Photo/logo.png";
+import { Apple, Package, ReceiptText } from "lucide-react";
+const Header = ({title}) => {
   return (
-    <header className="bg-[#333333] p-8 flex justify-between items-center">
-      <Link to={link}>
-        <button>
-          <img src={iconoSalida} alt={logoAlt} className="w-16 h-16 mr-4" />
-        </button>
-      </Link>
+    <Navbar isBordered maxWidth="full" className="h-20 text-black">
+      <NavbarContent justify="start">
+          
+          <NavbarBrand>
+            <Link href="/PaginaPrincipal">
+              <Image src={Logo} width={60}></Image>
+              <p className="font-bold text-inherit">{title}</p>
+            </Link>
+          </NavbarBrand>
+          
+      </NavbarContent>
 
-      <div>
-        <h1 className="text-white text-4xl font-bold mb-2 text-center">
-          {title}
-        </h1>
-        <p className="text-white text-lg text-center">{subtitle}</p>
-      </div>
+      <NavbarContent justify="center">
+        <NavbarItem>
+          <Link color="primary" href="/ConsultarCatalogo"
+            showAnchorIcon
+            isBlock
+            anchorIcon={<Apple></Apple>}
+          >
+            Catalogo
+          </Link>
+        </NavbarItem>
 
-      <div>
-        <img src={iconoFrutifolio} alt={''} className="w-16 h-16 mr-4" />
-      </div>
-    </header>
+        <NavbarItem isActive>
+          <NavbarItem>
+            <Link color="primary" href="/ConsultarCatalogo"
+              showAnchorIcon
+              isBlock
+              anchorIcon={<ReceiptText></ReceiptText>}
+            >
+              Facturacion
+            </Link>
+          </NavbarItem>
+        </NavbarItem>
+        <NavbarItem>
+          <Link color="primary" href="/ConsultarCatalogo"
+            showAnchorIcon
+            isBlock
+            anchorIcon={<Package></Package>}
+          >
+            Pedido
+          </Link>
+        </NavbarItem>
+      </NavbarContent>
+
+      <NavbarContent justify="end">
+        <NavbarItem>
+          <Button as={Link} color="warning" href="/LoginPrincipal" variant="flat">
+            Log Out
+          </Button>
+        </NavbarItem>
+      </NavbarContent>
+    </Navbar>
+
   );
 };
 
