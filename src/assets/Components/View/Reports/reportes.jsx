@@ -17,7 +17,6 @@ export const ReportView = () => {
         [selectedKeys]
     );
 
-    console.log(opcionMenu);
     return (
         <div className="min-h-screen w-screen bg-[#F5F5F5]">
             <Header

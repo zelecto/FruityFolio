@@ -1,12 +1,11 @@
-import { Link } from "react-router-dom";
-import Header from "../Header";
 import { MoveRight } from 'lucide-react';
 import {BuscarImagenDefault } from "../../Logic/Defaultimage";
 import { useEffect, useState } from "react";
 import { GetTiendasCiudad } from "../../Base/BdtiendaVirtual";
 import { CircleChevronLeft } from 'lucide-react';
 import { CircleChevronRight } from 'lucide-react';
-
+import { Spinner } from "@nextui-org/react";
+import HeaderClient from "./HederClient";
 
 export const ViewPaginaPrincipalClient = () => {
     const [tiendas, setTiendas]=useState([]);
@@ -36,40 +35,27 @@ export const ViewPaginaPrincipalClient = () => {
         return color;
     }
     return (
-        <div className="bg-[#F5F5F5] min-h-screen min-w-screen ">
-            <Header
-                link="/"
-                logoRightSrc="ruta-a-la-imagen-derecha.jpg"
-                logoAlt="FruityFolio logo"
-                title="FruityFolio"
-                subtitle="Compra fácilmente en la tienda que prefieras."
-            />
-            <div className="w-full flex justify-center items-center ">
-                {tiendas.length>0 ? (
-                    <div className="w-2/3 min-h-[350px] grid grid-cols-1 md:grid-cols-2 gap-6  justify-center py-10">
+        <div className="bg-[#F5F5F5] min-h-screen min-w-screen flex flex-col">
+            
+            <HeaderClient></HeaderClient>
+
+            <div className="flex-grow flex justify-center items-center">
+                {tiendas.length > 0 ? (
+                    <div className="w-2/3 min-h-[350px] grid grid-cols-1 md:grid-cols-2 gap-6 justify-center py-10">
                         {tiendas.map((items) => {
-                             
                             return (
                                 <>
-                                    <CardTienda tienda={items.tienda} imgTopProductos={items.topFrutasDisponibles}
-                                        colorFondo={manejoColores()}
-                                    ></CardTienda>
-                                    
-                                    
+                                    <CardTienda tienda={items.tienda} imgTopProductos={items.topFrutasDisponibles} colorFondo={manejoColores()}></CardTienda>
                                 </>
-                                
                             );
                         })}
                     </div>
-                ):(
-                    <div>
-                        Loading
+                ) : (
+                    <div className="flex w-full h-full justify-center items-center">
+                        <Spinner size="lg" label="Cargando..." color="primary" labelColor="primary"></Spinner>
                     </div>
                 )}
-                
             </div>
-
-
         </div>
     );
 }

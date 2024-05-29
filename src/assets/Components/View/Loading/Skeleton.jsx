@@ -20,7 +20,6 @@ const SkeletonPedidosSection = () => {
 
     return (
         <div className="mx-4 animate-pulse">
-            <h2 className="text-xl font-bold mb-4">Pedidos pendientes</h2>
             <div className="w-2/3">
                 {[...Array(numRows)].map((_, index) => (
                     <div key={index} className="flex justify-between p-5 mb-4 bg-gray-200 rounded-lg shadow-md">

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import Header from "../Header";
 import { BuscarImagenDefault } from '../../Logic/Defaultimage';
 import { ConsultarProductosPorStock } from '../../Base/BdProductos';
 import { GuardarFactura } from '../../Base/BdFactura';
 import { postPedido } from '../../Base/BdPedido';
 import { MensajeAlert } from '../../Tools/Validadores';
+import HeaderClient from './HederClient';
 
 const ProductGrid = ({ addToCart, cartItems }) => {
     const [productos, setProductos] = useState([]);
@@ -255,8 +255,8 @@ const PedidosView = () => {
     };
 
     return (
-        <div className='bg-[#F5F5F5]'>
-            <Header
+        <div className='bg-[#F5F5F5] min-h-screen'>
+            <HeaderClient
                 link="/PaginaPrincipalClient"
                 logoRightSrc="ruta-a-la-imagen-derecha.jpg"
                 logoAlt="FruityFolio logo"

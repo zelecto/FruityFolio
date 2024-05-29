@@ -45,8 +45,6 @@ const TiendaPage = () => {
 
     useEffect(() => {
         async function getData() {
-            console.clear()
-            console.log(estado);
             handelIsLoading(true)
             const respuesta = await fetchData(estado.anchorKey);
             if (respuesta != null) {
@@ -182,6 +180,7 @@ const TiendaPage = () => {
                                                 selectedOrder={selectedOrder}
                                                 orderDetails={orderDetails}
                                                 handelOrder={handelOrder}
+                                                vista={"usuario"}
                                             />
                                         )
                                             :
@@ -225,15 +224,15 @@ const TiendaInfo = ({ storeData }) => {
     );
 };
 
-const PedidosSection = ({ orders, toggleOrderDetails, selectedOrder, orderDetails, handelOrder }) => {
+export const PedidosSection = ({ orders, toggleOrderDetails, selectedOrder, orderDetails, handelOrder,vista }) => {
 
     return (
-        <div className="">
+        <div className="w-full">
             {orders.map((order) => (
                 <div key={order.id} className="flex  mb-4">
-                    <PedidoCard order={order} toggleOrderDetails={toggleOrderDetails} selectedOrder={selectedOrder} orderDetails={orderDetails} removerOrden={handelOrder} />
+                    <PedidoCard order={order} toggleOrderDetails={toggleOrderDetails} selectedOrder={selectedOrder} orderDetails={orderDetails} removerOrden={handelOrder} vista={vista} />
                     {selectedOrder === order.id && orderDetails[order.id] && (
-                        <EnvioSection orderId={order.id} estado={order.estado} precio={order.precioTransporte} handelOrder={handelOrder} />
+                        <EnvioSection orderId={order.id} estado={order.estado} precio={order.precioTransporte} handelOrder={handelOrder} vista={vista} />
                     )}
                 </div>
             ))}
@@ -241,7 +240,7 @@ const PedidosSection = ({ orders, toggleOrderDetails, selectedOrder, orderDetail
     );
 };
 
-const PedidoCard = ({ order, toggleOrderDetails, selectedOrder, orderDetails, removerOrden }) => {
+const PedidoCard = ({ order, toggleOrderDetails, selectedOrder, orderDetails, removerOrden,vista }) => {
     const [isLoading, setIsLoading] = useState(false);
     const handleToggleOrderDetails = async () => {
         setIsLoading(true);
@@ -292,7 +291,7 @@ const PedidoCard = ({ order, toggleOrderDetails, selectedOrder, orderDetails, re
                         variant="Flat"
                         size='lg'
                     ><p className='font-bold'>{order.estado}</p></Chip>
-                    <Tooltip content="Eliminar" color='danger'>
+                    <Tooltip content={vista=="usuario"? "Eliminar" : "Cancelar" } color='danger'>
                         {
                             !isLoading ? (
                                 <Button
@@ -300,6 +299,7 @@ const PedidoCard = ({ order, toggleOrderDetails, selectedOrder, orderDetails, re
                                     size='sm'
                                     className='mx-6'
                                     color='danger'
+                                    isDisabled={vista=="cliente" &&  order.estado!="Pendiente" ? true:false}
                                 >
                                     {<Trash2></Trash2>}
                                 </Button>
@@ -380,63 +380,63 @@ const PedidoCard = ({ order, toggleOrderDetails, selectedOrder, orderDetails, re
     );
 };
 
-const EnvioSection = ({ orderId, estado, precio, handelOrder }) => {
-    const [envioPrice, setEnvioPrice] = useState(precio ? precio:null);
+const EnvioSection = ({ orderId, estado, precio, handelOrder, vista }) => {
+    const [envioPrice, setEnvioPrice] = useState(precio ? precio : null);
 
     const handelEnvioPrice = (value) => {
         if (value > 0 && value < 1000000) {
-            setEnvioPrice(value)
+            setEnvioPrice(value);
         } else {
-            setEnvioPrice(4000)
+            setEnvioPrice(4000);
         }
-    }
+    };
 
     const fechActualizacion = async (estado) => {
-        console.clear();
-        console.log(await ActualizarEstadoYPrecioEnvio(orderId, estado, envioPrice));
+        await ActualizarEstadoYPrecioEnvio(orderId, estado, envioPrice);
         handelOrder(orderId);
-
     };
 
     return (
-        <div className=" max-h-[400px] w-[350px] bg-white shadow-lg  flex flex-col items-center justify-between p-5 mx-5">
-            <p className='font-bold text-center'>Asignar Precio de Envío</p>
+        <div className="max-h-[400px] w-[350px] rounded-xl bg-white shadow-lg flex flex-col items-center justify-between p-5 mx-5">
+            <p className="font-bold text-center">Asignar Precio de Envío</p>
             <img src={IconoRepartidor} alt="Envío" className="w-48" />
             <div className="flex items-center justify-center space-x-4">
                 <Input
-                    isDisabled={estado == "Pendiente" ? false : true}
-                    className='w-35'
-                    type='number'
-                    color='primary'
-                    size='lg'
-                    labelPlacement='outside'
+                    isDisabled={vista == "usuario" && estado === "Pendiente" ? false : true}
+                    className="w-35"
+                    type="number"
+                    color="primary"
+                    size="lg"
+                    labelPlacement="outside"
                     placeholder={precio > 0 ? precio : "Precio"}
                     value={envioPrice}
                     onChange={(e) => handelEnvioPrice(e.target.value)}
                 />
-                {estado == "Pendiente" ? (
+                {vista === "usuario" && estado === "Pendiente" && (
                     <Button
-                        color='success'
-                        className="w-35 h-10  text-white font-bold text-sm px-4 py-2 rounded"
-                        onClick={()=> fechActualizacion("Enviado")}
+                        color="success"
+                        className="w-35 h-10 text-white font-bold text-sm px-4 py-2 rounded"
+                        onClick={() => fechActualizacion("Enviado")}
                     >
                         Confirmar Envío
                     </Button>
-                ):(
-                        <Button
-                            color='success'
-                            className="w-35 h-10  text-white font-bold text-sm px-6 py-2 rounded"
-                            onClick={() => fechActualizacion("Entregado")}
-                            isDisabled = {estado=="Entregado" ? true:false}
-                        >
-                            Confirmar Recepción
-                        </Button>
-                ) }
-                
+                )}
+                {vista === "usuario" && estado === "Enviado" && (
+                    <Button
+                        color="success"
+                        className="w-35 h-10 text-white font-bold text-sm px-6 py-2 rounded"
+                        onClick={() => fechActualizacion("Entregado")}
+                        isDisabled={estado === "Entregado" ? true : false}
+                    >
+                        Confirmar Recepción
+                    </Button>
+                )}
             </div>
         </div>
     );
 };
+
+
 
 async function fetchData(estado) {
     const tiendaData = await fetchStoreData();
@@ -470,6 +470,16 @@ async function fetchOrders(idtienda, estado) {
     const respuesta = await getPedidos(idtienda, estado);
     if (respuesta) {
         const listaPedidos = respuesta.data;
+        listaPedidos.sort((a, b) => {
+            if (a.estado === "Pendiente" && (b.estado === "Enviado" || b.estado === "Entregado")) {
+                return -1;
+            } else if (a.estado === "Enviado" && b.estado === "Entregado") {
+                return -1;
+            } else if (a.estado === "Entregado" || (b.estado === "Pendiente" || b.estado === "Enviado")) {
+                return 1;
+            }
+            return 0;
+        });
         return listaPedidos;
     }
     return null;

@@ -20,7 +20,7 @@ const Header = ({title}) => {
       </NavbarContent>
 
       <NavbarContent justify="center">
-        <NavbarItem>
+        <NavbarItem isActive>
           <Link color="primary" href="/ConsultarCatalogo"
             showAnchorIcon
             isBlock
@@ -32,7 +32,7 @@ const Header = ({title}) => {
 
         <NavbarItem isActive>
           <NavbarItem>
-            <Link color="primary" href="/ConsultarCatalogo"
+            <Link color="primary" href="/crearFactura"
               showAnchorIcon
               isBlock
               anchorIcon={<ReceiptText></ReceiptText>}
@@ -41,8 +41,8 @@ const Header = ({title}) => {
             </Link>
           </NavbarItem>
         </NavbarItem>
-        <NavbarItem>
-          <Link color="primary" href="/ConsultarCatalogo"
+        <NavbarItem isActive>
+          <Link color="primary" href="/GestionarPedidos"
             showAnchorIcon
             isBlock
             anchorIcon={<Package></Package>}

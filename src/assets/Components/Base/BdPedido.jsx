@@ -45,3 +45,16 @@ export async function EliminarPedido(pedidoId) {
         return { datos: null, error: error }; // Retornar un objeto con las variables
     }
 }
+
+
+export const getPedidosClient = async (usernameClient, estado = null) => {
+    try {
+        const url = estado ? `https://localhost:7208/api/Pedidos/cliente/${usernameClient}?estado=${estado}` : 
+        `https://localhost:7208/api/Pedidos/cliente/${usernameClient}`;
+        const response = await axios.get(url);
+        return response;
+    } catch (error) {
+        return null;
+    }
+
+};

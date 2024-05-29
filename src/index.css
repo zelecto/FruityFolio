@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.large-text {
+    font-size: 40px;
+    /* Ajusta este valor a tus necesidades */
+}
