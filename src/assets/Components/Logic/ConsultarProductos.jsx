@@ -1,32 +1,34 @@
 import React, { useState } from "react";
 import { BuscarImagenDefault } from "./Defaultimage";
 import { InputField } from "../View/CrearProducto";
+import { Card, CardBody, CardFooter, CardHeader, Chip, Image, Tooltip } from "@nextui-org/react";
+import { CircleDollarSign } from "lucide-react";
 
-export const ProductList =  ({ products, onSelectProduct }) => {
+export const ProductList = ({ products, onSelectProduct }) => {
   const [buscar, setBuscar] = useState("");
-  
+
   const handelBuscar = (newValue) => {
     setBuscar(newValue);
     handelFiltro(newValue);
-    
+
   };
 
 
   const [filtro, setFlitro] = useState([]);
-  
+
   const handelFiltro = (nombre) => {
-    if(nombre===""){
-      setFlitro([])  
-    }else{
+    if (nombre === "") {
+      setFlitro([])
+    } else {
       // Filtrar la lista de productos por nombre
       const productosFiltrados = products.filter(producto => producto.name.toLowerCase().includes(nombre.toLowerCase()));
 
 
-    // Hacer algo con los productos filtrados, por ejemplo, actualizar el estado
-    setFlitro(productosFiltrados);
+      // Hacer algo con los productos filtrados, por ejemplo, actualizar el estado
+      setFlitro(productosFiltrados);
     }
     console.log(filtro)
-    
+
   };
 
 
@@ -91,46 +93,84 @@ export const ProductList =  ({ products, onSelectProduct }) => {
 };
 
 export const ProductDetail = ({ product }) => {
-  if(product!=null){
+  if (product != null) {
     return (
-      <div className="flex flex-col items-center max-w-[80%] pb-10">
-        <h2 className="text-lg font-bold mb-2 text-center my-5">
-          {product.name}
-        </h2>
-        <div className="flex justify-between">
-          <img
-            src={BuscarImagenDefault(product.img)}
-            alt="Imagen del producto"
-            className="w-[50%] h-auto "
-          />
-          <div className="flex flex-col justify-center">
-            <div className="flex justify-between">
-              <p className="font-bold mx-4">Precio: </p>
-              <p className="">{"$ " + product.price}</p>
-            </div>
+      <Card className="bg-white w-full" radius="none" shadow="none">
+        <CardHeader>
+          <h2 className="w-full text-lg font-bold mb-2 text-center">
+            {product.name}
+          </h2>
+        </CardHeader>
+        <CardBody>
+          <div className="flex flex-col items-center">
+            <Image src={BuscarImagenDefault(product.img)}
+              
+              alt="Imagen del producto"
+              className=" w-full h-[250px] rounded-l-none"
+            ></Image>  
+            <div className="flex justify-between w-full">
+              <Tooltip content={"Precio"} placement={"bottom"} color="success" className="text-white">
+                <Chip color="success" className="p-4">
+                  <p className="text-white flex text-lg justify-center items-center">{product.price} <CircleDollarSign></CircleDollarSign> </p>
+                </Chip>
+              </Tooltip>
 
-            <div className="flex justify-between">
-              <p className="font-bold mx-2">Cantidad:</p>
-              <p>{product.stock + " Kg"}</p>
+              <Tooltip content={"Stock"} placement={"bottom"} color="primary" className="text-white">
+                <Chip color="primary" className="p-4">
+                  <p className="text-white flex text-lg justify-between">{product.stock + " KG"}</p>
+                </Chip>
+              </Tooltip>
             </div>
           </div>
-        </div>
+          
+        </CardBody>
 
-        <div className="flex flex-col items-center">
-          <p className="font-bold">Descripción</p>
-          <div className="text-black bg-yellow-100 p-1 rounded-lg">
+        <CardFooter className="">
+          <div className="w-full text-black p-1 rounded-lg">
             <p>{product.description}</p>
+          </div>
+        </CardFooter>
+      </Card>
+    );
+  }
+};
+
+const vista = () => {
+  return (
+    <div className="flex flex-col items-center max-w-[80%] pb-10">
+      <h2 className="text-lg font-bold mb-2 text-center my-5">
+        {product.name}
+      </h2>
+      <div className="w-full flex justify-between bg-red-200">
+        <img
+          src={BuscarImagenDefault(product.img)}
+          alt="Imagen del producto"
+          className="w-[50%] h-auto "
+        />
+        <div className="flex flex-col justify-center">
+          <div className="flex justify-between">
+            <p className="font-bold mx-4">Precio: </p>
+            <p className="">{"$ " + product.price}</p>
+          </div>
+
+          <div className="flex justify-between">
+            <p className="font-bold mx-2">Cantidad:</p>
+            <p>{product.stock + " Kg"}</p>
           </div>
         </div>
       </div>
-    );
-  }
 
-  
-};
+      <div className="flex flex-col items-center">
+        <p className="font-bold">Descripción</p>
+        <div className="text-black bg-yellow-100 p-1 rounded-lg">
+          <p>{product.description}</p>
+        </div>
+      </div>
+    </div>)
+}
 
 
- function ListaPoductos() {
+function ListaPoductos() {
   const products = [
     {
       id: 1,

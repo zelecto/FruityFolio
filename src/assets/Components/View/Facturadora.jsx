@@ -10,6 +10,9 @@ import {
 } from "../Logic/ConsultarProductos";
 import { ConsultarProductos } from "../Base/BdProductos";
 import { GuardarFactura } from "../Base/BdFactura";
+import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Pagination, TableBody, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
+import { Table } from "lucide-react";
+import { TableFactura } from "./GestorVentas";
 
 const CrearFacturaForm = () => {
   const [mensaje, setMensaje] = useState({
@@ -49,10 +52,7 @@ const CrearFacturaForm = () => {
       )}
 
       <Header
-        link="/paginaPrincipal"
-        logoAlt="FruityFolio logo"
         title="FruityFolio"
-        subtitle="Añade un producto a tu catálogo."
       />
       <div className="flex justify-center items-center mx-auto mt-16 ">
         <TarjetaFactura handelOpenAlert={handelOpenAlert} handelSetMensaje={handelSetMensaje} />
@@ -145,6 +145,15 @@ const TarjetaFactura = ({ handelOpenAlert, handelSetMensaje }) => {
     return fechaFormateada;
   };
 
+  const [idSimulado,SetIdsimulado] = useState(0);
+
+  const handelIdSimulado =(agregar)=>{
+    if(agregar){
+      SetIdsimulado(idSimulado+1);
+    }else{
+      SetIdsimulado(idSimulado-1)
+    }
+  }
 
   //Lista Ventas
   const [listVentas, setListVentas] = useState([]);
@@ -152,12 +161,14 @@ const TarjetaFactura = ({ handelOpenAlert, handelSetMensaje }) => {
 
   const AgregarVenta = (Producto, Cantida, Total) => {
     // Crea una nueva copia del array listVentas y agrega el nuevo objeto de venta
+    handelIdSimulado(true)
     const nuevaListaVentas = [
       ...listVentas,
       {
+        id: idSimulado,
         producto: Producto,
-        cantidad: Cantida,
-        total: Total,
+        cantidadvendida: Cantida,
+        subprecio: Total,
       },
     ];
 
@@ -181,9 +192,10 @@ const TarjetaFactura = ({ handelOpenAlert, handelSetMensaje }) => {
   };
 
   const handelshowActualizarProducto = (value, producto) => {
+    console.log(producto) 
     if (value === true) {
       setShowAgregarProducto(false);
-      setproductoActualizar(producto.producto);
+      setproductoActualizar(producto);
       setShowActualizarProducto(value);
     } else {
       setShowAgregarProducto(true);
@@ -205,13 +217,13 @@ const TarjetaFactura = ({ handelOpenAlert, handelSetMensaje }) => {
       // Actualiza el objeto de venta en la lista con los nuevos valores
       nuevaListaVentas[index] = {
         ...nuevaListaVentas[index],
-        cantidad: Cantidad,
-        total: Total,
+        cantidadvendida: Cantidad,
+        subprecio: Total,
       };
 
       // Calcula el nuevo totalPago sumando el total de todas las ventas en la lista
       const nuevoPrecio = nuevaListaVentas.reduce(
-        (acumulador, venta) => acumulador + venta.total,
+        (acumulador, venta) => acumulador + venta.subprecio,
         0
       );
 
@@ -228,7 +240,7 @@ const TarjetaFactura = ({ handelOpenAlert, handelSetMensaje }) => {
 
   const EliminarVenta = (ProductoId) => {
     // Copia la lista de ventas actual
-
+    handelIdSimulado(false);
     const nuevaListaVentas = [...listVentas];
 
     // Encuentra el índice del objeto de venta que deseas eliminar
@@ -317,118 +329,74 @@ const TarjetaFactura = ({ handelOpenAlert, handelSetMensaje }) => {
 
   return (
 
-    <div className="flex justify-between">
+    <div className="w-full flex justify-center bg-black">
 
-      <div className="flex flex-col w-[900px] h-[650px] bg-[#CCE6FF] px-5 items-center rounded-md">
-        <div className="flex justify-between rounded-md  w-[800px]">
-          <div className="w-[800px]  flex justify-center items-center">
-            <div className="flex justify-between mt-4">
-              <div className="w-full sm:w-1/3 mb-4 sm:mb-0">
-                <InputField
-                  label="Cedula del cliente"
-                  id="cedula"
-                  type="text"
-                  placeholder="Cedula del cliente"
-                  value={cedula}
-                  onChange={(e) => handleCedula(e.target.value)}
-                  errorMessage={errorMessageCedula}
-                />
-              </div>
-              <div className="w-full sm:w-1/3 mb-4 sm:mb-0">
-                <InputField
-                  label="Nombre del cliente"
-                  id="nombre"
-                  type="text"
-                  placeholder="Nombre del cliente"
-                  value={nombre}
-                  onChange={(e) => handleNombre(e.target.value)}
-                  errorMessage={errorMessageNombre}
-                />
-              </div>
-              <div className="w-full sm:w-1/3">
-                <InputField
-                  label="Correo"
-                  id="Correo"
-                  type="email"
-                  placeholder="Correo"
-                  value={correo}
-                  onChange={(e) => handleCorreo(e.target.value)}
-                  errorMessage={errorMessageCorreo}
-                  onBlur={(e) => handleOnBulrCorreo(e.target.value)}
-                />
-              </div>
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between mt-4">
+            <div className="w-full sm:w-1/3 mb-4 sm:mb-0">
+              <InputField
+                label="Cedula del cliente"
+                id="cedula"
+                type="text"
+                placeholder="Cedula del cliente"
+                value={cedula}
+                onChange={(e) => handleCedula(e.target.value)}
+                errorMessage={errorMessageCedula}
+              />
+            </div>
+            <div className="w-full sm:w-1/3 mb-4 sm:mb-0">
+              <InputField
+                label="Nombre del cliente"
+                id="nombre"
+                type="text"
+                placeholder="Nombre del cliente"
+                value={nombre}
+                onChange={(e) => handleNombre(e.target.value)}
+                errorMessage={errorMessageNombre}
+              />
+            </div>
+            <div className="w-full sm:w-1/3">
+              <InputField
+                label="Correo"
+                id="Correo"
+                type="email"
+                placeholder="Correo"
+                value={correo}
+                onChange={(e) => handleCorreo(e.target.value)}
+                errorMessage={errorMessageCorreo}
+                onBlur={(e) => handleOnBulrCorreo(e.target.value)}
+              />
             </div>
           </div>
-        </div>
-        <div className="w-full flex justify-between px-5 mt-4">
-          <h1 className=" text-2xl font-bold mb-2 text-center">
-            FECHA {handelFechaActual()}
+          
+        </CardHeader>
+
+        <CardBody>
+          <h1 className=" text-xl font-bold mb-2">
+            Fecha {handelFechaActual()}
           </h1>
-          <p className=" text-2xl text-slate-500 mb-2 text-center">
-            # Factura : 1000000
-          </p>
-        </div>
-        <div className="w-full h-full flex flex-col items-center p-5 rounded-md  ">
-          {/* Color de fondo para los detalles de la factura */}
-          <div className="flex flex-col w-full border border-black rounded-lg  h-full">
-            <div className="flex flex-row justify-between p-4 bg-[#4D94FF]">
-              <h2 className="font-semibold text-lg w-1/4 text-center">
-                NOMBRE
-              </h2>
 
-              <h2 className="font-semibold text-lg w-1/4 text-center">
-                CANTIDAD
-              </h2>
+          <TableFactura listaFacturas={listVentas} showActualizarVenta={handelshowActualizarProducto}></TableFactura>
 
-              <h2 className="font-semibold text-lg w-1/4 text-center">
-                PRECIO
-              </h2>
+        </CardBody>
 
-              <h2 className="font-semibold text-lg w-1/4 text-center">TOTAL</h2>
-            </div>
+        <CardFooter>
+          <div className="w-full flex flex-row justify-between mt-4  items-center">
 
-            {/* CONTENEDOR DE PRODUCTOS VENDIDOS */}
-            <div className="max-h-[340px] overflow-auto">
-              {/* PRODUCTO VENDIDO */}
-              <div>
-                {listVentas.map((venta, index) => (
-                  <div
-                    key={index}
-                    onClick={() => handelshowActualizarProducto(true, venta)}
-                    className="flex flex-row justify-between border-t border-black p-4 hover:bg-slate-300 cursor-pointer"
-                  >
-                    <p className="w-1/4 text-center  border-black pl-4">
-                      {venta.producto.name}
-                    </p>
-                    <p className="w-1/4 text-center border-l border-black pl-4">
-                      {venta.cantidad} kg
-                    </p>
-                    <p className="w-1/4 text-center border-l border-black pl-4">
-                      ${venta.producto.price}
-                    </p>
-                    <p className="w-1/4 text-center border-l border-black pl-4">
-                      ${venta.total}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-          <div className="w-full flex flex-row justify-end mt-4  items-center">
-
-            <p className=" w-1/4 text-center text-lg  font-bold">Total :</p>
-            <p className=" w-1/4 text-center text-lg font-bold pl-4">
-              $ {totalPago}
-            </p>
-            <button
-              className="bg-green-400 font-bold text-white hover:bg-green-700 w-[20%] h-[150%] rounded-lg mx-2"
+            <Chip color="success" className="w-1/4 text-center text-lg font-bold text-white p-4"
+            
+            >{"Total: "+totalPago}</Chip>
+            <Button
+              color="success"
               onClick={() => guardarFactura()}
+              className="p-5 text-white font-bolds "
             >
               Guardar
-            </button>
+            </Button>
           </div>
-        </div>
-      </div>
+        </CardFooter>
+      </Card>
 
       {showAgregarProducto && (
         <TarjetaVenta
@@ -437,17 +405,122 @@ const TarjetaFactura = ({ handelOpenAlert, handelSetMensaje }) => {
         />
       )}
       {showActualizarProducto && (
-        <TarjetaActualizarVenta
-          productActualizar={productoActualizar}
-          ActualizarVenta={ActualizarVenta}
-          EliminarVenta={EliminarVenta}
-          CancelarActualizacionVenta={CancelarActualizacionVenta}
-        />
+        <div className="w-1/3">
+          <TarjetaActualizarVenta
+            productActualizar={productoActualizar}
+            ActualizarVenta={ActualizarVenta}
+            EliminarVenta={EliminarVenta}
+            CancelarActualizacionVenta={CancelarActualizacionVenta}
+          />
+        </div>
+        
       )}
     </div>
 
   );
 };
+
+const vista=()=>{
+  return (
+  <div className="flex flex-col w-[900px] h-[650px] bg-[#CCE6FF] px-5 items-center rounded-md">
+    <div className="flex justify-between rounded-md  w-[800px]">
+      <div className="w-[800px]  flex justify-center items-center">
+        <div className="flex justify-between mt-4">
+          <div className="w-full sm:w-1/3 mb-4 sm:mb-0">
+            <InputField
+              label="Cedula del cliente"
+              id="cedula"
+              type="text"
+              placeholder="Cedula del cliente"
+              value={cedula}
+              onChange={(e) => handleCedula(e.target.value)}
+              errorMessage={errorMessageCedula}
+            />
+          </div>
+          <div className="w-full sm:w-1/3 mb-4 sm:mb-0">
+            <InputField
+              label="Nombre del cliente"
+              id="nombre"
+              type="text"
+              placeholder="Nombre del cliente"
+              value={nombre}
+              onChange={(e) => handleNombre(e.target.value)}
+              errorMessage={errorMessageNombre}
+            />
+          </div>
+          <div className="w-full sm:w-1/3">
+            <InputField
+              label="Correo"
+              id="Correo"
+              type="email"
+              placeholder="Correo"
+              value={correo}
+              onChange={(e) => handleCorreo(e.target.value)}
+              errorMessage={errorMessageCorreo}
+              onBlur={(e) => handleOnBulrCorreo(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="w-full flex justify-between px-5 mt-4">
+      <h1 className=" text-2xl font-bold mb-2 text-center">
+        FECHA {handelFechaActual()}
+      </h1>
+    </div>
+    <div className="w-full h-full flex flex-col items-center p-5 rounded-md  ">
+      {/* Color de fondo para los detalles de la factura */}
+      <div className="flex flex-col w-full border border-black rounded-lg  h-full">
+        <div className="flex flex-row justify-between p-4 bg-[#4D94FF]">
+          <h2 className="font-semibold text-lg w-1/4 text-center">
+            NOMBRE
+          </h2>
+
+          <h2 className="font-semibold text-lg w-1/4 text-center">
+            CANTIDAD
+          </h2>
+
+          <h2 className="font-semibold text-lg w-1/4 text-center">
+            PRECIO
+          </h2>
+
+          <h2 className="font-semibold text-lg w-1/4 text-center">TOTAL</h2>
+        </div>
+
+        {/* CONTENEDOR DE PRODUCTOS VENDIDOS */}
+        <div className="max-h-[340px] overflow-auto">
+          {/* PRODUCTO VENDIDO */}
+          <div>
+            {listVentas.map((venta, index) => (
+              <div
+                key={index}
+                onClick={() => handelshowActualizarProducto(true, venta)}
+                className="flex flex-row justify-between border-t border-black p-4 hover:bg-slate-300 cursor-pointer"
+              >
+                <p className="w-1/4 text-center  border-black pl-4">
+                  {venta.producto.name}
+                </p>
+                <p className="w-1/4 text-center border-l border-black pl-4">
+                  {venta.cantidad} kg
+                </p>
+                <p className="w-1/4 text-center border-l border-black pl-4">
+                  ${venta.producto.price}
+                </p>
+                <p className="w-1/4 text-center border-l border-black pl-4">
+                  ${venta.total}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>);
+}
+
+
 
 export const InputField = ({
   label,
@@ -614,12 +687,6 @@ export const TarjetaVenta = ({ AgregarVenta, ListaProductosVendidos }) => {
     FiltrarProductosVendidos();
   }, [ListaProductosVendidos]);
 
-  useEffect(() => {
-    FiltrarProductosVendidos();
-  }, [listaProductos]);
-
-
-
   return (
     <div className="flex flex-col items-center  mx-20 bg-[#CCE6FF] w-[500px] rounded-md">
       <div >
@@ -755,30 +822,17 @@ export const TarjetaActualizarVenta = ({
   };
 
   return (
-    <>
-      <div className="flex flex-col items-center mx-20 bg-[#CCE6FF] w-[500px] rounded-md">
-
-        <div>
-          <h2 className="text-black text-2xl font-bold mb-2 text-center">
-            ACTUALIZA TU VENTA
-          </h2>
-        </div>
-
-        {showAlert && (
-          <MensajeAlert
-            message={mensaje.Mensaje}
-            onClose={handelShowAlertClose}
-            isError={mensaje.isError}
-            buttonColor={mensaje.colorBoton}
-            textColor={mensaje.colorText}
-            buttonText={mensaje.textBoton}
-          />
-        )}
-        <div className="flex justify-center bg-gray-100  rounded-lg shadow-md w-[400px] mt-5">
+    <div className="px-5 min-h-full min-w-full">
+      <Card className="mx-5" >
+        <CardHeader>
+            <h2 className="w-full text-black text-2xl font-bold mb-2 text-center">
+              ACTUALIZA TU VENTA
+            </h2>
+        </CardHeader>
+        
+        <CardBody className="min-w-full  flex items-center">
+            
           <ProductDetail product={productActualizar} />
-        </div>
-
-        <div className=" flex px-5 justify-between items-center  mt-6 w-full h-[130px]">
           <div className="w-[250px]">
             <InputField
               label="Cantidad a vender KG"
@@ -790,33 +844,105 @@ export const TarjetaActualizarVenta = ({
               errorMessage={errorMessageCantidadVender}
             />
           </div>
-          <div className="">
-            <h2 className="">Cobro : ${cobro ? cobro : 0} </h2>
-          </div>
-        </div>
 
-        <div className="w-full flex justify-between p-5 ">
-          <button
-            className="bg-slate-400 font-bold text-white hover:bg-slate-700 w-[40%] h-[200%] rounded-lg mx-2"
-            onClick={() => CancelarActualizacionVenta()}
-          >
-            CANCELAR
-          </button>
-          <button
-            className="bg-green-400 font-bold text-white hover:bg-green-700 w-[40%] h-[200%] rounded-lg mx-2"
-            onClick={() => handelActualizarVenta()}
-          >
-            ACTUALIZAR
-          </button>
-          <button
-            className="bg-red-400 font-bold text-white hover:bg-red-700 w-[40%] h-[200%] rounded-lg mx-2"
-            onClick={() =>
-              EliminarVenta(productActualizar, null, null, true)}
-          >
-            ELIMINAR
-          </button>
-        </div>
-      </div>
-    </>
+        </CardBody>
+        
+        <CardFooter className="w-full h-20">
+          <div className="w-full h-11 flex justify-between">
+            <Button
+            size="lg"
+              className="font-bold"
+              onClick={() => CancelarActualizacionVenta()}
+            >
+              Cancelar
+            </Button>
+            <Button
+              size="lg"
+              color="success"
+              onClick={() => handelActualizarVenta()}
+              className="text-white font-bold"
+            >
+              Actualizar
+            </Button>
+            <Button
+              size="lg"
+              color="danger"
+              onClick={() =>
+                EliminarVenta(productActualizar, null, null, true)}
+            >
+              ELIMINAR
+            </Button>
+          </div>
+        </CardFooter>
+
+      </Card>
+    </div>
+    
   );
 };
+
+const VistaPRueba = () => {
+  return (<>
+    <div className="flex flex-col items-center mx-20 bg-[#CCE6FF] w-[500px] h-full rounded-md">
+
+      <div>
+        <h2 className="text-black text-2xl font-bold mb-2 text-center">
+          ACTUALIZA TU VENTA
+        </h2>
+      </div>
+
+      {showAlert && (
+        <MensajeAlert
+          message={mensaje.Mensaje}
+          onClose={handelShowAlertClose}
+          isError={mensaje.isError}
+          buttonColor={mensaje.colorBoton}
+          textColor={mensaje.colorText}
+          buttonText={mensaje.textBoton}
+        />
+      )}
+      <div className="flex justify-center bg-gray-100  rounded-lg shadow-md w-[400px] mt-5">
+        <ProductDetail product={productActualizar} />
+      </div>
+
+      <div className=" flex px-5 justify-between items-center  mt-6 w-full h-[130px]">
+        <div className="w-[250px]">
+          <InputField
+            label="Cantidad a vender KG"
+            id="Cantidad a vender"
+            type="text"
+            placeholder="Cantidad a vender kg"
+            value={cantidadVender}
+            onChange={(e) => handelCantidadVender(e.target.value)}
+            errorMessage={errorMessageCantidadVender}
+          />
+        </div>
+        <div className="">
+          <h2 className="">Cobro : ${cobro ? cobro : 0} </h2>
+        </div>
+      </div>
+
+      <div className="w-full flex justify-between p-5 ">
+        <button
+          className="bg-slate-400 font-bold text-white hover:bg-slate-700 w-[40%] h-[200%] rounded-lg mx-2"
+          onClick={() => CancelarActualizacionVenta()}
+        >
+          CANCELAR
+        </button>
+        <button
+          className="bg-green-400 font-bold text-white hover:bg-green-700 w-[40%] h-[200%] rounded-lg mx-2"
+          onClick={() => handelActualizarVenta()}
+        >
+          ACTUALIZAR
+        </button>
+        <button
+          className="bg-red-400 font-bold text-white hover:bg-red-700 w-[40%] h-[200%] rounded-lg mx-2"
+          onClick={() =>
+            EliminarVenta(productActualizar, null, null, true)}
+        >
+          ELIMINAR
+        </button>
+      </div>
+    </div>
+  </>);
+}

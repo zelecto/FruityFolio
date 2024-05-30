@@ -45,12 +45,12 @@ function GestorVentasView() {
             <Header title="FruityFolio" />
 
             {/*
-        //<ConsultarFactura listaFacturas={listaFacturas} consultarFactura={ConsultarFactura} />
-    */}
+                //<ConsultarFactura listaFacturas={listaFacturas} consultarFactura={ConsultarFactura} />
+            */}
             <div className="w-full min-h-full flex-grow flex">
                 <VistaPrueba listaFacturas={listaFacturas} isLoading={loading} setFactura={setFactura} />
 
-                <div className="flex-grow flex justify-center items-center">
+                <div className="flex-grow min-h-full flex justify-center items-center">
                     {factura ? (
                         <DetallesFactura consultarFactura={consultaFacturas} showDetallesFactura={setFactura} factura={factura} />
                     ) : (
@@ -269,10 +269,10 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
     }
 
     return (
-        <div className="">
-            {isLoading ? <Spinner size="lg" label="Cargando..." labelColor="primary"></Spinner> :
+        <div className="w-full">
+            {isLoading ? <Spinner size="lg" label="Cargando..." labelColor="primary" className="w-full"></Spinner> :
                 (
-                    <div className="flex justify-between">
+                    <div className="flex-grow px-10 flex justify-center">
                         <Card className="min-w-[600px] min-h-[700px] p-2">
                             <CardHeader className="flex justify-between">
                                 <h2 className="text-2xl font-bold">
@@ -350,7 +350,7 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
                             </CardFooter>
                         </Card>
                         {showActualizarVenta && (
-                            <div className="min-h-[700px]">
+                            <div className="w-1/3">
                                 <TarjetaActualizarVenta
                                     productActualizar={productoActualizar}
                                     ActualizarVenta={actualizarOEliminarVenta}
@@ -361,7 +361,9 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
 
                         )}
                         {showAgregarVenta && (
-                            <TarjetaVenta AgregarVenta={AgregarVenta} ListaProductosVendidos={ListaProductosVendidos}></TarjetaVenta>
+                            <div className="">
+                                <TarjetaVenta AgregarVenta={AgregarVenta} ListaProductosVendidos={ListaProductosVendidos}></TarjetaVenta>
+                            </div>
                         )}
                     </div>
                     
@@ -644,8 +646,6 @@ const datos = () => {
     );
 }
 
-
-
 const VistaPrueba = ({ listaFacturas, isLoading, setFactura }) => {
     console.log(listaFacturas);
     const listaGrilla = listaFacturas.map(factura => {
@@ -722,11 +722,8 @@ const VistaPrueba = ({ listaFacturas, isLoading, setFactura }) => {
 }
 
 
-
-
-
-const TableFactura = ({ listaFacturas: listaDetalles, showActualizarVenta }) => {
-    console.log(listaDetalles);
+export const TableFactura = ({ listaFacturas: listaDetalles, showActualizarVenta }) => {
+    console.log(listaDetalles,"Table");
     const listaGrilla = listaDetalles.map(detalles => {
         return {
             id: detalles.id,
@@ -755,7 +752,7 @@ const TableFactura = ({ listaFacturas: listaDetalles, showActualizarVenta }) => 
             <h1 className="text-xl font-bold text-center w-full">Lista Facturas</h1>
 
             <Table color="primary" selectionMode="single" selectionBehavior={"toggle"} onRowAction={(key) => 
-                showActualizarVenta(true, listaDetalles.find(item => item.id == key).producto ) }
+                showActualizarVenta(true, listaDetalles.find(item => item.id == key).producto) }
                 bottomContent={
                     <div className="flex w-full justify-center my-5">
                         <Pagination
@@ -770,7 +767,7 @@ const TableFactura = ({ listaFacturas: listaDetalles, showActualizarVenta }) => 
                     </div>
                 }
                 classNames={{
-                    wrapper: "min-h-[222px]",
+                    wrapper: "min-h-[300px]",
                 }}
             >
                 <TableHeader>
@@ -779,7 +776,7 @@ const TableFactura = ({ listaFacturas: listaDetalles, showActualizarVenta }) => 
                     <TableColumn key={"precio"}>Precio</TableColumn>
                     <TableColumn key={"subTotal"}>SubTotal</TableColumn>
                 </TableHeader>
-                <TableBody emptyContent={"No hay factura en esta fecha"}
+                <TableBody emptyContent={"No hay ventas"}
                     
                 >
                     {items.map((item) =>

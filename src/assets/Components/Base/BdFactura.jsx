@@ -17,8 +17,8 @@ export async function GuardarFactura(factura) {
         if (respuestaFactura.datos != null) {
             // Si se guardó la factura correctamente, guardamos las ventas
             const listaVentas = factura.listaProductosVendidos.map((venta, index) => ({
-                cantidadvendida: parseInt(venta.cantidad),
-                subprecio: parseFloat(venta.total),
+                cantidadvendida: parseInt(venta.cantidadvendida),
+                subprecio: parseFloat(venta.subprecio),
                 idfactura: respuestaFactura.datos.id,
                 idproducto: venta.producto.id
             }));
