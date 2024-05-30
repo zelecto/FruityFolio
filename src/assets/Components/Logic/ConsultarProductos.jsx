@@ -95,7 +95,7 @@ export const ProductList = ({ products, onSelectProduct }) => {
 export const ProductDetail = ({ product }) => {
   if (product != null) {
     return (
-      <Card className="bg-white w-full" radius="none" shadow="none">
+      <Card className="bg-white w-full" shadow="none">
         <CardHeader>
           <h2 className="w-full text-lg font-bold mb-2 text-center">
             {product.name}

@@ -749,10 +749,10 @@ export const TableFactura = ({ listaFacturas: listaDetalles, showActualizarVenta
 
     return (
         <div className="bg-white mt-5">
-            <h1 className="text-xl font-bold text-center w-full">Lista Facturas</h1>
+            
 
-            <Table color="primary" selectionMode="single" selectionBehavior={"toggle"} onRowAction={(key) => 
-                showActualizarVenta(true, listaDetalles.find(item => item.id == key).producto) }
+            <Table  color="primary" selectionMode="single" selectionBehavior={"toggle"} 
+                onRowAction={(key) => showActualizarVenta(true, listaDetalles.find(item => item.id == key).producto) }
                 bottomContent={
                     <div className="flex w-full justify-center my-5">
                         <Pagination
@@ -770,18 +770,18 @@ export const TableFactura = ({ listaFacturas: listaDetalles, showActualizarVenta
                     wrapper: "min-h-[300px]",
                 }}
             >
-                <TableHeader>
-                    <TableColumn key={"nombre"}>Nombre</TableColumn>
-                    <TableColumn key={"cantidad"}>Cantida</TableColumn>
-                    <TableColumn key={"precio"}>Precio</TableColumn>
-                    <TableColumn key={"subTotal"}>SubTotal</TableColumn>
+                <TableHeader >
+                    <TableColumn className="text-lg" key={"nombre"}>Nombre</TableColumn>
+                    <TableColumn className="text-lg" key={"cantidad"}>Cantida</TableColumn>
+                    <TableColumn className="text-lg" key={"precio"}>Precio</TableColumn>
+                    <TableColumn className="text-lg" key={"subTotal"}>SubTotal</TableColumn>
                 </TableHeader>
-                <TableBody emptyContent={"No hay ventas"}
+                <TableBody emptyContent={"No hay ventas"} 
                     
                 >
                     {items.map((item) =>
                         <TableRow key={item.id} >
-                            {(columnKey) => <TableCell>{getKeyValue(item, columnKey)}</TableCell>}
+                            {(columnKey) => <TableCell className="text-lg" >{getKeyValue(item, columnKey)}</TableCell>}
                         </TableRow>
                     )}
                 </TableBody>
