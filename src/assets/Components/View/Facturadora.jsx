@@ -228,7 +228,7 @@ const TarjetaFactura = ({ handelOpenAlert, handelSetMensaje }) => {
 
   const EliminarVenta = (ProductoId) => {
     // Copia la lista de ventas actual
-    
+
     const nuevaListaVentas = [...listVentas];
 
     // Encuentra el índice del objeto de venta que deseas eliminar
@@ -590,7 +590,7 @@ export const TarjetaVenta = ({ AgregarVenta, ListaProductosVendidos }) => {
     setListaProductosBD(respuesta.datos.sort((a, b) => a.id - b.id))
   };
 
-  
+
 
   const FiltrarProductosVendidos = () => {
     if (ListaProductosVendidos.length !== 0) {
@@ -618,7 +618,7 @@ export const TarjetaVenta = ({ AgregarVenta, ListaProductosVendidos }) => {
     FiltrarProductosVendidos();
   }, [listaProductos]);
 
-  
+
 
   return (
     <div className="flex flex-col items-center  mx-20 bg-[#CCE6FF] w-[500px] rounded-md">
@@ -720,7 +720,7 @@ export const TarjetaActualizarVenta = ({
 
   const handelActualizarVenta = () => {
     if (cantidadVender > 0) {
-      ActualizarVenta(productActualizar, cantidadVender, cobro,false);
+      ActualizarVenta(productActualizar, cantidadVender, cobro, false);
     } else {
       setshowAlert(true);
       setMensaje({
@@ -810,8 +810,8 @@ export const TarjetaActualizarVenta = ({
           </button>
           <button
             className="bg-red-400 font-bold text-white hover:bg-red-700 w-[40%] h-[200%] rounded-lg mx-2"
-            onClick={() => 
-               EliminarVenta(productActualizar, null, null, true)}
+            onClick={() =>
+              EliminarVenta(productActualizar, null, null, true)}
           >
             ELIMINAR
           </button>
