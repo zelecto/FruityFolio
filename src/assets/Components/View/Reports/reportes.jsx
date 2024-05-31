@@ -570,7 +570,7 @@ const ViewReportOrder = () => {
 };
 
 
-function formatearFecha(fecha) {
+export function formatearFecha(fecha) {
     // Obtenemos los componentes de la fecha
     const year = fecha.getFullYear();
     // Los meses van de 0 a 11, así que sumamos 1 para obtener el mes correcto

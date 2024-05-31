@@ -2,19 +2,28 @@ import React, { useEffect, useState } from "react";
 import Header from "./Header";
 import { TarjetaActualizarVenta, TarjetaVenta } from "./Facturadora";
 import { ActualizarDetallesFactura, ActualizarFactura, EliminarDetalleFactura, EliminarFactura, consultarDetallesFactura, consultarFactura, guardarVentas } from "../Base/BdFactura";
-import { Button, Card, CardBody, CardFooter, CardHeader, Chip, DateRangePicker, Pagination, Spinner, Tooltip, getKeyValue } from "@nextui-org/react";
+import { Button, Card, CardBody, CardFooter, CardHeader, Chip, DateRangePicker, Pagination, Spinner, getKeyValue } from "@nextui-org/react";
 import { CalendarCheck, CircleDollarSignIcon } from "lucide-react";
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/react";
+import { parseDate, getLocalTimeZone, today } from "@internationalized/date";
+import { formatearFecha } from "./Reports/reportes";
+import { useDateFormatter } from "@react-aria/i18n";
 
 function GestorVentasView() {
     const usuario = JSON.parse(localStorage.getItem('user'));
     const [listaFacturas, setListaFacturas] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading,setLoading] = useState(false);
+    const [rangoFecha, setRangoFecha] = useState({
+        start: parseDate("2024-05-01"),
+        end: parseDate(formatearFecha(new Date())),
+    });
 
     const consultaFacturas = async () => {
         try {
             setLoading(true);
-            const respuesta = await consultarFactura(usuario.username);
+            const fechaInicio = `${rangoFecha.start.year}-${rangoFecha.start.month}-${rangoFecha.start.day}`;
+            const fechaFinal = `${rangoFecha.end.year}-${rangoFecha.end.month}-${rangoFecha.end.day}`;
+            const respuesta = await consultarFactura(usuario.username, fechaInicio, fechaFinal );
             setLoading(false);
 
             if (respuesta.datos) {
@@ -30,12 +39,13 @@ function GestorVentasView() {
 
     useEffect(() => {
         consultaFacturas();
-    }, []); // Ejecutar solo una vez al cargar el componente
+    }, []);// Ejecutar solo una vez al cargar el componente
 
 
     useEffect(() => {
+        consultaFacturas();
+    }, [rangoFecha]);// Ejecutar solo una vez al cargar el componente
 
-    }, [listaFacturas]);// Ejecutar solo una vez al cargar el componente
 
     const [factura, setFactura] = useState(null);
 
@@ -43,11 +53,9 @@ function GestorVentasView() {
         <div className="bg-[#F5F5F5] min-h-screen w-screen flex flex-col">
             <Header title="FruityFolio" />
 
-            {/*
-                //<ConsultarFactura listaFacturas={listaFacturas} consultarFactura={ConsultarFactura} />
-            */}
+            
             <div className="w-full min-h-full flex-grow flex">
-                <VistaPrueba listaFacturas={listaFacturas} isLoading={loading} setFactura={setFactura} />
+                <TablaFactura listaFacturas={listaFacturas} isLoading={loading} setFactura={setFactura} fechaConsulta={rangoFecha} setFechaConsulta={setRangoFecha} />
 
                 <div className="flex-grow min-h-full flex justify-center items-center">
                     {factura ? (
@@ -61,9 +69,6 @@ function GestorVentasView() {
 
     );
 }
-
-
-export default GestorVentasView;
 
 
 const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => {
@@ -245,8 +250,8 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
         <div className="w-full">
             {isLoading ? <Spinner size="lg" label="Cargando..." labelColor="primary" className="w-full"></Spinner> :
                 (
-                    <div className="flex-grow px-10 flex justify-center">
-                        <Card className="min-w-[600px] min-h-[700px] p-2">
+                    <div className="w-full flex-grow px-10 flex justify-center">
+                        <Card className="min-w-[600px] min-h-[700px] p-2 mx-5">
                             <CardHeader className="flex justify-between">
                                 <h2 className="text-2xl font-bold">
                                     Detalles Factura
@@ -261,17 +266,17 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
                             <CardBody>
                                 <div className="flex justify-between">
                                     {Object.entries(cliente).map(([key, value]) => (
-                                        <div key={key} className="flex items-center">
+                                        <div key={key} className="flex items-center mx-2">
                                             <strong>{key.charAt(0).toUpperCase() + key.slice(1)}:</strong>
                                             <p className="ml-2">{value}</p>
                                         </div>
                                     ))}
                                 </div>
 
-                                <TableFactura listaFacturas={ListaProductosVendidos}
+                                <TablaDetalles listaFacturas={ListaProductosVendidos}
                                     showActualizarVenta={handelShowActualizarVenta}
                                 >
-                                </TableFactura>
+                                </TablaDetalles>
                                 <div className="w-full flex justify-end p-2">
                                     <Chip color="success" className="text-xl text-white"
                                         endContent={<CircleDollarSignIcon></CircleDollarSignIcon>}
@@ -334,9 +339,7 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
 
                         )}
                         {showAgregarVenta && (
-                            <div className="">
                                 <TarjetaVenta AgregarVenta={AgregarVenta} ListaProductosVendidos={ListaProductosVendidos}></TarjetaVenta>
-                            </div>
                         )}
                     </div>
                     
@@ -351,8 +354,15 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
 };
 
 
-const VistaPrueba = ({ listaFacturas, isLoading, setFactura }) => {
-    console.log(listaFacturas);
+const TablaFactura = ({ listaFacturas, isLoading, setFactura, fechaConsulta = {
+    start: parseDate("2024-05-01"),end: parseDate(formatearFecha(new Date())),},
+    setFechaConsulta    
+}
+    ) => {
+    
+    const filtroFacturas=()=>{
+    }
+
     const listaGrilla = listaFacturas.map(factura => {
         return {
             id: factura.id,
@@ -360,7 +370,7 @@ const VistaPrueba = ({ listaFacturas, isLoading, setFactura }) => {
             cliente: factura.cliente.nombre,
             total: factura.preciototal
         }
-    })
+    });
 
     const [page, setPage] = React.useState(1);
     const rowsPerPage = 14;
@@ -374,16 +384,21 @@ const VistaPrueba = ({ listaFacturas, isLoading, setFactura }) => {
         return listaGrilla.slice(start, end);
     }, [page, listaGrilla],
     );
-
+    let formatter = useDateFormatter({ dateStyle: "long" });
     return (
         <div className="bg-white min-h-full mt-5">
             <h1 className="text-xl font-bold text-center w-full">Lista Facturas</h1>
 
-            <DateRangePicker size="md" variant="flat" color="primary"
-                className="p-10"
-            ></DateRangePicker>
+            <DateRangePicker size="md" variant="flat" color="primary"className="p-10"
+                label="Selecciona la fecha"
+                value={fechaConsulta}
+                onChange={setFechaConsulta}
+                maxValue={today(getLocalTimeZone())}
+            >
 
-            <Table color="primary" selectionMode="single" selectionBehavior={"toggle"} onRowAction={(key) => setFactura(listaFacturas.find(item => item.id == key))}
+            </DateRangePicker>
+
+            <Table aria-label="Tabla Facturas simple" color="primary" selectionMode="single" selectionBehavior={"toggle"} onRowAction={(key) => setFactura(listaFacturas.find(item => item.id == key))}
 
                 bottomContent={
                     <div className="flex w-full justify-center">
@@ -399,7 +414,7 @@ const VistaPrueba = ({ listaFacturas, isLoading, setFactura }) => {
                     </div>
                 }
                 classNames={{
-                    wrapper: "min-h-[222px]",
+                    wrapper: "min-h-[222px] min-w-[400px]",
                 }}
             >
                 <TableHeader>
@@ -410,12 +425,18 @@ const VistaPrueba = ({ listaFacturas, isLoading, setFactura }) => {
                 <TableBody emptyContent={"No hay factura en esta fecha"}
                     isLoading={isLoading}
                     loadingContent={<Spinner color="primary" labelColor="primary" label="Cargando..." />}
+
                 >
-                    {items.map((item) =>
-                        <TableRow key={item.id} >
-                            {(columnKey) => <TableCell>{getKeyValue(item, columnKey)}</TableCell>}
-                        </TableRow>
+                    {isLoading ? null: (
+                        
+                            items.map((item) =>
+                                <TableRow key={item.id} >
+                                    {(columnKey) => <TableCell>{getKeyValue(item, columnKey)}</TableCell>}
+                                </TableRow>
+                            )
+                        
                     )}
+                    
                 </TableBody>
             </Table>
 
@@ -426,8 +447,7 @@ const VistaPrueba = ({ listaFacturas, isLoading, setFactura }) => {
     );
 }
 
-
-export const TableFactura = ({ listaFacturas: listaDetalles, showActualizarVenta }) => {
+export const TablaDetalles = ({ listaFacturas: listaDetalles, showActualizarVenta }) => {
     console.log(listaDetalles,"Table");
     const listaGrilla = listaDetalles.map(detalles => {
         return {
@@ -456,7 +476,7 @@ export const TableFactura = ({ listaFacturas: listaDetalles, showActualizarVenta
         <div className="bg-white mt-5">
             
 
-            <Table  color="primary" selectionMode="single" selectionBehavior={"toggle"} 
+            <Table aria-label="Tabla detalles factura"  color="primary" selectionMode="single" selectionBehavior={"toggle"} 
                 onRowAction={(key) => showActualizarVenta(true, listaDetalles.find(item => item.id == key).producto) }
                 bottomContent={
                     <div className="flex w-full justify-center my-5">
@@ -499,4 +519,4 @@ export const TableFactura = ({ listaFacturas: listaDetalles, showActualizarVenta
     );
 }
 
-
+export default GestorVentasView;

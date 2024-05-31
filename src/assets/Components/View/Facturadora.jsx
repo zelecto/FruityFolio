@@ -12,7 +12,7 @@ import { ConsultarProductos } from "../Base/BdProductos";
 import { GuardarFactura } from "../Base/BdFactura";
 import { Button, Card, CardBody, CardFooter, CardHeader, Chip } from "@nextui-org/react";
 
-import { TableFactura } from "./GestorVentas";
+import { TablaDetalles } from "./GestorVentas";
 
 const CrearFacturaForm = () => {
   const [mensaje, setMensaje] = useState({
@@ -377,7 +377,7 @@ const TarjetaFactura = ({ handelOpenAlert, handelSetMensaje }) => {
             Fecha {handelFechaActual()}
           </h1>
 
-          <TableFactura listaFacturas={listVentas} showActualizarVenta={handelshowActualizarProducto}></TableFactura>
+          <TablaDetalles listaFacturas={listVentas} showActualizarVenta={handelshowActualizarProducto}></TablaDetalles>
 
         </CardBody>
 
@@ -588,7 +588,7 @@ export const TarjetaVenta = ({ AgregarVenta, ListaProductosVendidos }) => {
   }, [ListaProductosVendidos]);
 
   return (
-    <Card className="w-1/4 flex flex-col min-h-[700px]  max-h-[700px] ">
+    <Card className=" flex flex-col min-h-[700px]  max-h-[700px] ">
       <CardHeader>
         <h2 className="text-black text-2xl font-bold text-center w-full">
           Selecione un producto a vender

@@ -60,10 +60,13 @@ export async function guardarVentas(ventas) {
     }
 }
 
-export async function consultarFactura(usuario) {
-
+export async function consultarFactura(usuario,fechaInicio,fechaFinal) {
+    const params = new URLSearchParams({
+        fechaInicio,
+        fechaFinal,
+    }).toString();
     try {
-        const respuesta = await axios.get(`https://localhost:7208/api/Facturas/ByUser/${usuario}`);
+        const respuesta = await axios.get(`https://localhost:7208/api/Facturas/ByUser/${usuario}?${params}`);
 
         return { datos: respuesta.data, error: null }; // Retornar un objeto con las variables
     } catch (error) {
