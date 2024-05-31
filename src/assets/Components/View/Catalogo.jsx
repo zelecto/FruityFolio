@@ -7,6 +7,7 @@ import iconoCerrado from "../Icons/IconoCerrar.png";
 import { BorrarProducto, ConsultarProductos } from "../Base/BdProductos";
 import { MensajeAlert } from "../Tools/Validadores";
 import LoadingScreen from "./LoadingScreen";
+import { Button, Card, CardBody, CardFooter, CardHeader, Spinner } from "@nextui-org/react";
 
 function ConsultaCatalogo() {
 
@@ -83,16 +84,11 @@ function ConsultaCatalogo() {
 
 
   return (
-    <div className="bg-[#F5F5F5] h-screen">
+    <div className="bg-[#F5F5F5] h-screen w-screen flex flex-col">
       <Header
-        link="/paginaPrincipal"
-        logoRightSrc="ruta-a-la-imagen-derecha.jpg"
-        logoAlt="FruityFolio logo"
         title="FruityFolio"
-        subtitle="Gestiona tu negocio de frutas con facilidad."
       />
 
-      {loading && <LoadingScreen message="Cargando productos..." />}
       {showActualizar && (
 
         <div className="fixed top-6 left-0 w-full h-full flex flex-col justify-center items-center bg-gray-900 bg-opacity-50 z-50">
@@ -127,63 +123,83 @@ function ConsultaCatalogo() {
           </div>
         </div>
       )}
+      {loading ? <Spinner label="Cargando" color="primary" size="lg" className="flex-grow flex items-center justify-center"></Spinner>
       
-      <div className="flex justify-center my-10 px-8">
-        <div className="mx-20">
-          <div className="flex flex-col justify-center items-center  bg-[#CCE6FF] rounded-lg  shadow-md ">
-            <div className="w-full text-3xl text-gold text-black font-bold  text-center rounded-t-lg p-4">
-              <h1>Lista de Productos</h1>
-            </div>
-            {listaProductos.length == 0 && NoProductsFound()}
-            {listaProductos.length > 0 && (<div>
-              <ProductList
-                products={listaProductos}
-                onSelectProduct={handleSelectProduct}
-              />
-            </div>)}
+      :(
+        <div className="flex-grow flex justify-center items-center">
+          <Card className="w-1/4 h-3/4">
+            <CardHeader>
+              <h1 className="w-full text-center font-bold text-xl">Lista de Productos</h1>
+            </CardHeader>
+            <CardBody className="w-full overflow-hidden">
+              <div className="flex justify-center items-center">
+                {listaProductos.length == 0 && NoProductsFound()}
 
-          </div>
+                {listaProductos.length > 0 && (
+                  <div>
+                    <ProductList
+                      products={listaProductos}
+                      onSelectProduct={handleSelectProduct}
+                    />
+                  </div>
+                )}
+              </div>
+
+            </CardBody>
+            <CardFooter></CardFooter>
+          </Card>
+            {selectedProduct&& 
+              <Card className="w-1/4 h-3/4 mx-5">
+                <CardHeader>
+                  <h2 className="text-xl font-bold w-full text-center" >
+                    Detalles del Producto
+                  </h2>
+                </CardHeader>
+                <CardBody>
+                  <div className="flex  justify-center  mx-w-[80%]">
+                    <ProductDetail product={selectedProduct} />
+                  </div>
+                </CardBody>
+                <CardFooter>
+                  <div className="flex justify-between my-5 w-full h-1/5">
+                    <Button
+
+                      className="text-lg font-bold px-5"
+                      onClick={() => handleSelectProduct(null)}
+                    >
+                      CERRAR
+                    </Button>
+
+                    <Button
+                      color="primary"
+                      className="text-lg font-bold px-5"
+                      onClick={handelOpenShowActualizar}
+                    >
+                      EDITAR
+                    </Button>
+
+                    <Button
+                      color="danger"
+                      className="text-lg font-bold px-5"
+                      onClick={() => EliminarProducto()}
+                    >
+                      Eliminar
+                    </Button>
+                  </div>
+                </CardFooter>
+              </Card>
+            }
+          
         </div>
-
-        {selectedProduct && (
-          <div className="flex flex-col  items-center bg-[#CCE6FF]  rounded-lg p-6 shadow-md max-w-[30%] max-h-[60%]">
-            <h2 className="text-3xl font-bold mb-4 p-4">
-              Detalles del Producto
-            </h2>
-
-            <div className="flex  justify-center bg-gray-100  rounded-lg shadow-md mx-w-[80%]">
-              <ProductDetail product={selectedProduct} />
-            </div>
-            <div className="flex justify-between my-5 w-[90%]">
-              <button
-                className="bg-slate-500 font-bold text-white hover:bg-slate-700 w-[40%] h-[200%] rounded-lg mx-2"
-                onClick={() => handleSelectProduct(null)}
-              >
-                CERRAR
-              </button>
-
-              <button
-                className="bg-blue-400 font-bold text-white hover:bg-blue-700 w-[40%] h-[200%] rounded-lg mx-2"
-                onClick={handelOpenShowActualizar}
-              >
-                EDITAR
-              </button>
-
-              <button
-                className="bg-red-400 font-bold text-white hover:bg-red-700 w-[40%] h-[200%] rounded-lg mx-2"
-                onClick={() => EliminarProducto()}
-              >
-                Eliminar
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+      )}
+      
+      
     </div>
   );
 }
 
 export default ConsultaCatalogo;
+
 
 
 const NoProductsFound = () => {
