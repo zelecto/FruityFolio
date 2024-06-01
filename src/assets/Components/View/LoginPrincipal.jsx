@@ -38,13 +38,15 @@ export const LoginScreen = () => {
     }
 
     const onClickiniciarSecion = async () => {
-        const { datos, error } = await GetCuentaUsuario(username);
+        const { datos, error } = await GetCuentaUsuario(username,password);
         if (datos && password === datos.cuenta.password) {
+            localStorage.setItem('token', datos.token); 
             switch (datos.tipo) {
                 case "Usuario":
                     console.log("Entre");
                     window.location.href = '/paginaPrincipal';
                     localStorage.setItem('user', JSON.stringify(datos.cuenta));
+                    
                     setMensaje({});
                     break;
                 case "ClienteUsuario":

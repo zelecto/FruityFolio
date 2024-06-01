@@ -39,6 +39,10 @@ const Login = () => {
     if (datos&& password===datos.password) {
       window.location.href = '/paginaPrincipal';
       localStorage.setItem('user', JSON.stringify(datos));
+      console.log(datos);
+      
+      localStorage.setItem('token', JSON.stringify(datos.token));
+      
       handelSetMensaje(null);
       
     }else{

@@ -1,6 +1,21 @@
 import axios from 'axios';
 const url = "https://localhost:7208";
 
+// Función para obtener el token almacenado
+function getToken() {
+    return localStorage.getItem('token'); // Asegúrate de almacenar el token en el localStorage cuando inicias sesión
+}
+
+// Configurar el interceptor para incluir el token en cada solicitud
+axios.interceptors.request.use(config => {
+    const token = getToken();
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+}, error => {
+    return Promise.reject(error);
+});
 
 export async function getNumeroVentaProducto(fechaInicio, fechaFin, username) {
     try {
@@ -10,7 +25,7 @@ export async function getNumeroVentaProducto(fechaInicio, fechaFin, username) {
             username
         }).toString();
 
-        const respuesta = await axios.get(`https://localhost:7208/api/DetallesProductosVendidos/VentasPorProductoEnRangoFechas?${params}`);
+        const respuesta = await axios.get(`${url}/api/DetallesProductosVendidos/VentasPorProductoEnRangoFechas?${params}`);
         return { datos: respuesta.data, error: null };
     } catch (error) {
         return { datos: null, error: error.message };
@@ -25,7 +40,7 @@ export async function getIngresoFacturaDia(fechaInicio, fechaFin, username) {
             username
         }).toString();
 
-        const respuesta = await axios.get(`https://localhost:7208/api/Facturas/IngresosPorDia?${params}`);
+        const respuesta = await axios.get(`${url}/api/Facturas/IngresosPorDia?${params}`);
         return { datos: respuesta.data, error: null };
     } catch (error) {
         return { datos: null, error: error.message };
@@ -40,7 +55,7 @@ export async function getCantidadOrdenesMeses(fechaInicio, fechaFin, username) {
             username
         }).toString();
 
-        const respuesta = await axios.get(`https://localhost:7208/api/Pedidos/CantidadPorMes?${params}`);
+        const respuesta = await axios.get(`${url}/api/Pedidos/CantidadPorMes?${params}`);
         return { datos: respuesta.data, error: null };
     } catch (error) {
         return { datos: null, error: error.message };

@@ -1,8 +1,23 @@
 import axios from 'axios';
 const url = "https://localhost:7208";
 
-export async function GuardarFactura(factura) {
+// Función para obtener el token almacenado
+function getToken() {
+    return localStorage.getItem('token'); // Asegúrate de almacenar el token en el localStorage o en alguna otra parte cuando inicias sesión
+}
 
+// Configurar el interceptor para incluir el token en cada solicitud
+axios.interceptors.request.use(config => {
+    const token = getToken();
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+}, error => {
+    return Promise.reject(error);
+});
+
+export async function GuardarFactura(factura) {
     try {
         const facturaGuardar = {
             fecha: factura.fechaActual,
@@ -40,90 +55,77 @@ export async function GuardarFactura(factura) {
 }
 
 async function guardarFactura(factura) {
-
     try {
-        const respuesta = await axios.post(`https://localhost:7208/api/Facturas`,factura);
-        return { datos: respuesta.data, error: null }; // Retornar un objeto con las variables
+        const respuesta = await axios.post(`${url}/api/Facturas`, factura);
+        return { datos: respuesta.data, error: null };
     } catch (error) {
-        return { datos: null, error: error }; // Retornar un objeto con las variables
+        return { datos: null, error: error };
     }
 }
 
 export async function guardarVentas(ventas) {
-
     try {
-        const respuesta = await axios.post(`https://localhost:7208/api/DetallesProductosVendidos`, ventas);
-
-        return { datos: respuesta.data, error: null }; // Retornar un objeto con las variables
+        const respuesta = await axios.post(`${url}/api/DetallesProductosVendidos`, ventas);
+        return { datos: respuesta.data, error: null };
     } catch (error) {
-        return { datos: null, error: error }; // Retornar un objeto con las variables
+        return { datos: null, error: error };
     }
 }
 
-export async function consultarFactura(usuario,fechaInicio,fechaFinal) {
+export async function consultarFactura(usuario, fechaInicio, fechaFinal) {
     const params = new URLSearchParams({
         fechaInicio,
         fechaFinal,
     }).toString();
     try {
-        const respuesta = await axios.get(`https://localhost:7208/api/Facturas/ByUser/${usuario}?${params}`);
-
-        return { datos: respuesta.data, error: null }; // Retornar un objeto con las variables
+        const respuesta = await axios.get(`${url}/api/Facturas/ByUser/${usuario}?${params}`);
+        return { datos: respuesta.data, error: null };
     } catch (error) {
-        return { datos: null, error: error }; // Retornar un objeto con las variables
+        return { datos: null, error: error };
     }
 }
+
 export async function consultarDetallesFactura(facturaID) {
-
     try {
-        const respuesta = await axios.get(`https://localhost:7208/api/DetallesProductosVendidos/ByFactura/${facturaID}`);
-
-        return { datos: respuesta.data, error: null }; // Retornar un objeto con las variables
+        const respuesta = await axios.get(`${url}/api/DetallesProductosVendidos/ByFactura/${facturaID}`);
+        return { datos: respuesta.data, error: null };
     } catch (error) {
-        return { datos: null, error: error }; // Retornar un objeto con las variables
+        return { datos: null, error: error };
     }
 }
 
 export async function ActualizarDetallesFactura(detalle) {
-
     try {
-        const respuesta = await axios.put(`https://localhost:7208/api/DetallesProductosVendidos/${detalle.id}`,detalle);
-
-        return { datos: respuesta.data, error: null }; // Retornar un objeto con las variables
+        const respuesta = await axios.put(`${url}/api/DetallesProductosVendidos/${detalle.id}`, detalle);
+        return { datos: respuesta.data, error: null };
     } catch (error) {
-        return { datos: null, error: error }; // Retornar un objeto con las variables
+        return { datos: null, error: error };
     }
 }
+
 export async function ActualizarFactura(factura) {
-
     try {
-        const respuesta = await axios.put(`https://localhost:7208/api/Facturas/${factura.id}`, factura);
-
-        return { datos: respuesta.data, error: null }; // Retornar un objeto con las variables
+        const respuesta = await axios.put(`${url}/api/Facturas/${factura.id}`, factura);
+        return { datos: respuesta.data, error: null };
     } catch (error) {
-        return { datos: null, error: error }; // Retornar un objeto con las variables
+        return { datos: null, error: error };
     }
 }
+
 export async function EliminarDetalleFactura(id) {
-
     try {
-        const respuesta = await axios.delete(`https://localhost:7208/api/DetallesProductosVendidos/${id}`);
-
-        return { datos: respuesta.data, error: null }; // Retornar un objeto con las variables
+        const respuesta = await axios.delete(`${url}/api/DetallesProductosVendidos/${id}`);
+        return { datos: respuesta.data, error: null };
     } catch (error) {
-        return { datos: null, error: error }; // Retornar un objeto con las variables
+        return { datos: null, error: error };
     }
 }
 
 export async function EliminarFactura(id) {
-
     try {
-        const respuesta = await axios.delete(`https://localhost:7208/api/Facturas/${id}`);
-
-        return { datos: respuesta.data, error: null }; // Retornar un objeto con las variables
+        const respuesta = await axios.delete(`${url}/api/Facturas/${id}`);
+        return { datos: respuesta.data, error: null };
     } catch (error) {
-        return { datos: null, error: error }; // Retornar un objeto con las variables
+        return { datos: null, error: error };
     }
 }
-
-
