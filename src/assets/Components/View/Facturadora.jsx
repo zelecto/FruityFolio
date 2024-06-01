@@ -331,7 +331,7 @@ const TarjetaFactura = ({ handelOpenAlert, handelSetMensaje }) => {
 
     <div className="w-full flex justify-center ">
 
-      <Card className="mx-10">
+      <Card className="w-1/3">
         <CardHeader>
           <div className="flex justify-between mt-4">
             <div className="w-full sm:w-1/3 mb-4 sm:mb-0">
@@ -399,11 +399,15 @@ const TarjetaFactura = ({ handelOpenAlert, handelSetMensaje }) => {
       </Card>
 
       {showAgregarProducto && (
+        <div
+          className="w-[30%] mx-5"
+        >
+          <TarjetaVenta
+            AgregarVenta={AgregarVenta}
+            ListaProductosVendidos={listVentas}
+          />
+        </div>
         
-        <TarjetaVenta
-          AgregarVenta={AgregarVenta}
-          ListaProductosVendidos={listVentas}
-        />
       )}
       {showActualizarProducto && (
         <div className="w-1/3">

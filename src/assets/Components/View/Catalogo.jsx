@@ -6,7 +6,6 @@ import { TarjetaCrearProducto } from "./CrearProducto";
 import iconoCerrado from "../Icons/IconoCerrar.png";
 import { BorrarProducto, ConsultarProductos } from "../Base/BdProductos";
 import { MensajeAlert } from "../Tools/Validadores";
-import LoadingScreen from "./LoadingScreen";
 import { Button, Card, CardBody, CardFooter, CardHeader, Spinner } from "@nextui-org/react";
 
 function ConsultaCatalogo() {
@@ -18,8 +17,6 @@ function ConsultaCatalogo() {
     setLoading(true);
     const respuesta = await ConsultarProductos(usuario.username);
     setLoading(false);
-    // Imprimir el estatus error
-    // console.log(respuesta.error.response.status);
     if (respuesta.datos) {
       setListaProductos(respuesta.datos.sort((a, b) => a.id - b.id));
     } else {
@@ -164,10 +161,10 @@ function ConsultaCatalogo() {
                   <div className="flex justify-between my-5 w-full h-1/5">
                     <Button
 
-                      className="text-lg font-bold px-5"
+                      className="text-lg font-semibold px-5"
                       onClick={() => handleSelectProduct(null)}
                     >
-                      CERRAR
+                      Cerrar
                     </Button>
 
                     <Button
@@ -175,7 +172,7 @@ function ConsultaCatalogo() {
                       className="text-lg font-bold px-5"
                       onClick={handelOpenShowActualizar}
                     >
-                      EDITAR
+                      Editar
                     </Button>
 
                     <Button

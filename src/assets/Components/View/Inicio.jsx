@@ -6,7 +6,6 @@ import { MensajeAlert } from "../Tools/Validadores";
 
 const Login = () => {
   const [showReguistrar, setShowReguistar] = useState(false);
-  PruebaBD();
   const handelShowReguistrar = (value) => {
     setShowReguistar(value);
   }
@@ -161,23 +160,4 @@ const Login = () => {
   );
 };
 
-import axios from 'axios';
-const PruebaBD=async ()=>{
-  try {
-    const nuevoUsuario = {
-      cedula: "147",
-      nombre: " ",
-      correo: "ascc",
-      username: "asd",
-      password: "asdds"
-    };
-    const respuesta = await axios.post('https://localhost:7208/api/Usuarios', nuevoUsuario);
-    console.log(respuesta)
-    return { datos: respuesta.data, error: null };
-  } catch (error) {
-    console.log(error)
-    return { datos: null, error: error };
-
-  }
-}
 export default Login;

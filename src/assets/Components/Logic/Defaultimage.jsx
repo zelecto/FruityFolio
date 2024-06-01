@@ -22,7 +22,7 @@ export function ImagenDefecto() {
       alt: "Kiwi",
     },
     {
-      nombre: "LimonAmarillo",
+      nombre: "Limon Amarillo",
       src: LimonAmarillo,
       alt: "Limon Amarillo",
     },
@@ -102,7 +102,7 @@ export function ImagenDefecto() {
       alt: "Borojo",
     },
     {
-      nombre: "Cherry512",
+      nombre: "Cherry",
       src: Cherry512,
       alt: "Cherry512",
     },
