@@ -1,8 +1,11 @@
 import React, { useState } from "react";
-import RegistroUsuarioForm from "./ReguistrarUsuario";
+
+
 import { ConsultarUsuario } from "../Base/BdUsuarios";
-import { InputField } from './Facturadora';
+
 import { MensajeAlert } from "../Tools/Validadores";
+import RegistroUsuarioForm from "./admin/user/ReguistrarUsuario";
+import { InputField } from "./admin/producto/CrearProducto";
 
 const Login = () => {
   const [showReguistrar, setShowReguistar] = useState(false);

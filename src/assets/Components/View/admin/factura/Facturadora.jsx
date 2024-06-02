@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from "react";
-import validarNombre, {
-  ErrorMensaje,
-  MensajeAlert,
-} from "../Tools/Validadores";
-import Header from "./Header";
-import {
-  ProductDetail,
-  ProductList,
-} from "../Logic/ConsultarProductos";
-import { ConsultarProductos } from "../Base/BdProductos";
-import { GuardarFactura } from "../Base/BdFactura";
-import { Button, Card, CardBody, CardFooter, CardHeader, Chip } from "@nextui-org/react";
+import validarNombre, {ErrorMensaje,MensajeAlert,} from "../../../Tools/Validadores";
+import Header from "../../Header";
+import {ProductDetail,ProductList,} from "../../../Logic/ConsultarProductos";
+import { ConsultarProductos } from "../../../Base/BdProductos";
+import { GuardarFactura } from "../../../Base/BdFactura";
+import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Input } from "@nextui-org/react";
 
-import { TablaDetalles } from "./GestorVentas";
+import { TablaDetalles } from "../tienda/GestorVentas";
+import { Fingerprint, Mail, Users } from "lucide-react";
 
 const CrearFacturaForm = () => {
   const [mensaje, setMensaje] = useState({
@@ -77,13 +72,14 @@ const TarjetaFactura = ({ handelOpenAlert, handelSetMensaje }) => {
   const handleCedula = (newValue) => {
     if (newValue >= 0 && newValue <= 9999999999) {
       setCedula(newValue);
+      console.log(newValue)
       setErrorMessageCedula(null);
     } else if (newValue >= 9999999999) {
-      setCedula(newValue);
       setErrorMessageCedula("No se admiten mas de 10 nuemros");
     } else if (/^[a-zA-Z]+$/.test(newValue)) {
-
       setErrorMessageCedula("No se admiten letras");
+    }else if(newValue==0 && cedula>0){
+      setCedula(0);
     }
   };
 
@@ -276,7 +272,7 @@ const TarjetaFactura = ({ handelOpenAlert, handelSetMensaje }) => {
 
   const guardarFactura = async () => {
     const usuario = JSON.parse(localStorage.getItem('user'));
-    if (errorMessageCedula == null && errorMessageCorreo == null && errorMessageNombre == null && cedula != "" && correo != "" && nombre != "" && listVentas != null) {
+    if (errorMessageCedula == null && errorMessageCorreo == null && errorMessageNombre == null && cedula != "" && correo != "" && nombre != "" && listVentas.length != 0) {
       const cliente = {
         cedula: cedula,
         nombre: nombre,
@@ -332,36 +328,37 @@ const TarjetaFactura = ({ handelOpenAlert, handelSetMensaje }) => {
     <div className="w-full flex justify-center ">
 
       <Card className="w-1/3">
-        <CardHeader>
+        <CardHeader className="felx flex-col">
+          <h1 className="w-full flex justify-center font-bold text-xl mb-0">Datos cliente</h1>
           <div className="flex justify-between mt-4">
-            <div className="w-full sm:w-1/3 mb-4 sm:mb-0">
+            <div className="mx-2">
               <InputField
-                label="Cedula del cliente"
+                label="Cedula"
                 id="cedula"
                 type="text"
-                placeholder="Cedula del cliente"
+                startContent={<Fingerprint color={errorMessageCedula ? "#F31260" : "#338EF7"}></Fingerprint>}
                 value={cedula}
                 onChange={(e) => handleCedula(e.target.value)}
                 errorMessage={errorMessageCedula}
               />
             </div>
-            <div className="w-full sm:w-1/3 mb-4 sm:mb-0">
+            <div className="mx-2">
               <InputField
-                label="Nombre del cliente"
+                label="Nombre"
                 id="nombre"
                 type="text"
-                placeholder="Nombre del cliente"
+                startContent={<Users color={errorMessageNombre ? "#F31260" : "#338EF7"}></Users>}
                 value={nombre}
                 onChange={(e) => handleNombre(e.target.value)}
                 errorMessage={errorMessageNombre}
               />
             </div>
-            <div className="w-full sm:w-1/3">
+            <div className="mx-2">
               <InputField
                 label="Correo"
                 id="Correo"
                 type="email"
-                placeholder="Correo"
+                startContent={<Mail color={errorMessageCorreo ? "#F31260" : "#338EF7"}></Mail>}
                 value={correo}
                 onChange={(e) => handleCorreo(e.target.value)}
                 errorMessage={errorMessageCorreo}
@@ -435,25 +432,27 @@ export const InputField = ({
   onChange,
   errorMessage,
   onBlur,
+  startContent
 }) => {
   return (
-    <div className="mx-2">
-      <label htmlFor={id} className="block text-black text-sm font-bold mb-2">
-        {label}
-      </label>
-      <div>
-        <input
-          id={id}
-          type={type}
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-          onBlur={onBlur}
-          className="shadow appearance-none border rounded w-full h-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline hover:bg-gray-200"
-        />
-        {errorMessage && ErrorMensaje(errorMessage, "w-full")}
-      </div>
-    </div>
+    <Input
+    id={id}
+    label={label} 
+    labelPlacement="outside"
+    placeholder={placeholder}
+    startContent={startContent}
+    type={type}
+    variant="bordered"
+    color="primary"
+    value={value}
+    onChange={onChange}
+    onBlur={onBlur}
+    isInvalid={errorMessage ? true : false}
+    errorMessage={errorMessage}
+
+    >  
+    
+    </Input>
   );
 };
 
@@ -662,8 +661,6 @@ export const TarjetaVenta = ({ AgregarVenta, ListaProductosVendidos }) => {
 
   );
 };
-
-
 
 export const TarjetaActualizarVenta = ({
   productActualizar,

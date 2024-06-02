@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import Header from './Header';
-import { ActualizarEstadoYPrecioEnvio, EliminarPedido, getPedidos } from '../Base/BdPedido';
-import { consultarDetallesFactura } from '../Base/BdFactura';
-import { BuscarImagenDefault } from '../Logic/Defaultimage';
-import IconoTienda from "../Icons/IconoTienda.png";
-import IconoRepartidor from "../Icons/IconoRepartidor.png";
-import LoadingModerno from "../Photo/loadinModerno.gif";
-import fondo from "../Photo/fondo.png";
-import SignoPregunta from "../Photo/SignoPregunta.png";
-import { GetTiendaVirtualUsernameDetail } from '../Base/BdtiendaVirtual';
+import Header from '../../Header';
+import { ActualizarEstadoYPrecioEnvio, EliminarPedido, getPedidos } from '../../../Base/BdPedido';
+import { consultarDetallesFactura } from '../../../Base/BdFactura';
+import { BuscarImagenDefault } from '../../../Logic/Defaultimage';
+import IconoTienda from "../../../Icons/IconoTienda.png";
+import IconoRepartidor from "../../../Icons/IconoRepartidor.png";
+import LoadingModerno from "../../../Photo/loadinModerno.gif";
+import fondo from "../../../Photo/fondo.png";
+import SignoPregunta from "../../../Photo/SignoPregunta.png";
+import { GetTiendaVirtualUsernameDetail } from '../../../Base/BdtiendaVirtual';
 import TiendaFormulario from './formularioTienda';
 import { Select, SelectSection, SelectItem } from "@nextui-org/select";
 
-import { SkeletonPedidosSection, SkeletonTiendaInfo } from './Loading/Skeleton';
+import { SkeletonPedidosSection, SkeletonTiendaInfo } from '../../Loading/Skeleton';
 import { BaggageClaim, Ban, CarFront, CircleDollarSignIcon, Eraser, Loader, PackageCheck, Trash2 } from 'lucide-react';
 import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Input, Spacer, Tooltip } from '@nextui-org/react';
 

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { InputField } from './Facturadora.jsx';
-import validarNombre, { MensajeAlert } from '../Tools/Validadores.jsx';
-import { GuardarUsuario } from '../Base/BdUsuarios.jsx';
-import { GetCiudades } from '../Base/bdCiudades.jsx';
-import { GuardarCliente } from '../Base/BdUsuarios copy.jsx';
+import { InputField } from '../factura/Facturadora.jsx';
+import validarNombre, { MensajeAlert } from '../../../Tools/Validadores.jsx';
+import { GuardarUsuario } from '../../../Base/BdUsuarios.jsx';
+import { GetCiudades } from '../../../Base/bdCiudades.jsx';
+import { GuardarCliente } from '../../../Base/BdUsuarios copy.jsx';
 
 const RegistroClienteForm = ({ cerrar }) => {
 

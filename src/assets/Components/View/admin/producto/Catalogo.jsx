@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { ProductList } from "../Logic/ConsultarProductos";
-import { ProductDetail } from "../Logic/ConsultarProductos";
-import Header from "./Header";
+import { ProductList } from "../../../Logic/ConsultarProductos";
+import { ProductDetail } from "../../../Logic/ConsultarProductos";
+import Header from "../../Header";
 import { TarjetaCrearProducto } from "./CrearProducto";
-import iconoCerrado from "../Icons/IconoCerrar.png";
-import { BorrarProducto, ConsultarProductos } from "../Base/BdProductos";
-import { MensajeAlert } from "../Tools/Validadores";
+import iconoCerrado from "../../../Icons/IconoCerrar.png";
+import { BorrarProducto, ConsultarProductos } from "../../../Base/BdProductos";
+import { MensajeAlert } from "../../../Tools/Validadores";
 import { Button, Card, CardBody, CardFooter, CardHeader, Spinner } from "@nextui-org/react";
 
 function ConsultaCatalogo() {

@@ -1,14 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Header from "./Header";
+import Header from "../../Header";
 
 //Iconos a usar
-import iconoInventario from "../Icons/iconoInventario.png";
-import iconoFactura from "../Icons/iconoFactura.png";
-import iconoConsulta from "../Icons/IconoConsulta.png";
-import iconoProducto from "../Icons/iconoProducto.png";
-import IconoTienda from "../Icons/IconoTienda.png";
-import IconoGrafica from "../Icons/IconoGrafica.png";
+import iconoInventario from "../../../Icons/iconoInventario.png";
+import iconoFactura from "../../../Icons/iconoFactura.png";
+import iconoConsulta from "../../../Icons/IconoConsulta.png";
+import iconoProducto from "../../../Icons/iconoProducto.png";
+import IconoTienda from "../../../Icons/IconoTienda.png";
+import IconoGrafica from "../../../Icons/IconoGrafica.png";
 import { Button, Image } from "@nextui-org/react";
 
 

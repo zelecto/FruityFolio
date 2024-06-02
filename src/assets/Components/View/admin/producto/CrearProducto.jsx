@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import validarNombre from "../Tools/Validadores";
-import { ErrorMensaje, MensajeAlert } from "../Tools/Validadores";
-import Header from "./Header";
-import { BuscarImagenNombre, ImagenDefecto } from "../Logic/Defaultimage";
+import validarNombre from "../../../Tools/Validadores";
+import { ErrorMensaje, MensajeAlert } from "../../../Tools/Validadores";
+import Header from "../../Header";
+import { BuscarImagenNombre, ImagenDefecto } from "../../../Logic/Defaultimage";
 
 
 const CrearProductoForm = () => {
@@ -398,8 +398,8 @@ export const InputField = ({
   );
 };
 
-import iconoGaleria from "../Icons/IconoGaleria.png";
-import { ActualizarProductos, GuardarProducto } from "../Base/BdProductos";
+import iconoGaleria from "../../../Icons/IconoGaleria.png";
+import { ActualizarProductos, GuardarProducto } from "../../../Base/BdProductos";
 import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Image } from "@nextui-org/react";
 const Defaultimage = ImagenDefecto();
 

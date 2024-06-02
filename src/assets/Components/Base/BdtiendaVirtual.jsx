@@ -18,6 +18,8 @@ axios.interceptors.request.use(config => {
 });
 
 export async function GetTiendaVirtualUsernameDetail(username, fecha, estado) {
+    
+
     try {
         const respuesta = await axios.get(`${url}/api/TiendaVirtuals/by-username/${username}/pedidos?fecha=${fecha}&estado=${estado}`);
 

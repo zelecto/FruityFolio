@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
-import Header from "./Header";
-import { TarjetaActualizarVenta, TarjetaVenta } from "./Facturadora";
-import { ActualizarDetallesFactura, ActualizarFactura, EliminarDetalleFactura, EliminarFactura, consultarDetallesFactura, consultarFactura, guardarVentas } from "../Base/BdFactura";
+import Header from "../../Header";
+
+import { ActualizarDetallesFactura, ActualizarFactura, EliminarDetalleFactura, EliminarFactura, consultarDetallesFactura, consultarFactura,  guardarVentas } from "../../../Base/BdFactura";
+
 import { Button, Card, CardBody, CardFooter, CardHeader, Chip, DateRangePicker, Pagination, Spinner, getKeyValue } from "@nextui-org/react";
 import { CalendarCheck, CircleDollarSignIcon } from "lucide-react";
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/react";
 import { parseDate, getLocalTimeZone, today } from "@internationalized/date";
-import { formatearFecha } from "./Reports/reportes";
+import { formatearFecha } from "../../Reports/reportes";
 import { useDateFormatter } from "@react-aria/i18n";
+import { TarjetaActualizarVenta, TarjetaVenta } from "../factura/Facturadora";
 
 function GestorVentasView() {
     const usuario = JSON.parse(localStorage.getItem('user'));
@@ -448,7 +450,6 @@ const TablaFactura = ({ listaFacturas, isLoading, setFactura, fechaConsulta = {
 }
 
 export const TablaDetalles = ({ listaFacturas: listaDetalles, showActualizarVenta }) => {
-    console.log(listaDetalles,"Table");
     const listaGrilla = listaDetalles.map(detalles => {
         return {
             id: detalles.id,

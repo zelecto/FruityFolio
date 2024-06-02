@@ -1,11 +1,11 @@
-import { Divider, Listbox, ListboxItem, ListboxSection } from "@nextui-org/react";
+import { Divider, Listbox, ListboxItem } from "@nextui-org/react";
 import HeaderClient from "./HederClient";
-import { BaggageClaim, CircleCheck, PackageCheckIcon, TimerIcon } from "lucide-react";
-import { PedidosSection } from "../GestionPedido";
+import { BaggageClaim, PackageCheckIcon, TimerIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { getPedidosClient } from "../../Base/BdPedido";
 import SkeletonPedidosSection from "../Loading/Skeleton";
 import { consultarDetallesFactura } from "../../Base/BdFactura";
+import { PedidosSection } from "../admin/tienda/GestionPedido";
 
 
 export const CarritoViewClient=()=>{
@@ -20,7 +20,7 @@ export const CarritoViewClient=()=>{
     const handelIsLoading = (estado) => {
         setIsLoading(estado);
     }
-    const [selectedKeys, setSelectedKeys] = React.useState(new Set(["text"]));
+    const [selectedKeys, setSelectedKeys] = React.useState(new Set(["Todos"]));
 
     const opcionMenu = React.useMemo(
         () => Array.from(selectedKeys).join(", "),
@@ -155,6 +155,7 @@ async function fetchOrders(estado) {
     if (estado === "Todos") {
         estado = null;
     }
+
     const respuesta = await getPedidosClient(usuario.username, estado);
     if (respuesta.data) {
         let listaPedidos = respuesta.data;

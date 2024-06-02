@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { BuscarImagenDefault } from "./Defaultimage";
-import { InputField } from "../View/CrearProducto";
+import { InputField } from "../View/admin/producto/CrearProducto";
 import { Card, CardBody, CardFooter, CardHeader, Chip, Image, Tooltip } from "@nextui-org/react";
 import { CircleDollarSign } from "lucide-react";
 

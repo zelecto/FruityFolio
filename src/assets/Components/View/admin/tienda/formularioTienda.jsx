@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { GuardarTienda } from '../Base/BdtiendaVirtual';
+import { GuardarTienda } from '../../../Base/BdtiendaVirtual';
 const ciudadesColombia = [
     "Bogotá",
     "Medellín",

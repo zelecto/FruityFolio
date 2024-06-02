@@ -1,17 +1,18 @@
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import Login from "./assets/Components/View/Inicio";
-import Principal from "./assets/Components/View/PaginaPrincipal";
-import { Routes, Route } from "react-router-dom";
-import  CrearProductoForm  from "./assets/Components/View/CrearProducto";
-import CrearFacturaForm from "./assets/Components/View/Facturadora";
-import ConsultaCatalogo from "./assets/Components/View/Catalogo";
-import GestorVentasView from "./assets/Components/View/GestorVentas";
-import PedidosView from "./assets/Components/View/Client/PedidosView";
-import TiendaPage from "./assets/Components/View/GestionPedido";
-import { LoginScreen } from "./assets/Components/View/LoginPrincipal";
-import { ViewPaginaPrincipalClient } from "./assets/Components/View/Client/paginaPrincipalCliente";
 import { ReportView } from "./assets/Components/View/Reports/reportes";
+import CrearFacturaForm from "./assets/Components/View/admin/factura/Facturadora";
+import CrearProductoForm from "./assets/Components/View/admin/producto/CrearProducto";
+import TiendaPage from "./assets/Components/View/admin/tienda/GestionPedido";
+import GestorVentasView from "./assets/Components/View/admin/tienda/GestorVentas";
+import LoginScreen from "./assets/Components/View/admin/user/LoginPrincipal";
+import Principal from "./assets/Components/View/admin/user/PaginaPrincipal";
+import ConsultaCatalogo from "./assets/Components/View/admin/producto/Catalogo";
+import PedidosView from "./assets/Components/View/Client/PedidosView";
+import { ViewPaginaPrincipalClient } from "./assets/Components/View/Client/paginaPrincipalCliente";
 import { CarritoViewClient } from "./assets/Components/View/Client/CarritoClient";
+
 
 
 function App() {

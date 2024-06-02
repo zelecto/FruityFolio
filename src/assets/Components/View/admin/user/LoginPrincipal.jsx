@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import { InputField } from "./CrearProducto";
-import { MensajeAlert } from "../Tools/Validadores";
+
+import { MensajeAlert } from "../../../Tools/Validadores";
 import RegistroUsuarioForm from "./ReguistrarUsuario";
-import Logo from "../Photo/logo.png";
-import Pregunta from "../Photo/PreguntaAdministracion.png";
-import Ordenes from "../Photo/ClienteCompra.jpg";
+import Logo from "../../../Photo/logo.png";
+import Pregunta from "../../../Photo/PreguntaAdministracion.png";
+import Ordenes from "../../../Photo/ClienteCompra.jpg";
 import { CircleChevronLeft } from 'lucide-react';
 import { CircleChevronRight } from 'lucide-react';
 import RegistroClienteForm from "./ReguistrarCliente";
-import { GetCuentaUsuario } from "../Base/BdInicioSecion";
+import { GetCuentaUsuario } from "../../../Base/BdInicioSecion";
+import { InputField } from "../producto/CrearProducto";
 export const LoginScreen = () => {
     const [username, setUsername] = useState("");
     const [mensajeErroUsername, setMensajeErroUsername] = useState("");
