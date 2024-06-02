@@ -86,7 +86,6 @@ const TarjetaFactura = ({ handelOpenAlert, handelSetMensaje }) => {
   const handleNombre = (newValue) => {
     setNombre(newValue);
     if (validarNombre(newValue) || newValue == "") {
-
       setErrorMessageNombre(null);
     } else {
       setErrorMessageNombre("No se admite numeros");
@@ -449,7 +448,6 @@ export const InputField = ({
     onBlur={onBlur}
     isInvalid={errorMessage ? true : false}
     errorMessage={errorMessage}
-
     >  
     
     </Input>

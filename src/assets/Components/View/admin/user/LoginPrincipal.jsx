@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import { MensajeAlert } from "../../../Tools/Validadores";
 import RegistroUsuarioForm from "./ReguistrarUsuario";
 import Logo from "../../../Photo/logo.png";
@@ -10,6 +9,11 @@ import { CircleChevronRight } from 'lucide-react';
 import RegistroClienteForm from "./ReguistrarCliente";
 import { GetCuentaUsuario } from "../../../Base/BdInicioSecion";
 import { InputField } from "../producto/CrearProducto";
+import { Button } from "@nextui-org/react";
+import * as Yup from 'yup';
+
+
+
 export const LoginScreen = () => {
     const [username, setUsername] = useState("");
     const [mensajeErroUsername, setMensajeErroUsername] = useState("");
@@ -130,8 +134,9 @@ export const LoginScreen = () => {
                     </div>
                 </div>
             )}
-
-            <div className="w-3/4 px-20 py-10">
+            
+            
+            <form className="w-3/4 px-20 py-10">
                 <div className="bg-white h-full py-10 px-20 rounded shadow-lg">
                     <div className="flex flex-col items-center">
                         <img src={Logo} alt="Logo Frutiolio" className="w-52 items-center flex" />
@@ -141,11 +146,12 @@ export const LoginScreen = () => {
                         <h3 className="font-bold text-gray-500 text-lg py-4">¡Bienvenido de nuevo! Por favor, ingrese sus datos.</h3>
                     </div>
 
-                    <div className="my-5 text-lg">
+                    <div className="my-10 text-xl">
                         <InputField
                             label="Nombre Usuario"
                             id="Nombre Usuario"
                             type="text"
+                            size={"lg"}
                             placeholder="Nombre Usuario"
                             value={username}
                             onChange={(e) => handelUserName(e.target.value)}
@@ -159,6 +165,7 @@ export const LoginScreen = () => {
                             label="Contraseña"
                             id="Contraseña"
                             type="password"
+                            size={"lg"}
                             placeholder="Contraseña"
                             value={password}
                             onChange={(e) => handelPasword(e.target.value)}
@@ -167,14 +174,15 @@ export const LoginScreen = () => {
                         />
                     </div>
 
-                    <button
-                        className="my-10 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    <Button
+                        color="primary"
+                        className="w-full"
                         onClick={onClickiniciarSecion}
                     >
                         Iniciar sesión
-                    </button>
+                    </Button>
                 </div>
-            </div>
+            </form>
 
             <div className="bg-gray-200 w-1/2 flex items-center justify-center backdrop-blur-sm">
                 <div className="p-20">

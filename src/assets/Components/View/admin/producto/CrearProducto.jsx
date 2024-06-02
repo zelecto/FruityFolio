@@ -218,54 +218,58 @@ export const TarjetaCrearProducto = ({
             </CardHeader>
 
             <CardBody className="w-full">
-              
+                <div className="my-2">
                 <InputField
                   label="Nombre del producto"
                   id="nombre"
                   type="text"
+                  startContent={<ShoppingBasketIcon color={mensaje ? "#F31260" : "#338EF7"}></ShoppingBasketIcon>}
                   placeholder="Nombre del producto"
                   value={nombre}
                   onChange={(e) => handleNombreChange(e.target.value)}
                   errorMessage={mensaje}
                 />
+                </div>
 
+                <div className="my-2">
                 <InputField
                   label="Stock"
                   id="stock"
                   type="number"
                   placeholder="Stock"
                   value={stock}
+                  startContent={<Package color={mensaje1 ? "#F31260" : "#338EF7"}></Package>}
                   onChange={(e) => handleStockChange(e.target.value)}
                   errorMessage={mensaje1}
                 />
-
+                </div>
+               
+              <div className="my-2">
                 <InputField
                   label="Precio"
                   id="precio"
                   type="number"
                   placeholder="Precio"
                   value={precio}
+                  startContent={<CircleDollarSignIcon color={mensaje2 ? "#F31260" : "#338EF7"}></CircleDollarSignIcon>}
                   onChange={(e) => handlePrecioChange(e.target.value)}
                   errorMessage={mensaje2}
                 />
-
-                <label
-                  htmlFor="descripcion"
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                >
-                  Descripción
-                </label>
-                <textarea
+              </div>
+            
+              <Textarea
                   id="descripcion"
+                  label="Descripción"
                   placeholder="Descripción"
+                  labelPlacement="outside"
+                  variant="bordered"
+                  color="primary"
                   value={descripcion}
+                  startContent={<FileTypeIcon color="#338EF7"></FileTypeIcon>}
                   onChange={handleDescripcionChange}
-                  className="resize-none shadow appearance-none border rounded w-full h-[100px] py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline hover:bg-gray-200"
+                  description={`${maxLength - descripcion.length} caracteres restantes`}
                 />
-                <p className="text-sm text-gray-500 mb-2">
-                  {maxLength - descripcion.length} caracteres restantes
-                </p>
-              
+                
             </CardBody>
 
             <CardFooter className="w-full justify-end">
@@ -296,71 +300,6 @@ export const TarjetaCrearProducto = ({
   );
 };
 
-const vista =()=>{
-  return (
-    <div>
-      <div className="mx-5 mb-4">
-        <InputField
-          label="Nombre del producto"
-          id="nombre"
-          type="text"
-          placeholder="Nombre del producto"
-          value={nombre}
-          onChange={(e) => handleNombreChange(e.target.value)}
-          errorMessage={mensaje}
-        />
-
-        <InputField
-          label="Stock"
-          id="stock"
-          type="number"
-          placeholder="Stock"
-          value={stock}
-          onChange={(e) => handleStockChange(e.target.value)}
-          errorMessage={mensaje1}
-        />
-
-        <InputField
-          label="Precio"
-          id="precio"
-          type="number"
-          placeholder="Precio"
-          value={precio}
-          onChange={(e) => handlePrecioChange(e.target.value)}
-          errorMessage={mensaje2}
-        />
-
-        <label
-          htmlFor="descripcion"
-          className="block text-gray-700 text-sm font-bold mb-2"
-        >
-          Descripción
-        </label>
-        <textarea
-          id="descripcion"
-          placeholder="Descripción"
-          value={descripcion}
-          onChange={handleDescripcionChange}
-          className="resize-none shadow appearance-none border rounded w-full h-[100px] py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline hover:bg-gray-200"
-        />
-        <p className="text-sm text-gray-500 mb-2">
-          {maxLength - descripcion.length} caracteres restantes
-        </p>
-      </div>
-
-      <div className="flex items-center justify-center">
-        <button
-          type="submit"
-          className=" bg-green-500 hover:bg-green-700 text-white font-bold py-2 mt-6 px-4 rounded focus:outline-none focus:shadow-outline"
-        >
-          {TextButton}
-        </button>
-
-
-      </div>
-    </div>
-  );
-}
 
 
 export default CrearProductoForm;
@@ -373,34 +312,36 @@ export const InputField = ({
   value,
   onChange,
   errorMessage,
-  pading
+  onBlur,
+  startContent,
+  size
 }) => {
   return (
-    <div className="my-4">
-      <label
-        htmlFor={id}
-        className="block text-gray-700 font-bold mb-2"
-      >
-        {label}
-      </label>
-      <div>
-        <input
-          id={id}
-          type={type}
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-          className={`shadow appearance-none border rounded w-full h-full ${pading ? pading : "py-2"} px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline hover:bg-gray-200`}
-        />
-        {errorMessage && ErrorMensaje(errorMessage, "w-full")}
-      </div>
-    </div>
+    <Input
+      id={id}
+      label={label}
+      labelPlacement="outside"
+      placeholder={placeholder}
+      startContent={startContent}
+      type={type}
+      variant="bordered"
+      color="primary"
+      value={value}
+      onChange={onChange}
+      onBlur={onBlur}
+      size={size}
+      isInvalid={errorMessage ? true : false}
+      errorMessage={errorMessage}
+    >
+
+    </Input>
   );
 };
 
 import iconoGaleria from "../../../Icons/IconoGaleria.png";
 import { ActualizarProductos, GuardarProducto } from "../../../Base/BdProductos";
-import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Image } from "@nextui-org/react";
+import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Image, Input, Textarea } from "@nextui-org/react";
+import { CircleDollarSignIcon, FileTypeIcon, Package, ShoppingBasketIcon } from "lucide-react";
 const Defaultimage = ImagenDefecto();
 
 const Gallery = ({ imagen, handelImg }) => {
@@ -505,60 +446,3 @@ const Gallery = ({ imagen, handelImg }) => {
   );
 };
 
-const hola=()=>{
-  return (
-  <div className="flex flex-col justify-center items-center ">
-    <h1 className=" text-4xl font-bold mb-2 text-center">IMAGENES</h1>
-    {showSelecionImaganes && (
-      <button
-        className="flex flex-col bg-white justify-between overflow-hidden items-center w-[350px] max-w-[350px]   m-10 rounded-lg hover:bg-slate-200"
-        onClick={() => ShowImagenes(true)}
-      >
-        <img
-          src={imagenSelecionada ? imagenSelecionada.src : iconoGaleria}
-          alt=""
-          className="w-[300px] h-[300px]"
-        />
-        <div>
-          {imagenSelecionada
-            ? imagenSelecionada.nombre
-            : "Selecciona una imagen"}
-        </div>
-      </button>
-    )}
-
-    {imagenes && (
-      <div>
-        <div className="flex flex-wrap items-cente h-[350px] overflow-auto justify-center ">
-          {imagenes.map((image, index) => (
-            <div className="" key={index}>
-              <button
-                className={`flex items-center justify-center w-[100px] h-[100px] relative overflow-hidden rounded-lg hover:bg-slate-200 
-                  transition-transform duration-300 transform hover:scale-125 m-2
-                  ${activeButtons[index] ? "bg-slate-400" : "bg-white hover:bg-slate-200 "}`}
-              >
-                <img
-                  src={image.src}
-                  alt={`Imagen ${index}`}
-                  className="w-full h-full "
-                  onClick={() => {
-                    handelImagenSelecionada(image, index);
-                  }}
-                />
-              </button>
-            </div>
-          ))}
-        </div>
-        <div className="flex items-center justify-center">
-          <button
-            type="button"
-            className=" bg-green-500 hover:bg-green-700 text-white font-bold rounded p-2 focus:outline-none focus:shadow-outline mt-5"
-            onClick={() => handleOpenSelecionImagen()}
-          >
-            ACEPTAR
-          </button>
-        </div>
-      </div>
-    )}
-  </div>)
-}

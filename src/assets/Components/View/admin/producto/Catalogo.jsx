@@ -7,6 +7,7 @@ import iconoCerrado from "../../../Icons/IconoCerrar.png";
 import { BorrarProducto, ConsultarProductos } from "../../../Base/BdProductos";
 import { MensajeAlert } from "../../../Tools/Validadores";
 import { Button, Card, CardBody, CardFooter, CardHeader, Spinner } from "@nextui-org/react";
+import { AnimacionEntrada } from "../../../Tools/animaciones";
 
 function ConsultaCatalogo() {
 
@@ -21,7 +22,6 @@ function ConsultaCatalogo() {
       setListaProductos(respuesta.datos.sort((a, b) => a.id - b.id));
     } else {
       setListaProductos([]);
-
     }
 
   }
@@ -144,6 +144,7 @@ function ConsultaCatalogo() {
 
             </CardBody>
             <CardFooter></CardFooter>
+            
           </Card>
             {selectedProduct&& 
               <Card className="w-1/4 h-3/4 mx-5">
@@ -195,9 +196,6 @@ function ConsultaCatalogo() {
   );
 }
 
-export default ConsultaCatalogo;
-
-
 
 const NoProductsFound = () => {
   return (
@@ -208,4 +206,4 @@ const NoProductsFound = () => {
   );
 };
 
-
+export default ConsultaCatalogo;
