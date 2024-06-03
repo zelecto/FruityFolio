@@ -15,11 +15,6 @@ export const LoginScreen = () => {
   const [mensaje, setMensaje] = useState({});
   const [showAlert, setShowAlert] = useState(false);
 
-  const handelShowReguistrarUsuario = (value) => {
-    setShowReguistar(value);
-  };
-
-
   return (
     <div className="w-screen min-h-screen flex justify-center items-center bg-[#F5F5F5]">
       {showAlert && (

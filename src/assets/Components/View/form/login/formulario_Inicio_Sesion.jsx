@@ -1,4 +1,4 @@
-import React from "react";
+import React, {  useState } from "react";
 import * as Yup from "yup";
 import { Button, Input } from "@nextui-org/react";
 import { useFormik } from "formik";
@@ -17,6 +17,7 @@ const userSchema = Yup.object().shape({
 });
 
 export const FormularioLogin = ({setMensaje,setShowAlert}) => {
+  const [isLoading,setIsLoading]=useState(false);
   const formik = useFormik({
     initialValues: {
       username: "",
@@ -24,6 +25,7 @@ export const FormularioLogin = ({setMensaje,setShowAlert}) => {
     },
     validationSchema: userSchema,
     onSubmit: async (values) => {
+      setIsLoading(true);
       const { datos, error } = await GetCuentaUsuario(values.username, values.password);
       if (datos!=null && values.password === datos.cuenta.password) {
         console.log(datos);
@@ -34,11 +36,13 @@ export const FormularioLogin = ({setMensaje,setShowAlert}) => {
             window.location.href = "/paginaPrincipal";
             localStorage.setItem("user", JSON.stringify(datos.cuenta));
             setMensaje({});
+            setIsLoading(false);
             break;
           case "ClienteUsuario":
             window.location.href = "/PaginaPrincipalClient";
             localStorage.setItem("user", JSON.stringify(datos.cuenta));
             setMensaje({});
+            setIsLoading(false);
             break;
           default:
             break;
@@ -107,14 +111,26 @@ export const FormularioLogin = ({setMensaje,setShowAlert}) => {
           }
         ></Input>
 
-        <Button
-          color="primary"
-          variant="ghost"
-          type="submit"
-          className="w-1/2 p-2 my-5"
-        >
-          Entrar
-        </Button>
+        {!isLoading ? (
+          <Button
+            color="primary"
+            variant="ghost"
+            type="submit"
+            className="w-1/2 p-2 my-5"
+          >
+            Entrar
+          </Button>
+        ) : (
+          <Button
+            isLoading
+            color="primary"
+            variant="ghost"
+            type="submit"
+            className="w-1/2 p-2 my-5"
+          >
+            Entrar
+          </Button>
+        )}
       </div>
     </form>
   );
