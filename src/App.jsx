@@ -12,12 +12,15 @@ import ConsultaCatalogo from "./assets/Components/View/admin/producto/Catalogo";
 import PedidosView from "./assets/Components/View/Client/PedidosView";
 import { ViewPaginaPrincipalClient } from "./assets/Components/View/Client/paginaPrincipalCliente";
 import { CarritoViewClient } from "./assets/Components/View/Client/CarritoClient";
+import { ValidationSchemaExample } from "./assets/Components/View/pruebaFormulario";
+import { Toaster } from "react-hot-toast";
 
 
 
 function App() {
   return (
     <>
+      <Toaster></Toaster>
       <Routes>
         <Route path="*" element={<LoginScreen></LoginScreen>} />
         <Route path="paginaPrincipal" element={<Principal />} />
@@ -56,6 +59,9 @@ function App() {
         />
         <Route path="/CarritoClient"
           element={<CarritoViewClient></CarritoViewClient>}
+        />
+        <Route path="/Pruebas"
+          element={<ValidationSchemaExample></ValidationSchemaExample>}
         />
 
 

@@ -7,7 +7,7 @@ export async function GuardarUsuario(nuevoUsuario) {
         const respuesta = await axios.post('https://localhost:7208/api/Usuarios', nuevoUsuario);
         return { datos: respuesta.data, error: null };
     } catch (error) {
-        return { datos: null, error: error };
+        return { datos: null, error: error.response };
         
     }
 }
