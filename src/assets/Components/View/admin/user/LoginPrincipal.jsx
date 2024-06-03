@@ -8,6 +8,7 @@ import ClienteCompras from "../../../Photo/ClienteCarritoCompras.svg";
 
 import { FormularioLogin } from "../../form/login/formulario_Inicio_Sesion";
 import { Button, Image } from "@nextui-org/react";
+import RegistroClienteForm from "./ReguistrarCliente";
 
 
 export const LoginScreen = () => {
@@ -21,7 +22,6 @@ export const LoginScreen = () => {
 
   return (
     <div className="w-screen min-h-screen flex justify-center items-center bg-[#F5F5F5]">
-      
       {showAlert && (
         <MensajeAlert
           message={mensaje.Mensaje}
@@ -33,7 +33,6 @@ export const LoginScreen = () => {
           buttonText={mensaje.textBoton}
         />
       )}
-
 
       <div className="w-3/4 flex h-full bg-[#338EF7] justify-between rounded-xl shadow-lg">
         <div className="bg-white w-full h-full py-10 px-20 rounded-l-xl">
@@ -83,14 +82,7 @@ export const LoginScreen = () => {
                 Los usuarios pueden crear una cuenta de cliente para realizar
                 compras en las tiendas locales, brindando una experiencia
                 personalizada y conveniente.
-                <Button
-                  onClick={()=>notificacion()}
-                  color="success"
-                  variant="ghost"
-                  className="text-white font-bold"
-                >
-                  Reguistrate Cliente
-                </Button>
+                <RegistroClienteForm></RegistroClienteForm>
               </p>
               <Image
                 src={ClienteCompras}

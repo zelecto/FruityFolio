@@ -206,4 +206,8 @@ const RegistroUsuarioForm = ({ cerrar }) => {
 };
 
 
+
+
+
+
 export default RegistroUsuarioForm;
