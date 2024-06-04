@@ -1,7 +1,4 @@
 import React from "react";
-import iconoSalida from "../Icons/IconoRetroceder.png";
-import iconoFrutifolio from "../Icons/IconoFrutiFolio.png"
-
 import { Button, Image, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem, Tooltip } from "@nextui-org/react";
 import Logo from "../Photo/logo.png";
 import { Apple, Package, ReceiptText } from "lucide-react";

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { BuscarImagenDefault } from "./Defaultimage";
-import { InputField } from "../View/admin/producto/CrearProducto";
-import { Card, CardBody, CardFooter, CardHeader, Chip, Image, Tooltip } from "@nextui-org/react";
+import { Card, CardBody, CardFooter, CardHeader, Chip, Image, Input, Tooltip } from "@nextui-org/react";
 import { CircleDollarSign } from "lucide-react";
 import { AnimacionEntrada } from "../Tools/animaciones";
 
@@ -36,11 +35,12 @@ export const ProductList = ({ products, onSelectProduct }) => {
     <AnimacionEntrada>
       <div className="flex flex-col items-center w-[500px] h-[600px]">
         <div className="text-black w-full px-10 mb-5">
-          <InputField
+          <Input
             label="Busca tu producto"
             id="Buscar"
             type="text"
             placeholder="Buscalo por Nombre"
+            color="primary"
             value={buscar}
             onChange={(e) => handelBuscar(e.target.value)}
             errorMessage={""}

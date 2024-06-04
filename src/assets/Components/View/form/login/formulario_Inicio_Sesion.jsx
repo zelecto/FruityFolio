@@ -3,7 +3,7 @@ import * as Yup from "yup";
 import { Button, Input } from "@nextui-org/react";
 import { useFormik } from "formik";
 import { GetCuentaUsuario } from "../../../Base/BdInicioSecion";
-import { Eye, EyeOff } from "lucide-react";
+import { AtSign, Eye, EyeOff, LockKeyhole } from "lucide-react";
 
 
 
@@ -56,12 +56,13 @@ export const FormularioLogin = ({setMensaje,setShowAlert}) => {
           isError: true,
           textBoton: "ACEPTAR",
         });
+        setIsLoading(false);
         setShowAlert(true);
       }
     },
   });
 
-  const [isVisible, setIsVisible] = React.useState(false);
+  const [isVisible, setIsVisible] = React.useState(true);
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -75,6 +76,15 @@ export const FormularioLogin = ({setMensaje,setShowAlert}) => {
           className="my-5"
           variant="bordered"
           labelPlacement="outside"
+          startContent={
+            <AtSign
+              color={
+                formik.touched.username && Boolean(formik.errors.username)
+                  ? "#F31260"
+                  : "#338EF7"
+              }
+            ></AtSign>
+          }
           id="username"
           value={formik.values.username}
           onChange={formik.handleChange}
@@ -90,12 +100,22 @@ export const FormularioLogin = ({setMensaje,setShowAlert}) => {
           variant="bordered"
           labelPlacement="outside"
           label="Password"
+          startContent={
+            <LockKeyhole
+              color={
+                formik.touched.password && Boolean(formik.errors.password)
+                  ? "#F31260"
+                  : "#338EF7"
+              }
+            ></LockKeyhole>
+          }
           id="password"
           value={formik.values.password}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           isInvalid={formik.touched.password && Boolean(formik.errors.password)}
           errorMessage={formik.touched.password && formik.errors.password}
+          type={isVisible ? "password" : "text"}
           endContent={
             <button
               className="focus:outline-none"

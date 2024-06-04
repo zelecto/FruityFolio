@@ -66,10 +66,8 @@ const RegistroClienteForm = ({ cerrar }) => {
     if (ciudades.some((item) => item.nombre == e.target.value)) {
         setCiudadResidencia(e.target.value);
         setErrorCiudadResidencia(false);
-        console.log("entre")
     }else{
         setErrorCiudadResidencia(true);
-        console.log("entre2");
     }
     
   };
@@ -210,47 +208,6 @@ const RegistroClienteForm = ({ cerrar }) => {
     fetchCiudades();
   }, []);
 
-  const handleCloseShowMensaje = () => {
-    setShowMensaje(false);
-    cerrar();
-  };
-
-  //Reguistrar Usuario
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const cliente = {
-      username: username,
-      nombre: nombre,
-      cedula: cedula,
-      correo: correo,
-      password: password,
-      ciudad: ciudad,
-      direccionResidencia: direccionResidencia,
-    };
-
-    if (
-      !nombre ||
-      !cedula ||
-      !correo ||
-      !username ||
-      !password ||
-      !ciudad ||
-      !direccionResidencia
-    ) {
-      const mensajeError = {
-        Mensaje:
-          "¡Error al guardar datos! Revise los campos ingresados. Es posible que haya dejado alguno vacío o haya ingresado información incorrecta.",
-        colorBoton: "red",
-        colorText: "text-black-700",
-        isError: true,
-        textBoton: "Cerrar",
-      };
-      handleShowMensaje(true);
-      setMensaje(mensajeError);
-    } else {
-      GuardarClienteNuevo(cliente);
-    }
-  };
 
   const GuardarClienteNuevo = async (cliente) => {
     const respuesta = await GuardarCliente(cliente);

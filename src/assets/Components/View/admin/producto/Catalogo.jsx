@@ -7,7 +7,6 @@ import iconoCerrado from "../../../Icons/IconoCerrar.png";
 import { BorrarProducto, ConsultarProductos } from "../../../Base/BdProductos";
 import { MensajeAlert } from "../../../Tools/Validadores";
 import { Button, Card, CardBody, CardFooter, CardHeader, Spinner } from "@nextui-org/react";
-import { AnimacionEntrada } from "../../../Tools/animaciones";
 
 function ConsultaCatalogo() {
 

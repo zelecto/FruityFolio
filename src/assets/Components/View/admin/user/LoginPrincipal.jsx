@@ -7,7 +7,7 @@ import ClienteCompras from "../../../Photo/ClienteCarritoCompras.svg";
 
 
 import { FormularioLogin } from "../../form/login/formulario_Inicio_Sesion";
-import { Button, Image } from "@nextui-org/react";
+import { Image } from "@nextui-org/react";
 import RegistroClienteForm from "./ReguistrarCliente";
 
 
@@ -97,21 +97,6 @@ export const LoginScreen = () => {
   );
 };
 
-const CardRegistro = ({ imgUrl, title, texto, textbutton, openRegistro }) => {
-  return (
-    <div className="bg-white h-full rounded-md shadow-md p-5 flex flex-col items-center">
-      <h1 className="text-4xl font-bold text-center">{title}</h1>
-      <img src={imgUrl} alt="" className="w-96 my-8 rounded " />
-      <p className="text-lg font-semibold">{texto}</p>
-      <button
-        className="bg-green-500 hover:bg-green-700 text-white font-bold text-lg p-2 rounded-md my-8"
-        onClick={() => openRegistro(true)}
-      >
-        {textbutton}
-      </button>
-    </div>
-  );
-};
 
 
 export default LoginScreen;

@@ -5,7 +5,6 @@ import { ConsultarUsuario } from "../Base/BdUsuarios";
 
 import { MensajeAlert } from "../Tools/Validadores";
 import RegistroUsuarioForm from "./admin/user/ReguistrarUsuario";
-import { InputField } from "./admin/producto/CrearProducto";
 
 const Login = () => {
   const [showReguistrar, setShowReguistar] = useState(false);
