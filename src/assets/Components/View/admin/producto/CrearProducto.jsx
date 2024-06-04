@@ -50,12 +50,10 @@ const CrearProductoForm = () => {
     setShowAlert(true);
   };
 
-  const handelSetMensaje = (mensaje) => {
-    setMensaje(mensaje);
-  };
+  
 
   return (
-    <div className="h-screen w-screen bg-[#F5F5F5] flex flex-col">
+    <div className="h-screen w-screen bg-[#F5F5F5] flex flex-col items-center">
       {showAlert && (
         <MensajeAlert
           message={mensaje.Mensaje}
@@ -68,14 +66,8 @@ const CrearProductoForm = () => {
       )}
       <Header title="FruityFolio" />
 
-      <div className="flex-grow flex justify-center items-center">
-        <div className="flex items-center justify-center w-full">
-          <TarjetaCrearProducto
-            TextButton="Crear Producto"
-            handelSetMensaje={handelSetMensaje}
-            handelOpenAlert={handelOpenAlert}
-          />
-        </div>
+      <div className="w-2/3 h-full flex justify-center items-center">
+        <TarjetaCrearProducto TextButton="Crear Producto" />
       </div>
     </div>
   );
@@ -83,8 +75,6 @@ const CrearProductoForm = () => {
 
 export const TarjetaCrearProducto = ({
   TextButton,
-  handelSetMensaje,
-  handelOpenAlert,
   ActualizarProducto,
 }) => {
   // Esquema de validación usando Yup
@@ -130,15 +120,16 @@ export const TarjetaCrearProducto = ({
         ActualizarProducto.stock = values.stock;
         ActualizarProducto.img = img.nombre;
 
-        const respuesta = await ActualizarProductos(ActualizarProducto);
-
         const toastLoaing = toast.loading("Guardando...");
+        const respuesta = await ActualizarProductos(ActualizarProducto);
+        console.clear()
+        console.log(respuesta)
         toast.dismiss(toastLoaing);
 
-        if (respuesta.datos) {
+        if (!respuesta.error) {
           toast.success("Producto Actualizado");
         } else {
-          toast.error(`${respuesta.error.data}`);
+          toast.error(`${"Se a presentado un problema"}`);
         }
       } else {
         const producto = {
@@ -220,17 +211,17 @@ export const TarjetaCrearProducto = ({
 
 
   return (
-    <div className="flex w-3/4 justify-center ">
-      <div className="w-[450px] h-[700px] overflow-auto max-h-[800px] mx-10">
-        <form onSubmit={formik.handleSubmit} className="min-w-1/2">
-          <Card className="bg-white">
+    <div className="w-full  h-full flex justify-center items-center ">
+      
+        <form onSubmit={formik.handleSubmit}  className="w-1/2 mx-5">
+          <Card className=" ">
             <CardHeader>
               <h2 className="w-full text-center font-bold text-lg">
                 Crea tu producto
               </h2>
             </CardHeader>
 
-            <CardBody className="w-full">
+            <CardBody className="min-h-full">
               {inputConfigs.map((config) => (
                 <div className="">
                   <InputField
@@ -273,7 +264,7 @@ export const TarjetaCrearProducto = ({
               />
             </CardBody>
 
-            <CardFooter className="w-full justify-end">
+            <CardFooter className="w-full flex justify-end">
               <Button
                 type="submit"
                 color="success"
@@ -284,9 +275,7 @@ export const TarjetaCrearProducto = ({
             </CardFooter>
           </Card>
         </form>
-      </div>
-
-      <div className="w-1/3 h-1/2 overflow-y-auto p-2 rounded-lg  mx-5">
+      
         <Gallery
           imagen={
             ActualizarProducto
@@ -295,7 +284,7 @@ export const TarjetaCrearProducto = ({
           }
           handelImg={handelImg}
         ></Gallery>
-      </div>
+      
     </div>
   );
 };
@@ -339,13 +328,10 @@ const Gallery = ({ imagen, handelImg }) => {
     handelImg(value);
   };
 
-  const handelImagenSelecionada = (value, index) => {
-    setimagenSelecionada(value);
-    handleClick(index);
-  };
+
 
   return (
-    <Card className="w-full">
+    <Card className="w-1/3 flex items-center shadow-2xl bg-white">
       <CardHeader>
         <h1 className="w-full text-4xl font-bold mb-2 text-center">IMAGENES</h1>
       </CardHeader>
@@ -353,7 +339,7 @@ const Gallery = ({ imagen, handelImg }) => {
       <CardBody>
         {showSelecionImaganes && (
           <button
-            className="flex flex-col bg-white justify-between overflow-hidden items-center w-full max-w-[350px]   m-10 rounded-lg hover:bg-slate-200"
+            className="flex flex-col bg-white justify-between overflow-hidden items-center w-full rounded-lg hover:bg-slate-200"
             onClick={() => ShowImagenes(true)}
           >
             <Image
@@ -384,7 +370,7 @@ const Gallery = ({ imagen, handelImg }) => {
                       shadow="sm"
                       radius="lg"
                       alt={item.name}
-                      className="w-full object-cover h-[140px]"
+                      className="w-full object-contain h-[140px]"
                       src={item.src}
                     />
                   </CardBody>
