@@ -1,115 +1,185 @@
-import React, { useState } from 'react';
-import { GuardarTienda } from '../../../Base/BdtiendaVirtual';
-const ciudadesColombia = [
-    "Bogotá",
-    "Medellín",
-    "Cali",
-    "Barranquilla",
-    // Añadir más ciudades relevantes de Colombia aquí...
-];
+import React, { useEffect, useState } from "react";
+import { GuardarTienda } from "../../../Base/BdtiendaVirtual";
 
-const TiendaFormulario = ({  handelshowReguistrarTienda }) => {
-    const [nombre, setNombre] = useState('');
-    const [ciudad, setCiudad] = useState('');
-    const [direccion, setDireccion] = useState('');
-    const [errores, setErrores] = useState({});
+import * as Yup from "yup";
+import { useFormik } from "formik";
 
+import {
+  Button,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+  SelectItem,
+  Select,
+} from "@nextui-org/react";
+import { HomeIcon, Store } from "lucide-react";
+import InputField from "../../Components/input_From";
+import { GetCiudades } from "../../../Base/bdCiudades";
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (validarFormulario()) {
-            const usuario = JSON.parse(localStorage.getItem('user'));
-            const tienda=
-            {
-                "username": usuario.username,
-                "nombre": nombre,
-                "ciudad": ciudad,
-                "direccion": direccion
-            }
-            const respuesta = await GuardarTienda(tienda);
-            if(respuesta.error==null){
-                handelshowReguistrarTienda(false);
-                window.location.reload()
-            }else{
-                console.log("a ocurrido un error")
-            }
+const schemaReguistroTienda = Yup.object().shape({
+  nombre: Yup.string()
+    .required("El nombre de la tienda es requerido")
+    .matches(/^[a-zA-Z\s]*$/, "No se admiten números"),
+    ciudad: Yup.string().required("Por favor selecciona una ciudad"),
+  direccion: Yup.string().required("La dirección es requerida"),
+});
 
+const TiendaFormulario = ({ handelshowReguistrarTienda }) => {
+  const [ciudades, setCiudades] = useState([]);
+
+  useEffect(() => {
+    async function fetchCiudades() {
+      try {
+        const ciudadesFromDB = await GetCiudades(); // función que obtiene las ciudades desde la base de datos
+        setCiudades(ciudadesFromDB.datos);
+      } catch (error) {
+        console.error("Error al obtener ciudades:", error);
+      }
+    }
+    fetchCiudades();
+  }, []);
+
+  const formik = useFormik({
+    initialValues: {
+      nombre: "",
+      ciudad: "",
+      direccion: "",
+    },
+    validationSchema: schemaReguistroTienda,
+    onSubmit: async (values) => {
+        const usuario = JSON.parse(localStorage.getItem("user"));
+        const tienda = {
+          username: usuario.username,
+          nombre: values.nombre,
+          ciudad: values.ciudad,
+          direccion: values.direccion,
+        };
+        const respuesta = await GuardarTienda(tienda);
+        if (respuesta.error == null) {
+          handelshowReguistrarTienda(false);
+          window.location.reload();
+        } else {
+          console.log("a ocurrido un error");
         }
-    };
+    },
+  });
 
-    const validarFormulario = () => {
-        const errores = {};
-        if (!nombre.trim()) {
-            errores.nombre = 'El nombre de la tienda es requerido';
-        }
-        if (!ciudad) {
-            errores.ciudad = 'Por favor selecciona una ciudad';
-        }
-        if (!direccion.trim()) {
-            errores.direccion = 'La dirección es requerida';
-        }
-        setErrores(errores);
-        return Object.keys(errores).length === 0;
-    };
+  const inputConfigs = [
+    {
+      id: "nombre",
+      label: "Nombre",
+      startContent: (
+        <Store
+          color={
+            formik.touched.nombre && Boolean(formik.errors.nombre)
+              ? "#F31260"
+              : "#338EF7"
+          }
+        ></Store>
+      ),
+    },
+    {
+      id: "direccion",
+      label: "direccion",
+      startContent: (
+        <HomeIcon
+          color={
+            formik.touched.precio && Boolean(formik.errors.precio)
+              ? "#F31260"
+              : "#338EF7"
+          }
+        ></HomeIcon>
+      ),
+    },
+  ];
 
-    return (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-900 bg-opacity-70 z-50">
-            <div className="bg-white p-8 rounded-md shadow-md">
-                <h2 className="text-2xl font-bold mb-4">Completa la información de tu tienda</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label htmlFor="nombre" className="block font-semibold mb-1">Nombre de la tienda</label>
-                        <input
-                            type="text"
-                            id="nombre"
-                            value={nombre}
-                            onChange={(e) => setNombre(e.target.value)}
-                            className="w-full border-gray-300 border rounded-md px-3 py-2"
-                        />
-                        {errores.nombre && <p className="text-red-500 text-sm mt-1">{errores.nombre}</p>}
-                    </div>
-                    <div className="mb-4">
-                        <label htmlFor="ciudad" className="block font-semibold mb-1">Ciudad</label>
-                        <select
-                            id="ciudad"
-                            value={ciudad}
-                            onChange={(e) => setCiudad(e.target.value)}
-                            className="w-full border-gray-300 border rounded-md px-3 py-2"
-                        >
-                            <option value="">Selecciona una ciudad</option>
-                            {ciudadesColombia.map((ciudad) => (
-                                <option key={ciudad} value={ciudad}>{ciudad}</option>
-                            ))}
-                        </select>
-                        {errores.ciudad && <p className="text-red-500 text-sm mt-1">{errores.ciudad}</p>}
-                    </div>
-                    <div className="mb-4">
-                        <label htmlFor="direccion" className="block font-semibold mb-1">Dirección</label>
-                        <input
-                            type="text"
-                            id="direccion"
-                            value={direccion}
-                            onChange={(e) => setDireccion(e.target.value)}
-                            className="w-full border-gray-300 border rounded-md px-3 py-2"
-                        />
-                        {errores.direccion && <p className="text-red-500 text-sm mt-1">{errores.direccion}</p>}
-                    </div>
-                    <div className='flex justify-between'>
-                        <button type="submit" className="bg-green-400 hover:bg-green-600 font-bold text-white py-2 px-4 rounded-md">
-                            Crear Tienda
-                        </button>
-                        <button className="bg-red-400 hover:bg-red-600 font-bold text-white py-2 px-4 rounded-md"
-                            onClick={(e)=> handelshowReguistrarTienda(false)}
-                        >
-                            Cancelar
-                        </button>
-                    </div>
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (validarFormulario()) {
+      
+    }
+  };
+  const handleChangeExternal = (newValue) => {
+    
+  };
 
-                    
-                </form>
+
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  return (
+    <>
+      <Button
+        color="primary"
+        className="text-lg font-bold px-5"
+        onClick={onOpen}
+      >
+        Crear
+      </Button>
+      <Modal
+        backdrop="blur"
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        size="xl"
+      >
+        <ModalContent>
+          <ModalHeader>
+            <h1 className="w-full text-center font-bold">
+              Crea tu tienda virtual
+            </h1>
+          </ModalHeader>
+          <ModalBody>
+            <div className="w-full">
+              <form onSubmit={formik.handleSubmit}>
+                {inputConfigs.map((config) => (
+                  <div className="">
+                    <InputField
+                      key={config.id}
+                      config={config}
+                      formik={formik}
+                      startContent={config.startContent}
+                    />
+                  </div>
+                ))}
+
+                <Select
+                  id="ciudad"
+                  variant="faded"
+                  labelPlacement="inside"
+                  label="Ciudad de residencia"
+                  placeholder="Seleccione una ciudad"
+                  color="primary"
+                  value={formik.values.ciudad}
+                  onChange={(e)=> {formik.setFieldValue("ciudad", e.target.value);}}
+                  errorMessage={formik.touched.ciudad && formik.errors.ciudad}
+                  isInvalid={
+                    formik.touched.ciudad && Boolean(formik.errors.ciudad)
+                  }
+                >
+                  {ciudades.map((ciudad) => (
+                    <SelectItem key={ciudad.nombre} value={ciudad.nombre}>
+                      {ciudad.nombre}
+                    </SelectItem>
+                  ))}
+                </Select>
+
+                <Button
+                  type="submit"
+                  color="success"
+                  size="md"
+                  className="w-1/4 font-bold text-xl text-white"
+                >
+                  Crear
+                </Button>
+              </form>
             </div>
-        </div>
-    );
+          </ModalBody>
+          <ModalFooter></ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
+  );
 };
 
 export default TiendaFormulario;

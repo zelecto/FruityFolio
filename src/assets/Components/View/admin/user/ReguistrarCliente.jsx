@@ -209,33 +209,6 @@ const RegistroClienteForm = ({ cerrar }) => {
   }, []);
 
 
-  const GuardarClienteNuevo = async (cliente) => {
-    const respuesta = await GuardarCliente(cliente);
-    if (!respuesta.error) {
-      const mensajeGuardado = {
-        Mensaje: "Datos guardados correctamente",
-        colorBoton: "green",
-        colorText: "text-black-700",
-
-        textBoton: "Aceptar",
-      };
-
-      setMensaje(mensajeGuardado);
-    } else {
-      const mensajeError = {
-        Mensaje:
-          "¡Error al guardar datos!. No se puede reguistrar con el mismo nombre de usuario, cedula o correo",
-        colorBoton: "red",
-        colorText: "text-black-700",
-
-        textBoton: "Cerrar",
-      };
-      setMensaje(mensajeError);
-    }
-
-    handleShowMensaje(true);
-  };
-
   return (
     <div>
       <Button
