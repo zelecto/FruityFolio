@@ -3,9 +3,8 @@ import { ProductList } from "../../../Logic/ConsultarProductos";
 import { ProductDetail } from "../../../Logic/ConsultarProductos";
 import Header from "../../Header";
 import { TarjetaCrearProducto } from "./CrearProducto";
-import iconoCerrado from "../../../Icons/IconoCerrar.png";
 import { BorrarProducto, ConsultarProductos } from "../../../Base/BdProductos";
-import { MensajeAlert } from "../../../Tools/Validadores";
+
 import {
   Button,
   Card,
@@ -20,7 +19,7 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@nextui-org/react";
-//TODO: OPTIMIZAR LAS ACCIONES DE LA LISTA DE LOS PRODUCTOS CUANDO SE ACTULIZA O ELIMINA
+import toast from "react-hot-toast";
 
 function ConsultaCatalogo() {
   const usuario = JSON.parse(localStorage.getItem("user"));
@@ -47,25 +46,14 @@ function ConsultaCatalogo() {
   const handleSelectProduct = (product) => {
     setSelectedProduct(product);
   };
+
   const EliminarProducto = async () => {
-    setLoading(true);
+    const loading=toast.loading("Eliminando producto");
+    await BorrarProducto(selectedProduct);
+    toast.dismiss(loading);
+    await consultarProductos();
     handleSelectProduct(null); // Esto cierra la tarjeta de detalles del producto
-    handelCloseShowActualizar();
-
-    const respuesta = await BorrarProducto(selectedProduct);
-
-    consultarProductos();
-    setLoading(false);
   };
-
-  const [showActualizar, setShowActualizar] = useState(false);
-
- 
-
-  const handelCloseShowActualizar = () => {
-    setShowActualizar(false);
-  };
-
 
   const [loading, setLoading] = useState(false);
 
