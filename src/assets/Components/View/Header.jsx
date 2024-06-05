@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Image, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem, Tooltip } from "@nextui-org/react";
+import { Button, Image, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem} from "@nextui-org/react";
 import Logo from "../Photo/logo.png";
 import { Apple, Package, ReceiptText } from "lucide-react";
 const Header = ({title}) => {

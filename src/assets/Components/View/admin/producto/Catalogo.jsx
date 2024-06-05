@@ -60,9 +60,7 @@ function ConsultaCatalogo() {
 
   const [showActualizar, setShowActualizar] = useState(false);
 
-  const handelOpenShowActualizar = () => {
-    setShowActualizar(true);
-  };
+ 
 
   const handelCloseShowActualizar = () => {
     setShowActualizar(false);
@@ -126,9 +124,9 @@ function ConsultaCatalogo() {
                   >
                     Cerrar
                   </Button>
-                  {
-                    <ModalUpdateProduct selectedProduct={selectedProduct}></ModalUpdateProduct>
-                  }
+                  
+                  <ModalUpdateProduct selectedProduct={selectedProduct} consultarProductos={consultarProductos}></ModalUpdateProduct>
+                  
                   <Button
                     color="danger"
                     className="text-lg font-bold px-5"
@@ -161,7 +159,8 @@ const NoProductsFound = () => {
   );
 };
 
-const ModalUpdateProduct = ({ selectedProduct }) => {
+const ModalUpdateProduct = ({ selectedProduct, consultarProductos }) => {
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   return (
     <>
@@ -180,13 +179,16 @@ const ModalUpdateProduct = ({ selectedProduct }) => {
       >
         <ModalContent>
           <ModalHeader>
-            <h1 className="w-full text-center font-bold">Actualiza tu producto</h1>
+            <h1 className="w-full text-center font-bold">
+              Actualiza tu producto
+            </h1>
           </ModalHeader>
           <ModalBody>
             <div className="w-full">
               <TarjetaCrearProducto
                 TextButton={"Actualizar"}
                 ActualizarProducto={selectedProduct}
+                actualizarListaProductos={consultarProductos}
               ></TarjetaCrearProducto>
             </div>
           </ModalBody>

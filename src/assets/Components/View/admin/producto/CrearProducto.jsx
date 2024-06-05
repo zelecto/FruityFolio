@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import validarNombre from "../../../Tools/Validadores";
 import { ErrorMensaje, MensajeAlert } from "../../../Tools/Validadores";
 import Header from "../../Header";
@@ -19,6 +19,7 @@ import {
   Image,
   Input,
   Textarea,
+  image,
 } from "@nextui-org/react";
 import {
   CircleDollarSignIcon,
@@ -27,6 +28,7 @@ import {
   Package,
   ShoppingBasketIcon,
 } from "lucide-react";
+
 import { useFormik } from "formik";
 import InputField from "../../Components/input_From";
 import toast from "react-hot-toast";
@@ -73,9 +75,12 @@ const CrearProductoForm = () => {
   );
 };
 
+
+
 export const TarjetaCrearProducto = ({
   TextButton,
   ActualizarProducto,
+  actualizarListaProductos
 }) => {
   // Esquema de validación usando Yup
   const schemaRegistrarProducto = Yup.object().shape({
@@ -103,6 +108,16 @@ export const TarjetaCrearProducto = ({
     ),
   });
 
+  const [img, setImg] = useState(
+    ActualizarProducto ? BuscarImagenNombre(ActualizarProducto.img) : null
+  );
+
+  const [imagenSeleccionada, setImagenSeleccionada] = useState(
+    ActualizarProducto
+      ? BuscarImagenNombre(ActualizarProducto.img)
+      : { src: iconoGaleria, nombre: "Icono de Galería" }
+  );
+
   const formik = useFormik({
     initialValues: {
       nombre: ActualizarProducto ? ActualizarProducto.name : "",
@@ -111,8 +126,7 @@ export const TarjetaCrearProducto = ({
       descripcion: ActualizarProducto ? ActualizarProducto.description : "",
     },
     validationSchema: schemaRegistrarProducto,
-    onSubmit: async (values) => {
-
+    onSubmit: async (values,{resetForm}) => {
       if (ActualizarProducto) {
         ActualizarProducto.name = values.nombre;
         ActualizarProducto.description = values.descripcion;
@@ -122,16 +136,15 @@ export const TarjetaCrearProducto = ({
 
         const toastLoaing = toast.loading("Guardando...");
         const respuesta = await ActualizarProductos(ActualizarProducto);
-        console.clear()
-        console.log(respuesta)
         toast.dismiss(toastLoaing);
 
         if (!respuesta.error) {
           toast.success("Producto Actualizado");
+          actualizarListaProductos();
         } else {
           toast.error(`${"Se a presentado un problema"}`);
         }
-      } else {
+      } else if(img) {
         const producto = {
           name: values.nombre,
           description: values.descripcion,
@@ -141,17 +154,21 @@ export const TarjetaCrearProducto = ({
           username: usuario.username,
           activo: true,
         };
-
+        const toastLoaing = toast.loading("Guardando...");
         const respuesta= await GuardarProducto(producto);
+        toast.dismiss(toastLoaing);
         if (respuesta.datos) {
           toast.success("Producto Creado");
-          resetForm(); 
-          setImg(null); 
+          setImagenSeleccionada(null);
+          resetForm();
         } else {
           console.clear()
           console.log(respuesta.error)
+          toast.error("Error no creado");
           toast.error(`${respuesta.error.data}`);
         }
+      }else{
+        toast.error("Selecione una imagen")
       }
     },
   });
@@ -197,10 +214,7 @@ export const TarjetaCrearProducto = ({
       ),
     },
   ];
-
-  const [img, setImg] = useState(
-    ActualizarProducto ? BuscarImagenNombre(ActualizarProducto.img) : null
-  );
+  
   const handelImg = (img) => {
     setImg(img);
   };
@@ -212,103 +226,87 @@ export const TarjetaCrearProducto = ({
 
   return (
     <div className="w-full  h-full flex justify-center items-center ">
-      
-        <form onSubmit={formik.handleSubmit}  className="w-1/2 mx-5">
-          <Card className=" ">
-            <CardHeader>
-              <h2 className="w-full text-center font-bold text-lg">
-                Crea tu producto
-              </h2>
-            </CardHeader>
+      <form onSubmit={formik.handleSubmit} className="w-1/2 mx-5">
+        <Card className=" ">
+          <CardHeader>
+            <h2 className="w-full text-center font-bold text-lg">
+              Crea tu producto
+            </h2>
+          </CardHeader>
 
-            <CardBody className="min-h-full">
-              {inputConfigs.map((config) => (
-                <div className="">
-                  <InputField
-                    key={config.id}
-                    config={config}
-                    formik={formik}
-                    startContent={config.startContent}
-                  />
-                </div>
-              ))}
+          <CardBody className="min-h-full">
+            {inputConfigs.map((config) => (
+              <div className="">
+                <InputField
+                  key={config.id}
+                  config={config}
+                  formik={formik}
+                  startContent={config.startContent}
+                />
+              </div>
+            ))}
 
-              <Textarea
-                id="descripcion"
-                label="Descripción"
-                placeholder="Descripción"
-                labelPlacement="outside"
-                variant="bordered"
-                color="primary"
-                startContent={
-                  <FileTypeIcon
-                    color={
-                      formik.touched.descripcion &&
-                      Boolean(formik.errors.descripcion)
-                        ? "#F31260"
-                        : "#338EF7"
-                    }
-                  ></FileTypeIcon>
-                }
-                value={formik.values.descripcion}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                isInvalid={
-                  formik.touched.descripcion &&
-                  Boolean(formik.errors.descripcion)
-                }
-                errorMessage={
-                  formik.touched.descripcion && formik.errors.descripcion
-                }
-                description={`${maxLength - formik.values.descripcion.length} caracteres restantes`}
-              />
-            </CardBody>
+            <Textarea
+              id="descripcion"
+              label="Descripción"
+              placeholder="Descripción"
+              labelPlacement="outside"
+              variant="bordered"
+              color="primary"
+              startContent={
+                <FileTypeIcon
+                  color={
+                    formik.touched.descripcion &&
+                    Boolean(formik.errors.descripcion)
+                      ? "#F31260"
+                      : "#338EF7"
+                  }
+                ></FileTypeIcon>
+              }
+              value={formik.values.descripcion}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              isInvalid={
+                formik.touched.descripcion && Boolean(formik.errors.descripcion)
+              }
+              errorMessage={
+                formik.touched.descripcion && formik.errors.descripcion
+              }
+              description={`${maxLength - formik.values.descripcion.length} caracteres restantes`}
+            />
+          </CardBody>
 
-            <CardFooter className="w-full flex justify-end">
-              <Button
-                type="submit"
-                color="success"
-                className="font-bold text-lg text-white"
-              >
-                {TextButton}
-              </Button>
-            </CardFooter>
-          </Card>
-        </form>
-      
-        <Gallery
-          imagen={
-            ActualizarProducto
-              ? BuscarImagenNombre(ActualizarProducto.img)
-              : null
-          }
-          handelImg={handelImg}
-        ></Gallery>
-      
+          <CardFooter className="w-full flex justify-end">
+            <Button
+              type="submit"
+              color="success"
+              className="font-bold text-lg text-white"
+            >
+              {TextButton}
+            </Button>
+          </CardFooter>
+        </Card>
+      </form>
+
+      <Gallery
+        imagenSeleccionada={imagenSeleccionada}
+        setImagenSeleccionada={setImagenSeleccionada}
+        handelImg={handelImg}
+      ></Gallery>
     </div>
   );
 };
 
 export default CrearProductoForm;
 
-const Gallery = ({ imagen, handelImg }) => {
+const Gallery = ({
+  handelImg,
+  imagenSeleccionada,
+  setImagenSeleccionada,
+}) => {
   const [imagenes, setImagenes] = useState(null);
   const [showSelecionImaganes, setSelecionImaganes] = useState(true);
-  const [imagenSelecionada, setimagenSelecionada] = useState(
-    imagen ? imagen : null
-  );
-  const [activeButtons, setActiveButtons] = useState(
-    Array(Defaultimage.length).fill(false)
-  );
-
-  //console.log(imagenSelecionada)
-
-  const handleClick = (index) => {
-    const newActiveButtons = Array(Defaultimage.length).fill(false);
-
-    newActiveButtons[index] = true;
-    setActiveButtons(newActiveButtons);
-  };
+  
 
   const ShowImagenes = (Show) => {
     const image = ImagenDefecto();
@@ -320,20 +318,18 @@ const Gallery = ({ imagen, handelImg }) => {
       setSelecionImaganes(true);
     }
   };
-  const handleOpenSelecionImagen = (value) => {
-    setimagenSelecionada(value);
 
+  const handleOpenSeleccionImagen = (value) => {
+    setImagenSeleccionada(value);
     setSelecionImaganes(true);
-    setImagenes(false);
+    setImagenes(null);
     handelImg(value);
   };
-
-
 
   return (
     <Card className="w-1/3 flex items-center shadow-2xl bg-white">
       <CardHeader>
-        <h1 className="w-full text-4xl font-bold mb-2 text-center">IMAGENES</h1>
+        <h1 className="w-full text-4xl font-bold mb-2 text-center">IMÁGENES</h1>
       </CardHeader>
 
       <CardBody>
@@ -343,13 +339,13 @@ const Gallery = ({ imagen, handelImg }) => {
             onClick={() => ShowImagenes(true)}
           >
             <Image
-              src={imagenSelecionada ? imagenSelecionada.src : iconoGaleria}
+              src={imagenSeleccionada ? imagenSeleccionada.src : iconoGaleria}
               alt=""
               className="w-[300px] h-[300px]"
             />
             <div>
-              {imagenSelecionada
-                ? imagenSelecionada.nombre
+              {imagenSeleccionada
+                ? imagenSeleccionada.nombre
                 : "Selecciona una imagen"}
             </div>
           </button>
@@ -362,7 +358,7 @@ const Gallery = ({ imagen, handelImg }) => {
                 <Card
                   shadow="sm"
                   isPressable
-                  onClick={() => handleOpenSelecionImagen(item)}
+                  onClick={() => handleOpenSeleccionImagen(item)}
                 >
                   <CardBody className="overflow-visible p-0">
                     <Image
