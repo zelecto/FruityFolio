@@ -122,13 +122,16 @@ const Cart = ({ cartItems, removeFromCart }) => {
         const tienda = JSON.parse(localStorage.getItem('tienda'));
 
         // Crear una lista de productos vendidos para esta venta
-        const listaProductosVendidos = cartItems.map(item => ({
-            producto:{
-                id:item.id
-        },
-            cantidad: item.quantity,
-            total: item.price * item.quantity,
+        const listaProductosVendidos = cartItems.map((item) => ({
+          producto: {
+            id: item.id,
+          },
+          cantidadvendida: item.quantity,
+          subprecio: item.price * item.quantity,
         }));
+        console.log(listaProductosVendidos);
+        alert("hola")
+        
         const cliente = {
             cedula: usuario.cedula,
             nombre: usuario.nombre,
@@ -136,11 +139,11 @@ const Cart = ({ cartItems, removeFromCart }) => {
         };
         
         const factura = {
-            cliente: cliente,
-            fechaActual: handelFechaActualGuardar(),
-            listaProductosVendidos: listaProductosVendidos,
-            total: subtotal,
-            usuarioUsername: tienda.username
+          cliente: cliente,
+          fechaActual: handelFechaActualGuardar(),
+          listaProductosVendidos: listaProductosVendidos,
+          total: subtotal,
+          usuarioUsername: tienda.username,
         };
         
         const facturaGuardada= await GuardarFactura(factura);

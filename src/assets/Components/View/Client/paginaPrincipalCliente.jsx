@@ -14,7 +14,7 @@ export const ViewPaginaPrincipalClient = () => {
     useEffect(() => {
         async function fetchData() {
             try {
-                const respuesta = await GetTiendasCiudad("Valledupars");
+                const respuesta = await GetTiendasCiudad(usuario.ciudad);
                 
                 if (respuesta.datos) {
                     setTiendas(respuesta.datos);
