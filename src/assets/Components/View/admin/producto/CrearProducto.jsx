@@ -30,7 +30,7 @@ import {
 } from "lucide-react";
 
 import { useFormik } from "formik";
-import InputField from "../../Components/input_From";
+import InputFieldForm from "../../Components/input_From";
 import toast from "react-hot-toast";
 const Defaultimage = ImagenDefecto();
 
@@ -75,7 +75,30 @@ const CrearProductoForm = () => {
   );
 };
 
-
+const schemaRegistrarProducto = Yup.object().shape({
+  nombre: Yup.string()
+    .matches(
+      /^[A-Za-z]+$/,
+      "El nombre no puede contener números ni caracteres especiales"
+    )
+    .min(3, "El nombre debe tener al menos 3 caracteres")
+    .max(50, "El nombre no puede tener más de 50 caracteres")
+    .required("El nombre es obligatorio"),
+  stock: Yup.number()
+    .typeError("Debe ser un número")
+    .max(999999, "No se admite valores mayores a 999999")
+    .min(1, "El minimo es 1")
+    .required("El stock es obligatorio"),
+  precio: Yup.number()
+    .typeError("Debe ser un número")
+    .max(999999, "No se admite valores mayores a 999999")
+    .min(1, "El minimo es 1")
+    .required("El precio es obligatorio"),
+  descripcion: Yup.string().max(
+    150,
+    "La descripción no puede tener más de 150 caracteres"
+  ),
+});
 
 export const TarjetaCrearProducto = ({
   TextButton,
@@ -83,30 +106,7 @@ export const TarjetaCrearProducto = ({
   actualizarListaProductos
 }) => {
   // Esquema de validación usando Yup
-  const schemaRegistrarProducto = Yup.object().shape({
-    nombre: Yup.string()
-      .matches(
-        /^[A-Za-z]+$/,
-        "El nombre no puede contener números ni caracteres especiales"
-      )
-      .min(3, "El nombre debe tener al menos 3 caracteres")
-      .max(50, "El nombre no puede tener más de 50 caracteres")
-      .required("El nombre es obligatorio"),
-    stock: Yup.number()
-      .typeError("Debe ser un número")
-      .max(999999, "No se admite valores mayores a 999999")
-      .min(1, "El minimo es 1")
-      .required("El stock es obligatorio"),
-    precio: Yup.number()
-      .typeError("Debe ser un número")
-      .max(999999, "No se admite valores mayores a 999999")
-      .min(1, "El minimo es 1")
-      .required("El precio es obligatorio"),
-    descripcion: Yup.string().max(
-      150,
-      "La descripción no puede tener más de 150 caracteres"
-    ),
-  });
+  
 
   const [img, setImg] = useState(
     ActualizarProducto ? BuscarImagenNombre(ActualizarProducto.img) : null
@@ -237,7 +237,7 @@ export const TarjetaCrearProducto = ({
           <CardBody className="min-h-full">
             {inputConfigs.map((config) => (
               <div className="">
-                <InputField
+                <InputFieldForm
                   key={config.id}
                   config={config}
                   formik={formik}

@@ -2,7 +2,7 @@ import { Input } from "@nextui-org/react";
 import { EyeIcon, EyeOff } from "lucide-react";
 import { useState } from "react";
 
-const InputField = ({ config, formik, startContent }) => {
+const InputFieldForm = ({ config, formik, startContent }) => {
   const [isVisible, setIsVisible] = useState(false);
 
   const toggleVisibility = () => setIsVisible(!isVisible);
@@ -41,4 +41,4 @@ const InputField = ({ config, formik, startContent }) => {
   );
 };
 
-export default InputField;
+export default InputFieldForm;

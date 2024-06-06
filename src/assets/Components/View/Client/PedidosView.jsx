@@ -130,7 +130,6 @@ const Cart = ({ cartItems, removeFromCart }) => {
           subprecio: item.price * item.quantity,
         }));
         console.log(listaProductosVendidos);
-        alert("hola")
         
         const cliente = {
             cedula: usuario.cedula,

@@ -1,11 +1,11 @@
 import { Button } from "@nextui-org/react";
-import InputField from "./input_From";
+import InputFieldForm from "./input_From";
 
 const GenericFrom = ({ formik, inputConfigs, textButton }) => (
   <form onSubmit={formik.handleSubmit}>
     {inputConfigs.map((config) => (
       <div className="my-5">
-        <InputField
+        <InputFieldForm
           key={config.id}
           config={config}
           formik={formik}
