@@ -22,42 +22,13 @@ ChartJS.register(
     Filler
 );
 
-//var midata = {
-//    labels: meses,
-//    datasets: [
-//        {
-//            label: 'Beneficios',
-//            data: beneficios,
-//            backgroundColor: 'rgba(0, 220, 195, 0.5)'
-//        }
-//    ]
-//};
 
-export default function GraficaBarra({ data = {
-    labels: [],
-    valores: [],
-    nombre: "",
-    color: "",
-} }) {
-    
-
-
-    const midata = {
-        labels: data.labels,
-        datasets: [
-            {
-                label: data.nombre,
-                data: data.valores,
-                backgroundColor: data.color
-            }
-        ]
-    };
+export default function GraficaBarra({data}) {
+    console.log(data);
+    //const maxValue = data.valores.length > 0 ? Math.max(...data.valores) : 0;
 
     
-    const maxValue = data.valores.length > 0 ? Math.max(...data.valores) : 0;
-
-    
-    const maxWithIncrement = Math.round(maxValue * 1.10);
+    //const maxWithIncrement = Math.round(maxValue * 1.10);
 
     var misoptions = {
         responsive: true,
@@ -70,7 +41,7 @@ export default function GraficaBarra({ data = {
         scales: {
             y: {
                 min: 0,
-                max: maxWithIncrement
+                //max: maxWithIncrement
             },
             x: {
                 ticks: { color: 'rgba(0, 0, 0)' }
@@ -80,6 +51,6 @@ export default function GraficaBarra({ data = {
 
 
 
-    return <Bar data={midata} options={misoptions} />;
+    return <Bar data={data} options={misoptions} />;
 }
 

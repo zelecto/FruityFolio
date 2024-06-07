@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import * as Yup from "yup";
-import { MensajeAlert } from '../../../Tools/Validadores.jsx';
-import { useFormik } from 'formik';
-import GenericFrom from '../../Components/generic_From.jsx';
-import { AtSign, Fingerprint, LockKeyhole, Mail, User } from 'lucide-react';
+import { MensajeAlert } from "../../../Tools/Validadores.jsx";
+import { useFormik } from "formik";
+import GenericFrom from "../../Components/generic_From.jsx";
+import { AtSign, Fingerprint, LockKeyhole, Mail, User } from "lucide-react";
 import {
   Modal,
   ModalContent,
@@ -14,18 +14,19 @@ import {
   Button,
 } from "@nextui-org/react";
 
-import { GuardarUsuario } from '../../../Base/BdUsuarios.jsx';
-import toast from 'react-hot-toast';
-
+import { GuardarUsuario } from "../../../Base/BdUsuarios.jsx";
+import toast from "react-hot-toast";
 
 const validationSchemaUsuario = Yup.object({
   cedula: Yup.string()
-    .matches(/^\d+$/, "No se admiten letras")
-    .min(1, "La cédula es obligatoria")
+    .matches(/^\d+$/, "No se admiten caracteres")
+    .min(10, "No se admiten menos de 10 numeros")
     .max(10, "No se admiten más de 10 números")
     .required("La cédula es obligatoria"),
   nombre: Yup.string()
     .matches(/^[a-zA-Z\s]*$/, "No se admiten números")
+    .min(3, "No se admiten menos de 3 caracteres")
+    .max(50, "No se admiten mas de 50 caracteres")
     .trim()
     .required("El nombre es obligatorio")
     .test(
@@ -35,6 +36,8 @@ const validationSchemaUsuario = Yup.object({
     ),
   correo: Yup.string()
     .email("Correo electrónico no válido")
+    .min(3, "No se admiten menos de 3 caracteres")
+    .max(50, "No se admiten mas de 50 caracteres")
     .trim()
     .required("El correo es obligatorio")
     .test(
@@ -43,7 +46,8 @@ const validationSchemaUsuario = Yup.object({
       (value) => value.trim() !== ""
     ),
   username: Yup.string()
-    .max(50, "No puede tener más de 50 caracteres")
+    .min(3, "No se admiten menos de 3 letras")
+    .max(50, "No se admiten mas de 50 caracteres")
     .trim()
     .required("El nombre de usuario es obligatorio")
     .test(
@@ -89,11 +93,10 @@ const RegistroUsuarioForm = ({ cerrar }) => {
       toast.dismiss(toastLoding);
       if (data.datos) {
         toast.success("Usuario reguistrado");
-         onOpenChange(false)
+        onOpenChange(false);
       } else {
         toast.error(`${data.error.data}`);
       }
-     
     },
   });
 
@@ -204,10 +207,5 @@ const RegistroUsuarioForm = ({ cerrar }) => {
     </div>
   );
 };
-
-
-
-
-
 
 export default RegistroUsuarioForm;
