@@ -36,9 +36,12 @@ const schemaReguistroCliente = Yup.object().shape({
       "No se admiten más de 10 números",
       (val) => val && val.length <= 10
     )
+    .min(10, "No se admiten menos de 10 números")
     .required("La cédula es requerida"),
   nombre: Yup.string()
     .matches(/^[a-zA-Z\s]*$/, "No se admiten números")
+    .min(1,"No se admiten menos de 3 letras")
+    .max(50,"No se admiten mas de 50 caracteres")
     .required("El nombre es requerido"),
   correo: Yup.string()
     .email("Correo electrónico no válido")
