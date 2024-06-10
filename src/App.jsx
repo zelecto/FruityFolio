@@ -1,6 +1,4 @@
 import { Route, Routes } from "react-router-dom";
-import "./App.css";
-import Login from "./assets/Components/View/Inicio";
 import { ReportView } from "./assets/Components/View/Reports/reportes";
 import CrearFacturaForm from "./assets/Components/View/admin/factura/Facturadora";
 import CrearProductoForm from "./assets/Components/View/admin/producto/CrearProducto";
