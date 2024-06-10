@@ -180,13 +180,13 @@ const TarjetaFactura = () => {
     return fechaFormateada;
   };
 
-  const [idSimulado, SetIdsimulado] = useState(0);
+  const [idSimulado, setIdsimulado] = useState(0);
 
   const handelIdSimulado = (agregar) => {
     if (agregar) {
-      SetIdsimulado(idSimulado + 1);
+      setIdsimulado(idSimulado + 1);
     } else {
-      SetIdsimulado(idSimulado - 1);
+      setIdsimulado(idSimulado - 1);
     }
   };
 
@@ -220,12 +220,12 @@ const TarjetaFactura = () => {
   const [showAgregarProducto, setShowAgregarProducto] = useState(true);
   const [showActualizarProducto, setShowActualizarProducto] = useState(false);
 
-  const [productoActualizar, setproductoActualizar] = useState(null);
+  const [productoActualizar, setProductoActualizar] = useState(null);
 
   const handelshowActualizarProducto = (value, producto) => {
     if (value === true) {
       setShowAgregarProducto(false);
-      setproductoActualizar(producto);
+      setProductoActualizar(producto);
       setShowActualizarProducto(value);
     } else {
       setShowAgregarProducto(true);
@@ -300,7 +300,6 @@ const TarjetaFactura = () => {
     handelshowActualizarProducto(false);
   };
 
-  const [loading, setLoading] = useState(false); // Estado para controlar la carga
 
   return (
     <form
@@ -420,9 +419,8 @@ export const TarjetaVenta = ({
   //Controladores de vista
   const [showListProduct, setShowListProduct] = useState(true);
   const [showDatailProduct, setShowDatailProduct] = useState(false);
-  const [showAlert, setshowAlert] = useState(false);
 
-  let [productSell, setproductSell] = useState(null);
+  const [productSell, setProductSell] = useState(null);
 
   const handelShowListProduct = (value) => {
     if (value && cantidadVender > 0) {
@@ -432,7 +430,6 @@ export const TarjetaVenta = ({
       AgregarVenta(productSell, cantidadVender, cobro);
       setErrorMessageCantidadVender(null);
     } else {
-      setshowAlert(true);
       setErrorMessageCantidadVender("Obligatorio");
     }
   };
@@ -453,7 +450,7 @@ export const TarjetaVenta = ({
   };
 
   const handelProductSell = (value) => {
-    setproductSell(value);
+    setProductSell(value);
     setPrecio(value.price);
   };
   //Lista de productos de la base de datos

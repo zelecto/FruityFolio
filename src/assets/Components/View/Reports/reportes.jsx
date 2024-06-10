@@ -121,7 +121,7 @@ export const ReportView = () => {
 
 const ViewReportPruduct = () => {
   const usuario = JSON.parse(localStorage.getItem("user"));
-  const [rangoFecha, setValue] = useState({
+  const [rangoFecha, setRangoFecha] = useState({
     start: parseDate("2024-05-01"),
     end: parseDate(formatearFecha(new Date())),
   });
@@ -151,7 +151,7 @@ const ViewReportPruduct = () => {
     let fechaInicio = new Date();
     fechaInicio.setDate(1);
 
-    setValue({
+    setRangoFecha({
       start: parseDate(formatearFecha(fechaInicio)),
       end: parseDate(formatearFecha(new Date())),
     });
@@ -217,7 +217,7 @@ const ViewReportPruduct = () => {
           label="Selecciona la fecha"
           color="primary"
           value={rangoFecha}
-          onChange={setValue}
+          onChange={setRangoFecha}
           maxValue={today(getLocalTimeZone())}
         />
         <p className="text-default-500 text-sm text-center">

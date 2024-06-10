@@ -60,14 +60,10 @@ export default function LinesChart({datos={
             ],
     }
 
-    //const maxValue = datos.datos.length > 0 ? Math.max(...datos.datos) : 0;
-    //const maxWithIncrement = Math.round(maxValue * 1.10);
-    var misoptions = {
+    const misoptions = {
         scales: {
             y: {
                 min: 0,
-                //max: maxWithIncrement
-
             },
             
         }
