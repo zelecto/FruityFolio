@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from "prop-types";
 
 const ProgressBar = ({ isLoading, isSuccess }) => {
     const [showProgressBar, setShowProgressBar] = useState(false);
@@ -13,6 +14,16 @@ const ProgressBar = ({ isLoading, isSuccess }) => {
             {isSuccess && <p style={{ color: 'green' }}>La solicitud se realizó correctamente.</p>}
         </div>
     );
+};
+
+ProgressBar.propTypes = {
+  isLoading: PropTypes.bool,
+  isSuccess: PropTypes.bool,
+};
+
+ProgressBar.defaultProps = {
+  isLoading: false,
+  isSuccess: false,
 };
 
 export default ProgressBar;
