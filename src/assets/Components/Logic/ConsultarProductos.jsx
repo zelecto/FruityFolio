@@ -106,11 +106,6 @@ ProductList.propTypes = {
   onSelectProduct: PropTypes.func.isRequired,
 };
 
-ProductList.defaultProps = {
-  products: [],
-};
-
-
 
 export const ProductDetail = ({ product }) => {
   if (product != null) {

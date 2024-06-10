@@ -1,12 +1,10 @@
-import { MoveRight } from "lucide-react";
+import { MoveRight, CircleChevronLeft, CircleChevronRight } from "lucide-react";
 import { BuscarImagenDefault } from "../../Logic/Defaultimage";
 import { useEffect, useState } from "react";
 import { GetTiendasCiudad } from "../../Base/BdtiendaVirtual";
-import { CircleChevronLeft } from "lucide-react";
-import { CircleChevronRight } from "lucide-react";
 import { Spinner } from "@nextui-org/react";
 import HeaderClient from "./HederClient";
-
+import PropTypes from "prop-types";
 export const ViewPaginaPrincipalClient = () => {
   const [tiendas, setTiendas] = useState([]);
   const usuario = JSON.parse(localStorage.getItem("user"));
@@ -43,6 +41,7 @@ export const ViewPaginaPrincipalClient = () => {
             {tiendas.map((items) => {
               return (
                 <CardTienda
+                  key={items.id}
                   tienda={items.tienda}
                   imgTopProductos={items.topFrutasDisponibles}
                   colorFondo={manejoColores()}
@@ -109,6 +108,22 @@ const CardTienda = ({ tienda, colorFondo, imgTopProductos = [] }) => {
   );
 };
 
+CardTienda.propTypes = {
+  tienda: PropTypes.shape({
+    ciudad: PropTypes.string.isRequired,
+    direccion: PropTypes.string.isRequired,
+    nombre: PropTypes.string.isRequired,
+  }).isRequired,
+  colorFondo: PropTypes.string.isRequired,
+  imgTopProductos: PropTypes.arrayOf(
+    PropTypes.shape({
+      imagen: PropTypes.string.isRequired,
+    })
+  ),
+};
+
+
+
 const Carrusel = ({ images = [] }) => {
   const [curr, setCurr] = useState(0);
 
@@ -129,7 +144,7 @@ const Carrusel = ({ images = [] }) => {
         {images.map((image, index) => (
           <div
             className=" w-full  rounded-md flex-shrink-0 flex justify-center items-center"
-            key={index}
+            key={image.productoId}
           >
             <img
               src={BuscarImagenDefault(image)}

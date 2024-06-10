@@ -1,6 +1,6 @@
 import { Button } from "@nextui-org/react";
 import InputFieldForm from "./input_From";
-
+import PropTypes from "prop-types";
 const GenericFrom = ({ formik, inputConfigs, textButton }) => (
   <form onSubmit={formik.handleSubmit}>
     {inputConfigs.map((config) => (
@@ -20,5 +20,12 @@ const GenericFrom = ({ formik, inputConfigs, textButton }) => (
     </div>
   </form>
 );
+
+GenericFrom.propTypes = {
+  formik: PropTypes.object.isRequired,
+  inputConfigs: PropTypes.array.isRequired,
+  textButton: PropTypes.string.isRequired,
+};
+
 
 export default GenericFrom;

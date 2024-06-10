@@ -260,6 +260,11 @@ const Cart = ({ cartItems, removeFromCart }) => {
     );
 };
 
+Cart.propTypes = {
+  cartItems: PropTypes.array.isRequired,
+  removeFromCart: PropTypes.func.isRequired,
+};
+
 
 const PedidosView = () => {
     const [cartItems, setCartItems] = useState([]);
