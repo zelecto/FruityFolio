@@ -9,7 +9,6 @@ import SignoPregunta from "../../../Photo/SignoPregunta.png";
 import { GetTiendaVirtualUsernameDetail } from '../../../Base/BdtiendaVirtual';
 import TiendaFormulario from './formularioTienda';
 import { Select, SelectItem } from "@nextui-org/select";
-
 import { SkeletonPedidosSection, SkeletonTiendaInfo } from '../../Loading/Skeleton';
 import { BaggageClaim, Ban,  CircleDollarSignIcon,  Loader, PackageCheck, Trash2 } from 'lucide-react';
 import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Input, Tooltip } from '@nextui-org/react';
@@ -23,10 +22,6 @@ const TiendaPage = () => {
     //REGUISTRAR UNA TIENDA
     const [showReguistrarTienda, setShowReguistrarTienda] = useState(false);
     const [showFormularioTienda, setShowFormularioTienda] = useState(false);
-
-    const handelshowReguistrarTienda = (mostrar) => {
-        setShowReguistrarTienda(mostrar)
-    }
 
     const handelShowFormularioTienda = (mostrar) => {
         setShowFormularioTienda(mostrar)
@@ -48,7 +43,7 @@ const TiendaPage = () => {
             if (respuesta != null) {
                 const { tiendaData, pedidosData } = respuesta;
                 setStoreData(tiendaData);
-                setOrders(pedidosData ? pedidosData : null);
+                setOrders(pedidosData);
             } else {
                 setShowReguistrarTienda(true)
             }
@@ -85,12 +80,6 @@ const TiendaPage = () => {
             }
             setSelectedOrder(orderId);
         }
-    };
-
-    // Función para cambiar la opción seleccionada
-    const handleEstadoChange = (event, set) => {
-        set(event.target.value);
-        setEstado(event.target.value);
     };
 
     return (
@@ -221,6 +210,16 @@ const TiendaInfo = ({ storeData }) => {
         </Card>
     );
 };
+TiendaInfo.propTypes = {
+  storeData: PropTypes.shape({
+    tienda: PropTypes.shape({
+      nombre: PropTypes.string.isRequired,
+      direccion: PropTypes.string.isRequired,
+    }),
+    totalPedidos: PropTypes.number.isRequired,
+    sumaTotalCobros: PropTypes.number.isRequired,
+  }),
+};
 
 export const PedidosSection = ({ orders, toggleOrderDetails, selectedOrder, orderDetails, handelOrder,vista }) => {
 
@@ -237,6 +236,23 @@ export const PedidosSection = ({ orders, toggleOrderDetails, selectedOrder, orde
         </div>
     );
 };
+
+import PropTypes from "prop-types";
+
+PedidosSection.propTypes = {
+  orders: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      // Aquí debes agregar las demás propiedades de cada objeto dentro del array
+    })
+  ).isRequired,
+  toggleOrderDetails: PropTypes.func.isRequired,
+  selectedOrder: PropTypes.number,
+  orderDetails: PropTypes.object.isRequired,
+  handelOrder: PropTypes.func.isRequired,
+  vista: PropTypes.string.isRequired,
+};
+
 
 const PedidoCard = ({ order, toggleOrderDetails, selectedOrder, orderDetails, removerOrden,vista }) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -378,6 +394,28 @@ const PedidoCard = ({ order, toggleOrderDetails, selectedOrder, orderDetails, re
     );
 };
 
+PedidoCard.propTypes = {
+  order: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    factura: PropTypes.shape({
+      fecha: PropTypes.string.isRequired,
+      cliente: PropTypes.shape({
+        nombre: PropTypes.string.isRequired,
+      }).isRequired,
+      preciototal: PropTypes.number.isRequired,
+    }).isRequired,
+    estado: PropTypes.oneOf(["Pendiente", "Enviado", "Entregado"]).isRequired,
+    clienteUsuario: PropTypes.shape({
+      direccionResidencia: PropTypes.string.isRequired,
+    }).isRequired,
+  }).isRequired,
+  toggleOrderDetails: PropTypes.func.isRequired,
+  selectedOrder: PropTypes.number,
+  orderDetails: PropTypes.object.isRequired,
+  removerOrden: PropTypes.func.isRequired,
+  vista: PropTypes.string.isRequired,
+};
+
 const EnvioSection = ({ orderId, estado, precio, handelOrder, vista }) => {
     const [envioPrice, setEnvioPrice] = useState(precio ? precio : null);
 
@@ -434,6 +472,13 @@ const EnvioSection = ({ orderId, estado, precio, handelOrder, vista }) => {
     );
 };
 
+EnvioSection.propTypes = {
+  orderId: PropTypes.number.isRequired,
+  estado: PropTypes.oneOf(["Pendiente", "Enviado", "Entregado"]).isRequired,
+  precio: PropTypes.number,
+  handelOrder: PropTypes.func.isRequired,
+  vista: PropTypes.string.isRequired,
+};
 
 
 async function fetchData(estado) {
@@ -482,5 +527,11 @@ async function fetchOrders(idtienda, estado) {
     }
     return null;
 }
+
+fetchOrders.propTypes = {
+  idtienda: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+    .isRequired,
+  estado: PropTypes.string.isRequired,
+};
 
 export default TiendaPage;

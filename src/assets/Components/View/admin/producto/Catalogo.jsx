@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { ProductList } from "../../../Logic/ConsultarProductos";
-import { ProductDetail } from "../../../Logic/ConsultarProductos";
+import { ProductList, ProductDetail } from "../../../Logic/ConsultarProductos";
 import Header from "../../Header";
 import { TarjetaCrearProducto } from "./CrearProducto";
 import { BorrarProducto, ConsultarProductos } from "../../../Base/BdProductos";
+import PropTypes from "prop-types";
 
 import {
   Button,
@@ -193,6 +193,18 @@ const ModalUpdateProduct = ({ selectedProduct, consultarProductos }) => {
       </Modal>
     </>
   );
+};
+
+ModalUpdateProduct.propTypes = {
+  selectedProduct: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+    stock: PropTypes.number.isRequired,
+    description: PropTypes.string,
+    // Añade aquí otros campos que puedan estar en `selectedProduct`
+  }).isRequired,
+  consultarProductos: PropTypes.func.isRequired,
 };
 
 export default ConsultaCatalogo;

@@ -1,4 +1,5 @@
 import { Line } from 'react-chartjs-2';
+import PropTypes from "prop-types";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -72,3 +73,13 @@ export default function LinesChart({datos={
 
     return <Line data={midata} options={misoptions} />
 }
+
+LinesChart.propTypes = {
+  datos: PropTypes.shape({
+    nombreEjeX: PropTypes.arrayOf(PropTypes.string).isRequired,
+    nombreLinea: PropTypes.string.isRequired,
+    datos: PropTypes.arrayOf(PropTypes.number).isRequired,
+    datosComparacion: PropTypes.arrayOf(PropTypes.number).isRequired,
+    nombreLineaComparada: PropTypes.string.isRequired,
+  }).isRequired,
+};

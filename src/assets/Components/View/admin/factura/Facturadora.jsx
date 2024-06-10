@@ -4,6 +4,7 @@ import { ProductDetail, ProductList } from "../../../Logic/ConsultarProductos";
 import {
   ConsultarProductosPorStock,
 } from "../../../Base/BdProductos";
+import PropTypes from "prop-types";
 import { GuardarFactura } from "../../../Base/BdFactura";
 import {
   Button,
@@ -179,13 +180,13 @@ const TarjetaFactura = () => {
     return fechaFormateada;
   };
 
-  const [idSimulado, setIdsimulado] = useState(0);
+  const [idSimulado, setIdSimulado] = useState(0);
 
   const handelIdSimulado = (agregar) => {
     if (agregar) {
-      setIdsimulado(idSimulado + 1);
+      setIdSimulado(idSimulado + 1);
     } else {
-      setIdsimulado(idSimulado - 1);
+      setIdSimulado(idSimulado - 1);
     }
   };
 
@@ -312,7 +313,7 @@ const TarjetaFactura = () => {
           </h1>
           <div className="flex justify-between mt-4">
             {inputConfigs.map((config) => (
-              <div className="mx-5">
+              <div className="mx-5" key={config.id}>
                 <InputFieldForm
                   key={config.id}
                   config={config}
@@ -573,6 +574,21 @@ export const TarjetaVenta = ({
   );
 };
 
+TarjetaVenta.propTypes = {
+  AgregarVenta: PropTypes.func.isRequired,
+  ListaProductosVendidos: PropTypes.arrayOf(
+    PropTypes.shape({
+      producto: PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        name: PropTypes.string.isRequired,
+        price: PropTypes.number.isRequired,
+        stock: PropTypes.number.isRequired,
+      }).isRequired,
+    })
+  ).isRequired,
+  recargar: PropTypes.bool.isRequired,
+};
+
 export const TarjetaActualizarVenta = ({
   productActualizar,
   ActualizarVenta,
@@ -683,4 +699,16 @@ export const TarjetaActualizarVenta = ({
       </Card>
     </div>
   );
+};
+
+TarjetaActualizarVenta.propTypes = {
+  productActualizar: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+    stock: PropTypes.number.isRequired,
+  }).isRequired,
+  ActualizarVenta: PropTypes.func.isRequired,
+  EliminarVenta: PropTypes.func.isRequired,
+  CancelarActualizacionVenta: PropTypes.func.isRequired,
 };

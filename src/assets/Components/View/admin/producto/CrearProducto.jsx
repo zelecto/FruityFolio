@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import PropTypes from "prop-types";
 import Header from "../../Header";
 import { BuscarImagenNombre, ImagenDefecto } from "../../../Logic/Defaultimage";
 import iconoGaleria from "../../../Icons/IconoGaleria.png";
@@ -264,6 +264,18 @@ export const TarjetaCrearProducto = ({
     </div>
   );
 };
+TarjetaCrearProducto.propTypes = {
+  TextButton: PropTypes.string.isRequired,
+  ActualizarProducto: PropTypes.shape({
+    id: PropTypes.number,
+    name: PropTypes.string,
+    price: PropTypes.number,
+    stock: PropTypes.number,
+    description: PropTypes.string,
+    img: PropTypes.string,
+  }),
+  actualizarListaProductos: PropTypes.func.isRequired,
+};
 
 export default CrearProductoForm;
 
@@ -321,8 +333,8 @@ const Gallery = ({
 
         <div className="max-h-[460px] gap-2 grid grid-cols-2 sm:grid-cols-3 overflow-y-auto">
           {imagenes &&
-            imagenes.map((item, index) => (
-              <div key={index}>
+            imagenes.map((item) => (
+              <div key={item.alt}>
                 <Card
                   shadow="sm"
                   isPressable
@@ -351,3 +363,14 @@ const Gallery = ({
     </Card>
   );
 };
+
+
+Gallery.propTypes = {
+  handelImg: PropTypes.func.isRequired,
+  imagenSeleccionada: PropTypes.shape({
+    src: PropTypes.string,
+    nombre: PropTypes.string,
+  }),
+  setImagenSeleccionada: PropTypes.func.isRequired,
+};
+
