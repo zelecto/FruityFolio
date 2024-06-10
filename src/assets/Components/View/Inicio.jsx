@@ -7,9 +7,9 @@ import { MensajeAlert } from "../Tools/Validadores";
 import RegistroUsuarioForm from "./admin/user/ReguistrarUsuario";
 
 const Login = () => {
-  const [showReguistrar, setShowReguistar] = useState(false);
+  const [showReguistrar, setShowReguistrar] = useState(false);
   const handelShowReguistrar = (value) => {
-    setShowReguistar(value);
+    setShowReguistrar(value);
   }
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -31,12 +31,9 @@ const Login = () => {
       setMensajeErroPasword("no se admite mas de 20 carecteres");
     }
   }
-  const CloseShowReguistrar = () => {
-    setShowReguistar(false);
-  }
 
   const onClickiniciarSecion = async () => {
-    const { datos, error } = await ConsultarUsuario(username)
+    const { datos } = await ConsultarUsuario(username)
   
     if (datos&& password===datos.password) {
       window.location.href = '/paginaPrincipal';
@@ -136,13 +133,13 @@ const Login = () => {
 
           <div className="flex items-center justify-between my-5">
             <div className="text-sm">
-              <a
+              <button
                 href="#"
                 className="font-medium text-indigo-600 hover:text-indigo-500"
                 onClick={() => handelShowReguistrar(true)}
               >
                 Registrarse
-              </a>
+              </button>
             </div>
           </div>
 

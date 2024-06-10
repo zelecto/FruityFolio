@@ -1,7 +1,7 @@
 import { Input } from "@nextui-org/react";
 import { EyeIcon, EyeOff } from "lucide-react";
 import { useState } from "react";
-
+import PropTypes from "prop-types";
 const InputFieldForm = ({ config, formik, startContent }) => {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -39,6 +39,15 @@ const InputFieldForm = ({ config, formik, startContent }) => {
       errorMessage={formik.touched[config.id] && formik.errors[config.id]}
     />
   );
+};
+
+InputFieldForm.propTypes = {
+  config: PropTypes.shape({
+    label: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired,
+  }).isRequired,
+  formik: PropTypes.object.isRequired,
+  startContent: PropTypes.node,
 };
 
 export default InputFieldForm;

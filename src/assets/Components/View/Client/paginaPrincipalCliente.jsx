@@ -169,3 +169,7 @@ const Carrusel = ({ images = [] }) => {
     </div>
   );
 };
+
+Carrusel.propTypes = {
+  images: PropTypes.array,
+};

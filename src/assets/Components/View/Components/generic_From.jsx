@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 const GenericFrom = ({ formik, inputConfigs, textButton }) => (
   <form onSubmit={formik.handleSubmit}>
     {inputConfigs.map((config) => (
-      <div className="my-5">
+      <div key={config.id} className="my-5">
         <InputFieldForm
           key={config.id}
           config={config}

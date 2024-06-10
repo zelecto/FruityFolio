@@ -2,6 +2,7 @@ import React from "react";
 import { Button, Image, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem} from "@nextui-org/react";
 import Logo from "../Photo/logo.png";
 import { Apple, Package, ReceiptText } from "lucide-react";
+import PropTypes from "prop-types";
 const Header = ({title}) => {
   return (
     <Navbar isBordered maxWidth="full" className="h-20 text-black">
@@ -59,6 +60,10 @@ const Header = ({title}) => {
     </Navbar>
 
   );
+};
+
+Header.propTypes = {
+  title: PropTypes.string.isRequired,
 };
 
 export default Header;

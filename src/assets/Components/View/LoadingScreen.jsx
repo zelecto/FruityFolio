@@ -11,5 +11,10 @@ const Loading = ({ message }) => {
     );
 };
 
+Loading.propTypes = {
+  message: PropTypes.string.isRequired,
+};
+
+
 export default Loading;
 
