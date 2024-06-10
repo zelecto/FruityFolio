@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
-import validarNombre from "../../../Tools/Validadores";
-import { ErrorMensaje, MensajeAlert } from "../../../Tools/Validadores";
+import React, { useState } from "react";
+
 import Header from "../../Header";
 import { BuscarImagenNombre, ImagenDefecto } from "../../../Logic/Defaultimage";
 import iconoGaleria from "../../../Icons/IconoGaleria.png";
@@ -15,15 +14,12 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
-  Chip,
   Image,
-  Input,
   Textarea,
-  image,
+  
 } from "@nextui-org/react";
 import {
   CircleDollarSignIcon,
-  FileText,
   FileTypeIcon,
   Package,
   ShoppingBasketIcon,
@@ -32,40 +28,12 @@ import {
 import { useFormik } from "formik";
 import InputFieldForm from "../../Components/input_From";
 import toast from "react-hot-toast";
-const Defaultimage = ImagenDefecto();
 
 const CrearProductoForm = () => {
-  const [showAlert, setShowAlert] = useState(false);
-  const [mensaje, setMensaje] = useState({
-    Mensaje: "",
-    colorBoton: "",
-    colorText: "",
-    isError: false,
-    textBoton: "",
-  });
-
-  const handleCloseAlert = () => {
-    setShowAlert(false);
-  };
-
-  const handelOpenAlert = () => {
-    setShowAlert(true);
-  };
-
-  
 
   return (
     <div className="h-screen w-screen bg-[#F5F5F5] flex flex-col items-center">
-      {showAlert && (
-        <MensajeAlert
-          message={mensaje.Mensaje}
-          onClose={handleCloseAlert}
-          isError={mensaje.isError}
-          buttonColor={mensaje.colorBoton}
-          textColor={mensaje.colorText}
-          buttonText={mensaje.textBoton}
-        />
-      )}
+      
       <Header title="FruityFolio" />
 
       <div className="w-2/3 h-full flex justify-center items-center">

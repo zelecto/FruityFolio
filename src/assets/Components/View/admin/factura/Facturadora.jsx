@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import validarNombre, { MensajeAlert } from "../../../Tools/Validadores";
+
 import Header from "../../Header";
 import { ProductDetail, ProductList } from "../../../Logic/ConsultarProductos";
 import {
-  ConsultarProductos,
   ConsultarProductosPorStock,
 } from "../../../Base/BdProductos";
 import { GuardarFactura } from "../../../Base/BdFactura";
