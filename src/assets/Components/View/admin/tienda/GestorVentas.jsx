@@ -25,7 +25,6 @@ import {
 import { CalendarCheck, CircleDollarSignIcon } from "lucide-react";
 import { parseDate, getLocalTimeZone, today } from "@internationalized/date";
 import { formatearFecha } from "../../Reports/reportes";
-import { useDateFormatter } from "@react-aria/i18n";
 import { TarjetaActualizarVenta, TarjetaVenta } from "../factura/Facturadora";
 
 function GestorVentasView() {
@@ -110,6 +109,8 @@ const DetallesFactura = ({ factura, showDetallesFactura}) => {
 
 
     const { numero: fecha, cliente } = factura;
+    
+    
     const [listaProductosVendidos, setListaProductosVendidos] = useState([]);
     const [totalPago, setTotalPago] = useState(factura.preciototal);
     const [showActualizarVenta, setShowActualizarVenta] = useState(false);
@@ -276,7 +277,7 @@ const DetallesFactura = ({ factura, showDetallesFactura}) => {
                                 <Chip color="primary" endContent={<CalendarCheck></CalendarCheck>}
                                     className="text-lg p-2"
                                 >
-                                    {fecha}
+                                    {factura.fecha}
                                 </Chip>
                             </CardHeader>
 
