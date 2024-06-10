@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import PropTypes from "prop-types";
 const validarNombre = (nombre) => {
   const onlyLetters = /^[A-Za-z]+$/;
   return onlyLetters.test(nombre);
@@ -68,6 +68,24 @@ export const MensajeAlert = ({
     </>
   );
 };
+
+MensajeAlert.propTypes = {
+  message: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  onClose: PropTypes.func.isRequired,
+  buttonColor: PropTypes.string,
+  textColor: PropTypes.string,
+  buttonText: PropTypes.string,
+};
+
+MensajeAlert.defaultProps = {
+  buttonColor: "blue",
+  textColor: "text-black",
+  buttonText: "Close",
+};
+
+
+
 const colorClasses = {
   red: "bg-red-600 hover:bg-red-700",
   blue: "bg-blue-600 hover:bg-blue-700",
