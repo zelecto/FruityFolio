@@ -47,52 +47,50 @@ export const ProductList = ({ products, onSelectProduct }) => {
           />
         </div>
         <div className="flex flex-col justify-start items-center max-h-[400px] overflow-y-auto">
-          {filtro.length > 0 ? (
-            // Si hay productos filtrados, mostrar los productos filtrados
-            filtro.map((producto) => (
-              <div
-                key={producto.id}
-                onKeyUp={""}
-                className="border bg-white p-2 cursor-pointer m-2 w-[400px] hover:bg-gray-200 shadow-md rounded-md flex justify-between items-center"
-                onClick={() => onSelectProduct(producto)}
-              >
-                <div>
-                  <h2 className="text-lg font-bold my-1">{producto.name}</h2>
-                  <p className="text-gray-800">${producto.price}</p>
-                </div>
+          {filtro.length > 0
+            ? // Si hay productos filtrados, mostrar los productos filtrados
+              filtro.map((producto) => (
+                <div
+                  key={producto.id}
+                  onKeyUp={""}
+                  className="border bg-white p-2 cursor-pointer m-2 w-[400px] hover:bg-gray-200 shadow-md rounded-md flex justify-between items-center"
+                  onClick={() => onSelectProduct(producto)}
+                >
+                  <div>
+                    <h2 className="text-lg font-bold my-1">{producto.name}</h2>
+                    <p className="text-gray-800">${producto.price}</p>
+                  </div>
 
-                <img
-                  src={BuscarImagenDefault(producto.img)}
-                  alt="Imagen del producto"
-                  className="w-20 h-auto object-cover mr-4"
-                />
-              </div>
-            ))
-          ) : (
-            // Si no hay productos filtrados, mostrar todos los productos
-            products.map((producto) => (
-              <div
-                key={producto.id}
-                className="border bg-white p-2 cursor-pointer m-2 w-[400px] hover:bg-gray-200 shadow-md rounded-md flex justify-between items-center"
-                onClick={() => onSelectProduct(producto)}
-              >
-                <div>
-                  <h2 className="text-lg font-bold my-1">{producto.name}</h2>
-                  <p className="text-gray-800">${producto.price}</p>
+                  <img
+                    src={BuscarImagenDefault(producto.img)}
+                    alt="Imagen del producto"
+                    className="w-20 h-auto object-cover mr-4"
+                  />
                 </div>
+              ))
+            : // Si no hay productos filtrados, mostrar todos los productos
+              products.map((producto) => (
+                <div
+                  key={producto.id}
+                  onKeyUp={""}
+                  className="border bg-white p-2 cursor-pointer m-2 w-[400px] hover:bg-gray-200 shadow-md rounded-md flex justify-between items-center"
+                  onClick={() => onSelectProduct(producto)}
+                >
+                  <div>
+                    <h2 className="text-lg font-bold my-1">{producto.name}</h2>
+                    <p className="text-gray-800">${producto.price}</p>
+                  </div>
 
-                <img
-                  src={BuscarImagenDefault(producto.img)}
-                  alt="Imagen del producto"
-                  className="w-20 h-auto object-cover mr-4"
-                />
-              </div>
-            ))
-          )}
+                  <img
+                    src={BuscarImagenDefault(producto.img)}
+                    alt="Imagen del producto"
+                    className="w-20 h-auto object-cover mr-4"
+                  />
+                </div>
+              ))}
         </div>
       </div>
     </AnimacionEntrada>
-    
   );
 };
 

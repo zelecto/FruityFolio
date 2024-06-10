@@ -250,24 +250,24 @@ const PedidoCard = ({ order, toggleOrderDetails, selectedOrder, orderDetails, re
         switch (order.estado) {
             case "Pendiente":
                 return <Loader></Loader>
-                break;
+                
             case "Enviado":
                 return <BaggageClaim></BaggageClaim>
             case "Entregado":
                 return <PackageCheck></PackageCheck>
-                break
+               
         }
     }
     const AsignarColor = () => {
         switch (order.estado) {
             case "Pendiente":
                 return "bg-slate-400"
-                break;
+                
             case "Enviado":
                 return "bg-green-400"
             case "Entregado":
                 return "bg-blue-400"
-                break
+                
             
         }
     }
@@ -320,7 +320,7 @@ const PedidoCard = ({ order, toggleOrderDetails, selectedOrder, orderDetails, re
             </CardHeader>
             <CardBody className='p-0' >
 
-                <div className="flex w-full justify-between items-end cursor-pointer" onClick={handleToggleOrderDetails}>
+                <div className="flex w-full justify-between items-end cursor-pointer" onKeyUp={""} onClick={handleToggleOrderDetails}>
                     <div>
                         <p className="font-bold">Cliente: <span className="text-gray-600 font-semibold">{order.factura.cliente.nombre}</span></p>
                         <p className="font-bold">Total: <span className="text-gray-600 font-semibold">{order.factura.preciototal}$</span></p>
