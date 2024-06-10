@@ -1,5 +1,5 @@
 
-import { Button, Image, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem, Spinner } from "@nextui-org/react";
+import { Button, Image, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@nextui-org/react";
 import Logo from "../../Photo/logo.png";
 import { ShoppingBasket } from "lucide-react";
 const HeaderClient =()=>{

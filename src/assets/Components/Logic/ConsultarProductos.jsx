@@ -3,7 +3,7 @@ import { BuscarImagenDefault } from "./Defaultimage";
 import { Card, CardBody, CardFooter, CardHeader, Chip, Image, Input, Tooltip } from "@nextui-org/react";
 import { CircleDollarSign } from "lucide-react";
 import { AnimacionEntrada } from "../Tools/animaciones";
-
+import PropTypes from "prop-types";
 export const ProductList = ({ products, onSelectProduct }) => {
   const [buscar, setBuscar] = useState("");
 
@@ -94,6 +94,24 @@ export const ProductList = ({ products, onSelectProduct }) => {
   );
 };
 
+ProductList.propTypes = {
+  products: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+      price: PropTypes.number.isRequired,
+      img: PropTypes.string,
+    })
+  ).isRequired,
+  onSelectProduct: PropTypes.func.isRequired,
+};
+
+ProductList.defaultProps = {
+  products: [],
+};
+
+
+
 export const ProductDetail = ({ product }) => {
   if (product != null) {
     return (
@@ -136,4 +154,16 @@ export const ProductDetail = ({ product }) => {
     );
   }
 };
+
+ProductDetail.propTypes = {
+  product: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+    img: PropTypes.string,
+    stock: PropTypes.number.isRequired,
+    description: PropTypes.string.isRequired,
+  }),
+};
+
 

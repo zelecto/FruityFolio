@@ -5,6 +5,7 @@ import { GuardarFactura } from '../../Base/BdFactura';
 import { postPedido } from '../../Base/BdPedido';
 import { MensajeAlert } from '../../Tools/Validadores';
 import HeaderClient from './HederClient';
+import PropTypes from "prop-types";
 
 const ProductGrid = ({ addToCart, cartItems }) => {
     const [productos, setProductos] = useState([]);
@@ -43,6 +44,11 @@ const ProductGrid = ({ addToCart, cartItems }) => {
             ))}
         </div>
     );
+};
+
+ProductGrid.propTypes = {
+  addToCart: PropTypes.func.isRequired,
+  cartItems: PropTypes.array.isRequired,
 };
 
 
@@ -89,6 +95,19 @@ const Product = ({ product, addToCart, isInCart, colorFondo }) => {
         </div>
     );
 };
+Product.propTypes = {
+  product: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    stock: PropTypes.number.isRequired,
+    price: PropTypes.number.isRequired,
+    img: PropTypes.string,
+  }).isRequired,
+  addToCart: PropTypes.func.isRequired,
+  isInCart: PropTypes.bool.isRequired,
+  colorFondo: PropTypes.string.isRequired,
+};
+
 
 const Cart = ({ cartItems, removeFromCart }) => {
     // Calcular el subtotal sumando los precios de los productos en el carrito
