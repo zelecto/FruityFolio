@@ -67,7 +67,7 @@ const validationSchemaUsuario = Yup.object({
     ),
 });
 
-const RegistroUsuarioForm = ({ cerrar }) => {
+const RegistroUsuarioForm = () => {
   //modal
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const formik = useFormik({

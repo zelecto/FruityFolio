@@ -59,7 +59,7 @@ const schemaReguistroCliente = Yup.object().shape({
     .required("La dirección de residencia es requerida"),
 });
 
-const RegistroClienteForm = ({ cerrar }) => {
+const RegistroClienteForm = () => {
   const [ciudades, setCiudades] = useState([]);
   const [ciudadResidencia, setCiudadResidencia] = useState(null);
   const [errorCiudadResidencia, setErrorCiudadResidencia] = useState(false);

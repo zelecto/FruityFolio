@@ -85,11 +85,7 @@ const CardTienda = ({ tienda, colorFondo, imgTopProductos = [] }) => {
           <h2 className="px-5 font-bold text-lg">{tienda.direccion}</h2>
         </div>
         <h1 className="font-bold text-2xl">{tienda.nombre}</h1>
-        <p className="w-[300px] text-gray-500 text-lg">
-          {
-            "descripcion" //TODO: CAMBIAR LA DESCRIPCION
-          }
-        </p>
+        
         <button
           onClick={handleExplorarClick}
           className="w-80 flex font-semibold text-xl border-b-2 border-black items-center"

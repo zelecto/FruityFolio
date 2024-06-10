@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Header from "../../Header";
-
+import PropTypes from "prop-types";
 import { ActualizarDetallesFactura, ActualizarFactura, EliminarDetalleFactura, EliminarFactura, consultarDetallesFactura, consultarFactura,  guardarVentas } from "../../../Base/BdFactura";
 
 import { Button, Card, CardBody, CardFooter, CardHeader, Chip, DateRangePicker, Pagination, Spinner, getKeyValue } from "@nextui-org/react";
@@ -73,7 +73,7 @@ function GestorVentasView() {
 }
 
 
-const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => {
+const DetallesFactura = ({ factura, showDetallesFactura}) => {
 
     const consultaDetalle = async () => {
         setIsLoading(true);
@@ -353,6 +353,11 @@ const DetallesFactura = ({ factura, showDetallesFactura, consultarFactura }) => 
 
 
     );
+};
+DetallesFactura.propTypes = {
+  factura: PropTypes.object.isRequired,
+  showDetallesFactura: PropTypes.func.isRequired,
+  consultarFactura: PropTypes.func.isRequired,
 };
 
 

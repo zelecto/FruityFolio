@@ -18,7 +18,7 @@ import {
 import { HomeIcon, Store } from "lucide-react";
 import InputField from "../../Components/input_From";
 import { GetCiudades } from "../../../Base/bdCiudades";
-
+import PropTypes from "prop-types";
 const schemaReguistroTienda = Yup.object().shape({
   nombre: Yup.string()
     .required("El nombre de la tienda es requerido")
@@ -180,6 +180,9 @@ const TiendaFormulario = ({ handelshowReguistrarTienda }) => {
       </Modal>
     </>
   );
+};
+TiendaFormulario.propTypes = {
+  handelshowReguistrarTienda: PropTypes.func.isRequired,
 };
 
 export default TiendaFormulario;

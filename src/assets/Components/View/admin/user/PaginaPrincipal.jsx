@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Header from "../../Header";
-
+import PropTypes from "prop-types";
 //Iconos a usar
 import iconoInventario from "../../../Icons/iconoInventario.png";
 import iconoFactura from "../../../Icons/iconoFactura.png";
@@ -10,9 +10,6 @@ import iconoProducto from "../../../Icons/iconoProducto.png";
 import IconoTienda from "../../../Icons/IconoTienda.png";
 import IconoGrafica from "../../../Icons/IconoGrafica.png";
 import { Button, Image } from "@nextui-org/react";
-
-
-
 
 function Principal() {
   const usuario = JSON.parse(localStorage.getItem('user'));
@@ -83,7 +80,7 @@ function Principal() {
 function Card({ title, description, buttonText, to, img }) {
   const [hovered, setHovered] = React.useState(false);
   return (
-    <div
+    <button
       className={`bg-white p-6 mx-5 rounded-lg shadow-xl flex flex-col items-center justify-between h-[300px] w-[350px] transition-transform text-center ${hovered ? "transform scale-105" : ""
         }`}
       onMouseEnter={() => setHovered(true)}
@@ -102,8 +99,16 @@ function Card({ title, description, buttonText, to, img }) {
         </Button>
         
       </Link>
-    </div>
+    </button>
   );
 }
+
+Card.propTypes = {
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  buttonText: PropTypes.string.isRequired,
+  to: PropTypes.string.isRequired,
+  img: PropTypes.string.isRequired,
+};
 
 export default Principal;

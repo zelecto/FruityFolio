@@ -12,7 +12,7 @@ import { Select, SelectItem } from "@nextui-org/select";
 import { SkeletonPedidosSection, SkeletonTiendaInfo } from '../../Loading/Skeleton';
 import { BaggageClaim, Ban,  CircleDollarSignIcon,  Loader, PackageCheck, Trash2 } from 'lucide-react';
 import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Input, Tooltip } from '@nextui-org/react';
-
+import PropTypes from "prop-types";
 const TiendaPage = () => {
     const [storeData, setStoreData] = useState(null);
     const [orders, setOrders] = useState([]);
@@ -237,13 +237,13 @@ export const PedidosSection = ({ orders, toggleOrderDetails, selectedOrder, orde
     );
 };
 
-import PropTypes from "prop-types";
+
 
 PedidosSection.propTypes = {
   orders: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number.isRequired,
-      // Aquí debes agregar las demás propiedades de cada objeto dentro del array
+      
     })
   ).isRequired,
   toggleOrderDetails: PropTypes.func.isRequired,
@@ -336,7 +336,7 @@ const PedidoCard = ({ order, toggleOrderDetails, selectedOrder, orderDetails, re
             </CardHeader>
             <CardBody className='p-0' >
 
-                <div className="flex w-full justify-between items-end cursor-pointer" onKeyUp={""} onClick={handleToggleOrderDetails}>
+                <button className="flex w-full justify-between items-end cursor-pointer" onKeyUp={""} onClick={handleToggleOrderDetails}>
                     <div>
                         <p className="font-bold">Cliente: <span className="text-gray-600 font-semibold">{order.factura.cliente.nombre}</span></p>
                         <p className="font-bold">Total: <span className="text-gray-600 font-semibold">{order.factura.preciototal}$</span></p>
@@ -356,7 +356,7 @@ const PedidoCard = ({ order, toggleOrderDetails, selectedOrder, orderDetails, re
                         </Button>
                     )}
 
-                </div>
+                </button>
                 {!isLoading && (
                     <div>
                         {selectedOrder === order.id && (

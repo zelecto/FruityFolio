@@ -4,7 +4,7 @@ import { Button, Input } from "@nextui-org/react";
 import { useFormik } from "formik";
 import { GetCuentaUsuario } from "../../../Base/BdInicioSecion";
 import { AtSign, Eye, EyeOff, LockKeyhole } from "lucide-react";
-
+import PropTypes from "prop-types";
 
 
 const userSchema = Yup.object().shape({
@@ -154,4 +154,9 @@ export const FormularioLogin = ({setMensaje,setShowAlert}) => {
       </div>
     </form>
   );
+};
+
+FormularioLogin.propTypes = {
+  setMensaje: PropTypes.func.isRequired,
+  setShowAlert: PropTypes.func.isRequired,
 };
