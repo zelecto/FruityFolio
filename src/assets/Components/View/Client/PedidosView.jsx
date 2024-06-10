@@ -6,6 +6,8 @@ import { postPedido } from '../../Base/BdPedido';
 import { MensajeAlert } from '../../Tools/Validadores';
 import HeaderClient from './HederClient';
 import PropTypes from "prop-types";
+import { Button } from '@nextui-org/react';
+import toast from "react-hot-toast";
 
 const ProductGrid = ({ addToCart, cartItems }) => {
     const [productos, setProductos] = useState([]);
@@ -84,13 +86,13 @@ const Product = ({ product, addToCart, isInCart, colorFondo }) => {
                     onChange={(e) => handelSetQuantity(e.target.value)}
                     disabled={isInCart}
                 />
-                <button
+                <Button
                     className={`py-1 px-4 rounded ${isInCart ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 text-white'}`}
                     onClick={() => addToCart(product, quantity)}
                     disabled={isInCart}
                 >
                     {isInCart ? 'En el carrito' : 'Agregar'}
-                </button>
+                </Button>
             </div>
         </div>
     );
@@ -163,7 +165,7 @@ const Cart = ({ cartItems, removeFromCart }) => {
           total: subtotal,
           usuarioUsername: tienda.username,
         };
-        
+        const toastLoaing = toast.loading("Realizando pedido");
         const facturaGuardada= await GuardarFactura(factura);
         const pedido={
             estado: "Pendiente",
@@ -172,8 +174,9 @@ const Cart = ({ cartItems, removeFromCart }) => {
             precioTransporte: 0,
             username_Cliente: usuario.username
         }
+
         const response= await postPedido(pedido);
-        console.log(response);
+        toast.dismiss(toastLoaing);
         if (response.datos) {
             setMensaje({
                 title: "Pedido creado con éxito",
@@ -201,62 +204,77 @@ const Cart = ({ cartItems, removeFromCart }) => {
     };
 
     return (
-        <div className="fixed top-[175px] right-32 w-[400px] p-4 border border-gray-200 rounded h-[500px] overflow-y-auto bg-white shadow-lg z-50">
-            {showMensaje &&
-                <MensajeAlert
-                    message={mensaje.Mensaje}
-                    title={mensaje.title}
-                    onClose={() => handelShowMensaje(false, !mensaje.isError)}
-                    isError={mensaje.isError}
-                    buttonColor={mensaje.colorBoton}
-                    textColor={mensaje.colorText}
-                    buttonText={mensaje.textBoton}
-                />
-            }
-            <h2 className="text-xl text-center font-bold mb-4">Carrito de Compras</h2>
-            {cartItems.length === 0 ? (
-                <div className="flex flex-col items-center">
-                    <img className='w-64 my-5 rounded-xl'
-                        src="https://th.bing.com/th/id/OIG2.UgzdSFRMt9ZvNi5VJe3z?pid=ImgGn"
-                        alt="" />
-                    <h2 className='font-bold text-xl my-10'>Tu carrito esta vacio</h2>
+      <div className="fixed top-[175px] right-32 w-[400px] p-4 border border-gray-200 rounded h-[500px] overflow-y-auto bg-white shadow-lg z-50">
+        {showMensaje && (
+          <MensajeAlert
+            message={mensaje.Mensaje}
+            title={mensaje.title}
+            onClose={() => handelShowMensaje(false, !mensaje.isError)}
+            isError={mensaje.isError}
+            buttonColor={mensaje.colorBoton}
+            textColor={mensaje.colorText}
+            buttonText={mensaje.textBoton}
+          />
+        )}
+        <h2 className="text-xl text-center font-bold mb-4">
+          Carrito de Compras
+        </h2>
+        {cartItems.length === 0 ? (
+          <div className="flex flex-col items-center">
+            <img
+              className="w-64 my-5 rounded-xl"
+              src="https://th.bing.com/th/id/OIG2.UgzdSFRMt9ZvNi5VJe3z?pid=ImgGn"
+              alt=""
+            />
+            <h2 className="font-bold text-xl my-10">Tu carrito esta vacio</h2>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {cartItems.map((item) => (
+              <div
+                key={item.id}
+                className="flex justify-between items-center border border-gray-200 rounded p-2 shadow-lg"
+              >
+                <div className="flex flex-col">
+                  <p className="text-gray-800 font-bold mb-1">{item.name}</p>
+                  <p className="text-gray-500 font-semibold">
+                    Cantidad: {item.quantity} kg
+                  </p>
                 </div>
-            ) : (
-                <div className="space-y-4">
-                    {cartItems.map((item) => (
-                        <div key={item.id} className="flex justify-between items-center border border-gray-200 rounded p-2 shadow-lg">
-                            <div className="flex flex-col">
-                                <p className="text-gray-800 font-bold mb-1">{item.name}</p>
-                                <p className="text-gray-500 font-semibold">Cantidad: {item.quantity} kg</p>
-                            </div>
-                            <div className="flex flex-col items-end">
-                                <p className="text-blue-600 font-bold mb-1">{item.price * item.quantity} $</p>
-                                <button
-                                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
-                                    onClick={() => removeFromCart(item.id)}
-                                >
-                                    Eliminar
-                                </button>
-                            </div>
-                        </div>
-                    ))}
+                <div className="flex flex-col items-end">
+                  <p className="text-blue-600 font-bold mb-1">
+                    {item.price * item.quantity} $
+                  </p>
+                  <Button
+                    variant="ghost"
+                    color="danger"
+                    onClick={() => removeFromCart(item.id)}
+                  >
+                    Eliminar
+                  </Button>
                 </div>
-            )}
-            {cartItems.length > 0 && (
-                <>
-                    <hr className="my-4" />
-                    <div className="flex justify-between items-center">
-
-                        <p className="text-lg font-bold">TOTAL: {subtotal}$</p>
-                        <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-                            onClick={(e) => { fetchData() }}
-                        >
-                            Ordenar
-                        </button>
-                    </div>
-                </>
-            )}
-        </div>
+              </div>
+            ))}
+          </div>
+        )}
+        {cartItems.length > 0 && (
+          <>
+            <hr className="my-4" />
+            <div className="flex justify-between items-center">
+              <p className="text-lg font-bold">TOTAL: {subtotal}$</p>
+              <Button
+                className='text-white font-bold'
+                color="success"
+                onClick={(e) => {
+                  fetchData();
+                }}
+              >
+                Ordenar
+              </Button>
+            </div>
+          </>
+        )}
+      </div>
     );
 };
 

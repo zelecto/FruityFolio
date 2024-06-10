@@ -3,7 +3,7 @@ import { GuardarTienda } from "../../../Base/BdtiendaVirtual";
 
 import * as Yup from "yup";
 import { useFormik } from "formik";
-
+import toast from "react-hot-toast";
 import {
   Button,
   Modal,
@@ -57,9 +57,12 @@ const TiendaFormulario = ({ handelshowReguistrarTienda }) => {
           ciudad: values.ciudad,
           direccion: values.direccion,
         };
+        const toastLoaing = toast.loading("Guardando...");
         const respuesta = await GuardarTienda(tienda);
+        toast.dismiss(toastLoaing);
         if (respuesta.error == null) {
           handelshowReguistrarTienda(false);
+          toast.success("Cliente reguistrado");
           window.location.reload();
         } else {
           console.log("a ocurrido un error");
@@ -87,7 +90,7 @@ const TiendaFormulario = ({ handelshowReguistrarTienda }) => {
       startContent: (
         <HomeIcon
           color={
-            formik.touched.precio && Boolean(formik.errors.precio)
+            formik.touched.direccion && Boolean(formik.errors.direccion)
               ? "#F31260"
               : "#338EF7"
           }
@@ -158,7 +161,7 @@ const TiendaFormulario = ({ handelshowReguistrarTienda }) => {
                   type="submit"
                   color="success"
                   size="md"
-                  className="w-1/4 font-bold text-xl text-white"
+                  className="w-1/4 font-bold text-xl text-white my-5"
                 >
                   Crear
                 </Button>

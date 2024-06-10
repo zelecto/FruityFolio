@@ -83,109 +83,97 @@ const TiendaPage = () => {
     };
 
     return (
-        <div className='bg-[#F5F5F5] min-w-screen min-h-screen overflow-x-hidden ' >
+      <div className="bg-[#F5F5F5] min-w-screen min-h-screen overflow-x-hidden ">
+        <Header
+          link="/paginaPrincipal"
+          logoRightSrc="ruta-a-la-imagen-derecha.jpg"
+          logoAlt="FruityFolio logo"
+          title="¡Bienvenido a FruityFolio!"
+          subtitle={`Administra tu tienda virtual y pedidos`}
+        />
+        {showReguistrarTienda ? (
+          <div className="flex w-screen justify-center items-center overflow-hidden my-10">
+            <div className="flex flex-col items-center">
+              <h2 className="font-bold text-center text-4xl my-2">
+                ¿No tienes tienda?
+              </h2>
+              <img className="w-80" src={SignoPregunta} alt="Signo Pregunta" />
+              <TiendaFormulario
+                handelshowReguistrarTienda={handelShowFormularioTienda}
+              ></TiendaFormulario>
+            </div>
+          </div>
+        ) : (
+          //Contenedor de informacion general
+          <div className="flex flex-col items-center">
+            <div className="w-80 my-5">
+              <Select
+                labelPlacement="inside"
+                label="Filtra tus pedidos"
+                size="lg"
+                selectedKeys={estado}
+                onSelectionChange={setEstado}
+                color="primary"
+                className=" text-xl font-semibold text-black"
+              >
+                <SelectItem key={"Sinfiltro"} startContent={<Ban></Ban>}>
+                  Sin filtro
+                </SelectItem>
+                <SelectItem key={"Pendiente"} startContent={<Loader></Loader>}>
+                  Pedidos pendiente
+                </SelectItem>
+                <SelectItem
+                  key={"Enviado"}
+                  startContent={<BaggageClaim></BaggageClaim>}
+                >
+                  Pedidos enviado
+                </SelectItem>
+                <SelectItem
+                  key={"Entregado"}
+                  startContent={<PackageCheck></PackageCheck>}
+                >
+                  Pedidos Entregado
+                </SelectItem>
+              </Select>
+            </div>
 
-            <Header
-                link="/paginaPrincipal"
-                logoRightSrc="ruta-a-la-imagen-derecha.jpg"
-                logoAlt="FruityFolio logo"
-                title="¡Bienvenido a FruityFolio!"
-                subtitle={`Administra tu tienda virtual y pedidos`}
-            />
-            {showFormularioTienda && <TiendaFormulario handelshowReguistrarTienda={handelShowFormularioTienda}></TiendaFormulario>}
-            {
-                showReguistrarTienda ? (
-
-                    <div className="flex w-screen justify-center items-center overflow-hidden my-10">
-                        <div className="flex flex-col items-center">
-                            <h2 className="font-bold text-center text-4xl my-2">¿No tienes tienda?</h2>
-                            <img className="w-80" src={SignoPregunta} alt="Signo Pregunta" />
-                            <button
-                                className="bg-green-400 hover:bg-green-600 w-30 p-2 rounded-md my-2"
-                                onClick={() => handelShowFormularioTienda(true)}
-                            >
-                                <p className="text-white font-bold">CREA UNA</p>
-                            </button>
-                        </div>
-                    </div>
-
-                )
-                    :
-                    (
-                        //Contenedor de informacion general 
-                        <div className='flex flex-col items-center'>
-                            <div className='w-80 my-5'>
-                                <Select
-                                    labelPlacement='inside'
-                                    label="Filtra tus pedidos"
-                                    size='lg'
-                                    selectedKeys={estado}
-                                    onSelectionChange={setEstado}
-                                    color='primary'
-                                    className=' text-xl font-semibold text-black'
-                                >
-                                    <SelectItem key={"Sinfiltro"}
-                                        startContent={<Ban></Ban>}
-                                    >
-                                        Sin filtro
-                                    </SelectItem>
-                                    <SelectItem key={"Pendiente"}
-                                        startContent={<Loader></Loader>}
-                                    >
-                                        Pedidos pendiente
-                                    </SelectItem>
-                                    <SelectItem key={"Enviado"}
-                                        startContent={<BaggageClaim ></BaggageClaim>}
-                                    >
-                                        Pedidos enviado
-                                    </SelectItem>
-                                    <SelectItem key={"Entregado"}
-                                        startContent={<PackageCheck></PackageCheck>}
-                                    >
-                                        Pedidos Entregado
-                                    </SelectItem>
-                                </Select>
-                            </div>
-
-                            <div className="w-screen flex p-4 justify-between text-lg" >
-
-                                <div className="w-[25%] flex justify-center">
-                                    {isLoading ? (
-                                        <SkeletonTiendaInfo></SkeletonTiendaInfo>
-                                    ) : (
-                                        <TiendaInfo storeData={storeData} />
-                                    )}
-                                </div>
-                                <div className="flex-grow mx-4 w-4/5">
-                                    {isLoading ? (
-                                        <SkeletonPedidosSection></SkeletonPedidosSection>
-                                    ) : (
-                                        orders && orders.length>0 ? (
-                                            <PedidosSection
-                                                orders={orders}
-                                                toggleOrderDetails={toggleOrderDetails}
-                                                selectedOrder={selectedOrder}
-                                                orderDetails={orderDetails}
-                                                handelOrder={handelOrder}
-                                                vista={"usuario"}
-                                            />
-                                        )
-                                            :
-                                            (
-                                                <div className='flex flex-col justify-center items-center'>
-                                                    <h1 className='text-center text-2xl font-bold'>No hay pedidos {estado}</h1>
-                                                    <img className='w-1/2' src="https://images.vexels.com/media/users/3/199917/isolated/preview/bb4a24c88a1633c7fb4bae097e5e7172-caja-vacia-isometrica.png" alt="" />
-                                                </div>
-                                            )
-
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-
-                    )
-            }
-        </div>
+            <div className="w-screen flex p-4 justify-between text-lg">
+              <div className="w-[25%] flex justify-center">
+                {isLoading ? (
+                  <SkeletonTiendaInfo></SkeletonTiendaInfo>
+                ) : (
+                  <TiendaInfo storeData={storeData} />
+                )}
+              </div>
+              <div className="flex-grow mx-4 w-4/5">
+                {isLoading ? (
+                  <SkeletonPedidosSection></SkeletonPedidosSection>
+                ) : orders && orders.length > 0 ? (
+                  <PedidosSection
+                    orders={orders}
+                    toggleOrderDetails={toggleOrderDetails}
+                    selectedOrder={selectedOrder}
+                    orderDetails={orderDetails}
+                    handelOrder={handelOrder}
+                    vista={"usuario"}
+                  />
+                ) : (
+                  <div className="flex flex-col justify-center items-center">
+                    <h1 className="text-center text-2xl font-bold">
+                      No hay pedidos {estado}
+                    </h1>
+                    <img
+                      className="w-1/2"
+                      src="https://images.vexels.com/media/users/3/199917/isolated/preview/bb4a24c88a1633c7fb4bae097e5e7172-caja-vacia-isometrica.png"
+                      alt=""
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     );
 };
 

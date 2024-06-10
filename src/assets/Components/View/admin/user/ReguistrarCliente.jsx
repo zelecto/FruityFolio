@@ -106,7 +106,7 @@ const RegistroClienteForm = () => {
           toast.success("Cliente reguistrado");
           onOpenChange(false);
         } else {
-          toast.error(`${respuesta.error.data}`);
+          toast.error("No se pudo crear el usuario");
         }
       } else {
         setErrorCiudadResidencia(true);
