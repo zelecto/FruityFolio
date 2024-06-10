@@ -25,12 +25,8 @@ ChartJS.register(
 
 export default function GraficaBarra({data}) {
     console.log(data);
-    //const maxValue = data.valores.length > 0 ? Math.max(...data.valores) : 0;
 
-    
-    //const maxWithIncrement = Math.round(maxValue * 1.10);
-
-    var misoptions = {
+    const misoptions = {
         responsive: true,
         animation: true,
         plugins: {
@@ -41,7 +37,6 @@ export default function GraficaBarra({data}) {
         scales: {
             y: {
                 min: 0,
-                //max: maxWithIncrement
             },
             x: {
                 ticks: { color: 'rgba(0, 0, 0)' }
