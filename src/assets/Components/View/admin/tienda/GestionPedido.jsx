@@ -8,7 +8,7 @@ import IconoRepartidor from "../../../Icons/IconoRepartidor.png";
 import SignoPregunta from "../../../Photo/SignoPregunta.png";
 import { GetTiendaVirtualUsernameDetail } from '../../../Base/BdtiendaVirtual';
 import TiendaFormulario from './formularioTienda';
-import { Select, SelectSection, SelectItem } from "@nextui-org/select";
+import { Select, SelectItem } from "@nextui-org/select";
 
 import { SkeletonPedidosSection, SkeletonTiendaInfo } from '../../Loading/Skeleton';
 import { BaggageClaim, Ban,  CircleDollarSignIcon,  Loader, PackageCheck, Trash2 } from 'lucide-react';

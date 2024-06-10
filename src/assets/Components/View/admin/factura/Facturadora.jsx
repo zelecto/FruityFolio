@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 import Header from "../../Header";
 import { ProductDetail, ProductList } from "../../../Logic/ConsultarProductos";
 import {
@@ -16,7 +15,7 @@ import {
   Input,
 } from "@nextui-org/react";
 import { TablaDetalles } from "../tienda/GestorVentas";
-import { Fingerprint, Mail, User, Users } from "lucide-react";
+import { Fingerprint, Mail, User } from "lucide-react";
 
 const CrearFacturaForm = () => {
   return (

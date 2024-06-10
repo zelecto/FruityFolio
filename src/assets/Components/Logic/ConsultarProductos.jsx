@@ -13,18 +13,18 @@ export const ProductList = ({ products, onSelectProduct }) => {
 
   };
 
-  const [filtro, setFlitro] = useState([]);
+  const [filtro, setFiltro] = useState([]);
 
   const handelFiltro = (nombre) => {
     if (nombre === "") {
-      setFlitro([])
+      setFiltro([])
     } else {
       // Filtrar la lista de productos por nombre
       const productosFiltrados = products.filter(producto => producto.name.toLowerCase().includes(nombre.toLowerCase()));
 
 
       // Hacer algo con los productos filtrados, por ejemplo, actualizar el estado
-      setFlitro(productosFiltrados);
+      setFiltro(productosFiltrados);
     }
     console.log(filtro)
 
