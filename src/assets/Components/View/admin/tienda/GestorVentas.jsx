@@ -89,286 +89,292 @@ function GestorVentasView() {
 }
 
 
-const DetallesFactura = ({ factura, showDetallesFactura}) => {
-
-    const consultaDetalle = async () => {
-        setIsLoading(true);
-        const respuesta = await consultarDetallesFactura(factura.id);
-        setIsLoading(false);
-        if (respuesta.datos) {
-            setListaProductosVendidos(respuesta.datos.sort((a, b) => a.id - b.id));
-        } else {
-            setListaProductosVendidos([]);
-        }
+const DetallesFactura = ({
+  factura,
+  showDetallesFactura,
+  consultarFactura,
+}) => {
+  const consultaDetalle = async () => {
+    setIsLoading(true);
+    const respuesta = await consultarDetallesFactura(factura.id);
+    setIsLoading(false);
+    if (respuesta.datos) {
+      setListaProductosVendidos(respuesta.datos.sort((a, b) => a.id - b.id));
+    } else {
+      setListaProductosVendidos([]);
     }
-    useEffect(() => {
-        consultaDetalle();
-        setTotalPago(factura.preciototal)
-    }, [factura.id]);
+  };
+  useEffect(() => {
+    consultaDetalle();
+    setTotalPago(factura.preciototal);
+  }, [factura.id]);
 
+  const { numero: fecha, cliente } = factura;
 
+  const [listaProductosVendidos, setListaProductosVendidos] = useState([]);
+  const [totalPago, setTotalPago] = useState(factura.preciototal);
+  const [showActualizarVenta, setShowActualizarVenta] = useState(false);
+  const [showAgregarVenta, setShowAgregarVenta] = useState(false);
 
-    const { numero: fecha, cliente } = factura;
-    
-    
-    const [listaProductosVendidos, setListaProductosVendidos] = useState([]);
-    const [totalPago, setTotalPago] = useState(factura.preciototal);
-    const [showActualizarVenta, setShowActualizarVenta] = useState(false);
-    const [showAgregarVenta, setShowAgregarVenta] = useState(false);
+  const [productoActualizar, setProductoActualizar] = useState(null);
 
-    const [productoActualizar, setProductoActualizar] = useState(null);
+  const handelShowAgregarProducto = (mostrar) => {
+    setShowActualizarVenta(false);
+    setShowAgregarVenta(mostrar);
+  };
 
-    const handelShowAgregarProducto = (mostrar) => {
-        setShowActualizarVenta(false);
-        setShowAgregarVenta(mostrar);
+  const AgregarVenta = (Producto, Cantida, Total) => {
+    // Crea una nueva copia del array listVentas y agrega el nuevo objeto de venta
+    const nuevaListaVentas = [
+      ...listaProductosVendidos,
+      {
+        producto: Producto,
+        cantidadvendida: parseFloat(Cantida),
+        subprecio: Total,
+      },
+    ];
+    const nuevoPrecio = totalPago + Total;
 
-    };
+    // Actualiza el estado de totalPago con el nuevo valor
+    setTotalPago(nuevoPrecio);
 
-    const AgregarVenta = (Producto, Cantida, Total) => {
-        // Crea una nueva copia del array listVentas y agrega el nuevo objeto de venta
-        const nuevaListaVentas = [
-            ...listaProductosVendidos,
-            {
-                producto: Producto,
-                cantidadvendida: parseFloat(Cantida),
-                subprecio: Total,
-            },
-        ];
-        const nuevoPrecio = totalPago + Total;
+    // Actualiza el estado listVentas con la nueva lista
+    setListaProductosVendidos(nuevaListaVentas);
+  };
 
-        // Actualiza el estado de totalPago con el nuevo valor
-        setTotalPago(nuevoPrecio);
+  const handelShowActualizarVenta = (mostrar, producto) => {
+    setShowAgregarVenta(false);
+    setShowActualizarVenta(mostrar);
+    setProductoActualizar(producto);
+  };
 
-        // Actualiza el estado listVentas con la nueva lista
-        setListaProductosVendidos(nuevaListaVentas);
-    };
-
-    const handelShowActualizarVenta = (mostrar, producto) => {
-        setShowAgregarVenta(false);
-        setShowActualizarVenta(mostrar);
-        setProductoActualizar(producto);
-    };
-
-    const [listaDetallesEliminados, setListaDetallesEliminados] = useState([]);
-    const [listaDetallesActulizados, setListaDetallesActulizados] = useState([]);
-    const actualizarOEliminarVenta = async (Producto, Cantidad, Total, isEliminacion) => {
-        const nuevaListaVentas = [...listaProductosVendidos];
-        let nuevoPrecio;
-        const index = nuevaListaVentas.findIndex((venta) => venta.producto.id === Producto.id);
-
-        if (index !== -1) {
-
-            if (isEliminacion) {
-                console.clear()
-                console.log(nuevaListaVentas[index].subprecio)
-                nuevoPrecio = totalPago - nuevaListaVentas[index].subprecio;
-                if (nuevoPrecio < 0) {
-                    nuevoPrecio = 0;
-                }
-                const nuevaListaDetallesEliminados = [
-                    ...listaDetallesEliminados,
-                    nuevaListaVentas[index].id
-                ];
-                setListaDetallesEliminados(nuevaListaDetallesEliminados);
-
-                nuevaListaVentas.splice(index, 1); // Eliminar la venta de la lista
-                if (nuevaListaVentas.length === 0) {
-                    await EliminarFactura(factura.id);
-                    window.location.reload();
-                    return;
-                }
-            } else {
-                nuevaListaVentas[index] = {
-                    ...nuevaListaVentas[index],
-                    cantidadvendida: Cantidad,
-                    subprecio: Total,
-                };
-                nuevoPrecio = nuevaListaVentas.reduce((acumulador, venta) => acumulador + venta.subprecio, 0);
-            }
-
-            setTotalPago(nuevoPrecio);
-            setListaProductosVendidos(nuevaListaVentas);
-            handelShowActualizarVenta(false, null);
-
-            factura.preciototal = nuevoPrecio;
-
-            if (!isEliminacion) {
-                const nuevaListaDetallesEliminados = [
-                    ...listaDetallesEliminados,
-                    nuevaListaVentas[index]
-                ];
-                setListaDetallesActulizados(nuevaListaDetallesEliminados);
-            }
-        } else {
-            console.error("Venta no encontrada en la lista.");
-        }
-    };
-
-
-    const [isLoading, setIsLoading] = useState(false);
-
-
-    const GuardarCambios = async (detallesVentas) => {
-        // Filtrar los detalles de ventas que no tienen un id
-        let detallesSinId = detallesVentas.filter(venta => !venta.id);
-
-        // Crear nuevas instancias de objetos con los detalles requeridos
-        let nuevosDetalles = detallesSinId.map(venta => {
-            return {
-                cantidadvendida: venta.cantidadvendida,
-                subprecio: venta.subprecio,
-                idfactura: factura.id,
-                idproducto: venta.producto.id
-
-            };
-        });
-
-        if (listaDetallesEliminados.length > 0) {
-            let promesasVentas = listaDetallesEliminados.map(async (venta) => {
-                return await EliminarDetalleFactura(venta);
-            });
-            await Promise.all(promesasVentas);
-            setListaDetallesEliminados([]);
-        }
-
-        if (listaDetallesActulizados.length > 0) {
-            let promesasVentas = listaDetallesActulizados.map(async (venta) => {
-                return await ActualizarDetallesFactura(venta);
-            });
-            await Promise.all(promesasVentas);
-            setListaDetallesActulizados([]);
-        }
-
-        factura.preciototal = totalPago;
-        await ActualizarFactura(factura);
-        let promesasVentas = nuevosDetalles.map(async (venta) => {
-            return await guardarVentas(venta);
-        });
-        setIsLoading(true);
-
-        
-        // Esperamos a que se completen todas las promesas de guardado de ventas
-        await Promise.all(promesasVentas);
-        setIsLoading(false);
-        setShowAgregarVenta(false);
-        showDetallesFactura(null);
-
-    }
-
-    const eliminarFactra = async (idFactura) => {
-        setIsLoading(true)
-        
-        await EliminarFactura(idFactura);
-        setIsLoading(false)
-        showDetallesFactura(false)
-        window.location.reload()
-    }
-
-    return (
-        <div className="w-full">
-            {isLoading ? <Spinner size="lg" label="Cargando..." labelColor="primary" className="w-full"></Spinner> :
-                (
-                    <div className="w-full flex-grow px-10 flex justify-center">
-                        <Card className="min-w-[600px] min-h-[700px] p-2 mx-5">
-                            <CardHeader className="flex justify-between">
-                                <h2 className="text-2xl font-bold">
-                                    Detalles Factura
-                                </h2>
-                                <Chip color="primary" endContent={<CalendarCheck></CalendarCheck>}
-                                    className="text-lg p-2"
-                                >
-                                    {factura.fecha}
-                                </Chip>
-                            </CardHeader>
-
-                            <CardBody>
-                                <div className="flex justify-between">
-                                    {Object.entries(cliente).map(([key, value]) => (
-                                        <div key={key} className="flex items-center mx-2">
-                                            <strong>{key.charAt(0).toUpperCase() + key.slice(1)}:</strong>
-                                            <p className="ml-2">{value}</p>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <TablaDetalles listaFacturas={listaProductosVendidos}
-                                    showActualizarVenta={handelShowActualizarVenta}
-                                >
-                                </TablaDetalles>
-                                <div className="w-full flex justify-end p-2">
-                                    <Chip color="success" className="text-xl text-white"
-                                        endContent={<CircleDollarSignIcon></CircleDollarSignIcon>}
-                                    >
-                                        {`Total: ${totalPago}`}
-                                    </Chip>
-                                </div>
-
-                            </CardBody>
-
-                            <CardFooter>
-                                <div className="w-full flex justify-between  ">
-                                    <div className="w-1/2  flex flex-col justify-between ">
-                                        <Button
-                                            className="bg-slate-400 font-bold text-white m-2"
-                                            onClick={() => showDetallesFactura(null)}
-                                        >
-                                            CANCELAR
-                                        </Button>
-                                        <Button
-                                            color="success"
-                                            className=" font-bold text-white m-2 "
-                                            onClick={() => GuardarCambios(listaProductosVendidos)}
-                                        >
-                                            CONFIRMAR ACTUALIZACION
-                                        </Button>
-
-                                    </div>
-
-                                    <div className="w-1/2 flex flex-col justify-between">
-                                        <Button
-                                            color="primary"
-                                            className=" font-bold text-white m-2"
-                                            onClick={() => handelShowAgregarProducto(true)}
-                                        >
-                                            AGREGAR VENTA
-                                        </Button>
-
-                                        <Button
-                                            color="danger"
-                                            className="font-bold text-white m-2"
-                                            onClick={() => eliminarFactra(factura.id)}
-                                        >
-                                            ELIMINAR
-                                        </Button>
-                                    </div>
-
-                                </div>
-                            </CardFooter>
-                        </Card>
-                        {showActualizarVenta && (
-                            <div className="w-1/3">
-                                <TarjetaActualizarVenta
-                                    productActualizar={productoActualizar}
-                                    ActualizarVenta={actualizarOEliminarVenta}
-                                    CancelarActualizacionVenta={handelShowActualizarVenta}
-                                    EliminarVenta={actualizarOEliminarVenta}
-                                ></TarjetaActualizarVenta>
-                            </div>
-
-                        )}
-                        {showAgregarVenta && (
-                                <TarjetaVenta AgregarVenta={AgregarVenta} ListaProductosVendidos={listaProductosVendidos}></TarjetaVenta>
-                        )}
-                    </div>
-                    
-
-                    
-                )
-            }
-        </div>
-
-
+  const [listaDetallesEliminados, setListaDetallesEliminados] = useState([]);
+  const [listaDetallesActulizados, setListaDetallesActulizados] = useState([]);
+  const actualizarOEliminarVenta = async (
+    Producto,
+    Cantidad,
+    Total,
+    isEliminacion
+  ) => {
+    const nuevaListaVentas = [...listaProductosVendidos];
+    let nuevoPrecio;
+    const index = nuevaListaVentas.findIndex(
+      (venta) => venta.producto.id === Producto.id
     );
+
+    if (index !== -1) {
+      if (isEliminacion) {
+        console.clear();
+        console.log(nuevaListaVentas[index].subprecio);
+        nuevoPrecio = totalPago - nuevaListaVentas[index].subprecio;
+        if (nuevoPrecio < 0) {
+          nuevoPrecio = 0;
+        }
+        const nuevaListaDetallesEliminados = [
+          ...listaDetallesEliminados,
+          nuevaListaVentas[index].id,
+        ];
+        setListaDetallesEliminados(nuevaListaDetallesEliminados);
+
+        nuevaListaVentas.splice(index, 1); // Eliminar la venta de la lista
+        if (nuevaListaVentas.length === 0) {
+          await EliminarFactura(factura.id);
+          window.location.reload();
+          return;
+        }
+      } else {
+        nuevaListaVentas[index] = {
+          ...nuevaListaVentas[index],
+          cantidadvendida: Cantidad,
+          subprecio: Total,
+        };
+        nuevoPrecio = nuevaListaVentas.reduce(
+          (acumulador, venta) => acumulador + venta.subprecio,
+          0
+        );
+      }
+
+      setTotalPago(nuevoPrecio);
+      setListaProductosVendidos(nuevaListaVentas);
+      handelShowActualizarVenta(false, null);
+
+      factura.preciototal = nuevoPrecio;
+
+      if (!isEliminacion) {
+        const nuevaListaDetallesEliminados = [
+          ...listaDetallesEliminados,
+          nuevaListaVentas[index],
+        ];
+        setListaDetallesActulizados(nuevaListaDetallesEliminados);
+      }
+    } else {
+      console.error("Venta no encontrada en la lista.");
+    }
+  };
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const GuardarCambios = async (detallesVentas) => {
+    // Filtrar los detalles de ventas que no tienen un id
+    let detallesSinId = detallesVentas.filter((venta) => !venta.id);
+
+    // Crear nuevas instancias de objetos con los detalles requeridos
+    let nuevosDetalles = detallesSinId.map((venta) => {
+      return {
+        cantidadvendida: venta.cantidadvendida,
+        subprecio: venta.subprecio,
+        idfactura: factura.id,
+        idproducto: venta.producto.id,
+      };
+    });
+
+    if (listaDetallesEliminados.length > 0) {
+      let promesasVentas = listaDetallesEliminados.map(async (venta) => {
+        return await EliminarDetalleFactura(venta);
+      });
+      await Promise.all(promesasVentas);
+      setListaDetallesEliminados([]);
+    }
+
+    if (listaDetallesActulizados.length > 0) {
+      let promesasVentas = listaDetallesActulizados.map(async (venta) => {
+        return await ActualizarDetallesFactura(venta);
+      });
+      await Promise.all(promesasVentas);
+      setListaDetallesActulizados([]);
+    }
+
+    factura.preciototal = totalPago;
+    await ActualizarFactura(factura);
+    let promesasVentas = nuevosDetalles.map(async (venta) => {
+      return await guardarVentas(venta);
+    });
+    setIsLoading(true);
+    consultarFactura();
+    // Esperamos a que se completen todas las promesas de guardado de ventas
+    await Promise.all(promesasVentas);
+    setIsLoading(false);
+    setShowAgregarVenta(false);
+    showDetallesFactura(null);
+  };
+
+  const eliminarFactra = async (idFactura) => {
+    setIsLoading(true);
+
+    await EliminarFactura(idFactura);
+    setIsLoading(false);
+    showDetallesFactura(false);
+    window.location.reload();
+  };
+
+  return (
+    <div className="w-full">
+      {isLoading ? (
+        <Spinner
+          size="lg"
+          label="Cargando..."
+          labelColor="primary"
+          className="w-full"
+        ></Spinner>
+      ) : (
+        <div className="w-full flex-grow px-10 flex justify-center">
+          <Card className="min-w-[600px] min-h-[700px] p-2 mx-5">
+            <CardHeader className="flex justify-between">
+              <h2 className="text-2xl font-bold">Detalles Factura</h2>
+              <Chip
+                color="primary"
+                endContent={<CalendarCheck></CalendarCheck>}
+                className="text-lg p-2"
+              >
+                {factura.fecha}
+              </Chip>
+            </CardHeader>
+
+            <CardBody>
+              <div className="flex justify-between">
+                {Object.entries(cliente).map(([key, value]) => (
+                  <div key={key} className="flex items-center mx-2">
+                    <strong>
+                      {key.charAt(0).toUpperCase() + key.slice(1)}:
+                    </strong>
+                    <p className="ml-2">{value}</p>
+                  </div>
+                ))}
+              </div>
+
+              <TablaDetalles
+                listaFacturas={listaProductosVendidos}
+                showActualizarVenta={handelShowActualizarVenta}
+              ></TablaDetalles>
+              <div className="w-full flex justify-end p-2">
+                <Chip
+                  color="success"
+                  className="text-xl text-white"
+                  endContent={<CircleDollarSignIcon></CircleDollarSignIcon>}
+                >
+                  {`Total: ${totalPago}`}
+                </Chip>
+              </div>
+            </CardBody>
+
+            <CardFooter>
+              <div className="w-full flex justify-between  ">
+                <div className="w-1/2  flex flex-col justify-between ">
+                  <Button
+                    className="bg-slate-400 font-bold text-white m-2"
+                    onClick={() => showDetallesFactura(null)}
+                  >
+                    CANCELAR
+                  </Button>
+                  <Button
+                    color="success"
+                    className=" font-bold text-white m-2 "
+                    onClick={() => GuardarCambios(listaProductosVendidos)}
+                  >
+                    CONFIRMAR ACTUALIZACION
+                  </Button>
+                </div>
+
+                <div className="w-1/2 flex flex-col justify-between">
+                  <Button
+                    color="primary"
+                    className=" font-bold text-white m-2"
+                    onClick={() => handelShowAgregarProducto(true)}
+                  >
+                    AGREGAR VENTA
+                  </Button>
+
+                  <Button
+                    color="danger"
+                    className="font-bold text-white m-2"
+                    onClick={() => eliminarFactra(factura.id)}
+                  >
+                    ELIMINAR
+                  </Button>
+                </div>
+              </div>
+            </CardFooter>
+          </Card>
+          {showActualizarVenta && (
+            <div className="w-1/3">
+              <TarjetaActualizarVenta
+                productActualizar={productoActualizar}
+                ActualizarVenta={actualizarOEliminarVenta}
+                CancelarActualizacionVenta={handelShowActualizarVenta}
+                EliminarVenta={actualizarOEliminarVenta}
+              ></TarjetaActualizarVenta>
+            </div>
+          )}
+          {showAgregarVenta && (
+            <TarjetaVenta
+              AgregarVenta={AgregarVenta}
+              ListaProductosVendidos={listaProductosVendidos}
+            ></TarjetaVenta>
+          )}
+        </div>
+      )}
+    </div>
+  );
 };
 DetallesFactura.propTypes = {
   factura: PropTypes.object.isRequired,
