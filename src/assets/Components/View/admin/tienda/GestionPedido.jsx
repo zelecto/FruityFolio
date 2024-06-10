@@ -284,101 +284,143 @@ const PedidoCard = ({ order, toggleOrderDetails, selectedOrder, orderDetails, re
         
     }
     return (
-        <Card className='w-2/3 p-5'>
-            <CardHeader className='flex justify-between items-center p-0'>
-                <p className="font-bold">{order.factura.fecha}</p>
-                <div className='flex justify-center items-center'>
-                    <Chip endContent={selecionIcono()}
-                        className={`${AsignarColor()} text-white `}
-                        variant="Flat"
-                        size='lg'
-                    ><p className='font-bold'>{order.estado}</p></Chip>
-                    <Tooltip content={vista=="usuario"? "Eliminar" : "Cancelar" } color='danger'>
-                        {
-                            !isLoading ? (
-                                <Button
-                                    onClick={() => fechEliminar()}
-                                    size='sm'
-                                    className='mx-6'
-                                    color='danger'
-                                    isDisabled={vista=="cliente" &&  order.estado!="Pendiente" ? true:false}
-                                >
-                                    {<Trash2></Trash2>}
-                                </Button>
-                            ):(
-                                    <Button
-                                        onClick={() => fechEliminar()}
-                                        size='sm'
-                                        className='mx-6'
-                                        color='danger'
-                                        isLoading
-                                    >
-                                    </Button>
-                            )
+      <Card className="w-2/3 p-5">
+        <CardHeader className="flex justify-between items-center p-0">
+          <p className="font-bold">{order.factura.fecha}</p>
+          <div className="flex justify-center items-center">
+            <Chip
+              endContent={selecionIcono()}
+              className={`${AsignarColor()} text-white `}
+              variant="Flat"
+              size="lg"
+            >
+              <p className="font-bold">{order.estado}</p>
+            </Chip>
+            <Tooltip
+              content={vista == "usuario" ? "Eliminar" : "Cancelar"}
+              color="danger"
+            >
+              {!isLoading ? (
+                <Button
+                  onClick={() => fechEliminar()}
+                  size="sm"
+                  className="mx-6"
+                  color="danger"
+                  isDisabled={
+                    vista == "cliente" && order.estado != "Pendiente"
+                      ? true
+                      : false
+                  }
+                >
+                  {<Trash2></Trash2>}
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => fechEliminar()}
+                  size="sm"
+                  className="mx-6"
+                  color="danger"
+                  isLoading
+                ></Button>
+              )}
+            </Tooltip>
+          </div>
+        </CardHeader>
+        <CardBody className="p-0">
+          <div
+            className="flex w-full justify-between items-end cursor-pointer"
+            onKeyUp={""}
+            onClick={handleToggleOrderDetails}
+          >
+            <div>
+              <p className="font-bold">
+                Cliente:{" "}
+                <span className="text-gray-600 font-semibold">
+                  {order.factura.cliente.nombre}
+                </span>
+              </p>
+              <p className="font-bold">
+                Total:{" "}
+                <span className="text-gray-600 font-semibold">
+                  {vista == "cliente"
+                    ? order.factura.preciototal + order.precioTransporte
+                    : order.factura.preciototal}
+                  $
+                </span>
+              </p>
+              <p className="font-bold">
+                Dirección:{" "}
+                <span className="text-gray-600 font-semibold">
+                  {order.clienteUsuario.direccionResidencia}
+                </span>
+              </p>
+            </div>
+
+            {isLoading ? (
+              <Button color="primary" isLoading>
+                Loading
+              </Button>
+            ) : (
+              <Button
+                className={`ml-5 px-3 py-1 rounded transition-colors text-white w-[120px] font-semibold 
+                                    ${selectedOrder === order.id ? " transition-colors duration-300  bg-gray-500 " : "bg-blue-500"}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleToggleOrderDetails();
+                }}
+              >
+                {selectedOrder === order.id ? "Recoger" : "Ver Detalles"}
+              </Button>
+            )}
+          </div>
+          {!isLoading && (
+            <div>
+              {selectedOrder === order.id && (
+                <div className="">
+                  <h3 className="text-lg font-bold mb-2 text-center">
+                    Productos del Pedido
+                  </h3>
+                  <div className="grid grid-cols-4 gap-4">
+                    {orderDetails[order.id].map((venta) => (
+                      <Tooltip
+                        key={venta.id}
+                        color="primary"
+                        showArrow={true}
+                        placement="bottom"
+                        size="lg"
+                        content={
+                          <p className="flex">
+                            {venta.subprecio}{" "}
+                            <CircleDollarSignIcon className="ml-2"></CircleDollarSignIcon>
+                          </p>
                         }
-                        
-                    </Tooltip>
-                    
+                      >
+                        <Card
+                          key={venta.id}
+                          className="bg-black flex items-center"
+                        >
+                          <CardBody className="bg-blue-400 rounded-lg flex justify-center items-center overflow-hidden">
+                            <img
+                              src={BuscarImagenDefault(venta.producto.img)}
+                              alt={venta.producto.name}
+                              className="w-32 h-28 object-cover"
+                            />
+                          </CardBody>
+
+                          <CardFooter className="font-bold flex justify-between text-white">
+                            <p>{venta.producto.name}</p>
+                            <p>{venta.cantidadvendida} KG</p>
+                          </CardFooter>
+                        </Card>
+                      </Tooltip>
+                    ))}
+                  </div>
                 </div>
-                
-            </CardHeader>
-            <CardBody className='p-0' >
-
-                <button className="flex w-full justify-between items-end cursor-pointer" onKeyUp={""} onClick={handleToggleOrderDetails}>
-                    <div>
-                        <p className="font-bold">Cliente: <span className="text-gray-600 font-semibold">{order.factura.cliente.nombre}</span></p>
-                        <p className="font-bold">Total: <span className="text-gray-600 font-semibold">{order.factura.preciototal}$</span></p>
-                        <p className="font-bold">Dirección: <span className="text-gray-600 font-semibold">{order.clienteUsuario.direccionResidencia}</span></p>
-                    </div>
-
-                    {isLoading ? (
-                        <Button color="primary" isLoading>
-                            Loading
-                        </Button>
-                    ) : (
-                        <Button
-                            className={`ml-5 px-3 py-1 rounded transition-colors text-white w-[120px] font-semibold 
-                                    ${selectedOrder === order.id ? ' transition-colors duration-300  bg-gray-500 ' : 'bg-blue-500'}`}
-                            onClick={(e) => { e.stopPropagation(); handleToggleOrderDetails(); }}>
-                            {selectedOrder === order.id ? 'Recoger' : 'Ver Detalles'}
-                        </Button>
-                    )}
-
-                </button>
-                {!isLoading && (
-                    <div>
-                        {selectedOrder === order.id && (
-                            <div className="">
-                                <h3 className="text-lg font-bold mb-2 text-center">Productos del Pedido</h3>
-                                <div className="grid grid-cols-4 gap-4">
-                                    {orderDetails[order.id].map((venta) => (
-                                        <Tooltip key={venta.id} color='primary' showArrow={true} placement='bottom' size='lg' 
-                                            content={ 
-                                            <p className='flex'>{venta.subprecio} <CircleDollarSignIcon className='ml-2'></CircleDollarSignIcon></p>
-                                            }>
-                                        <Card key={venta.id} className="bg-black flex items-center">
-                                            <CardBody className='bg-blue-400 rounded-lg flex justify-center items-center overflow-hidden'>
-                                              
-                                                <img src={BuscarImagenDefault(venta.producto.img)} alt={venta.producto.name} className="w-32 h-28 object-cover" />
-                                                
-                                            </CardBody>
-
-                                            <CardFooter className='font-bold flex justify-between text-white'>
-                                                <p>{venta.producto.name}</p>
-                                                <p>{venta.cantidadvendida} KG</p>
-                                            </CardFooter>
-                                        </Card>
-                                        </Tooltip>
-
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                )}
-            </CardBody>
-        </Card>
-
+              )}
+            </div>
+          )}
+        </CardBody>
+      </Card>
     );
 };
 
@@ -445,7 +487,7 @@ const EnvioSection = ({ orderId, estado, precio, handelOrder, vista }) => {
                         Confirmar Envío
                     </Button>
                 )}
-                {vista === "usuario" && estado === "Enviado" && (
+                {estado === "Enviado" && (
                     <Button
                         color="success"
                         className="w-35 h-10 text-white font-bold text-sm px-6 py-2 rounded"

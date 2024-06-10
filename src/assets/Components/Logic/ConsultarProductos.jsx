@@ -50,7 +50,7 @@ export const ProductList = ({ products, onSelectProduct }) => {
           {filtro.length > 0
             ? // Si hay productos filtrados, mostrar los productos filtrados
               filtro.map((producto) => (
-                <button
+                <div
                   key={producto.id}
                   onKeyUp={""}
                   className="border bg-white p-2 cursor-pointer m-2 w-[400px] hover:bg-gray-200 shadow-md rounded-md flex justify-between items-center"
@@ -66,11 +66,11 @@ export const ProductList = ({ products, onSelectProduct }) => {
                     alt="Imagen del producto"
                     className="w-20 h-auto object-cover mr-4"
                   />
-                </button>
+                </div>
               ))
             : // Si no hay productos filtrados, mostrar todos los productos
               products.map((producto) => (
-                <button
+                <div
                   key={producto.id}
                   onKeyUp={""}
                   className="border bg-white p-2 cursor-pointer m-2 w-[400px] hover:bg-gray-200 shadow-md rounded-md flex justify-between items-center"
@@ -86,7 +86,7 @@ export const ProductList = ({ products, onSelectProduct }) => {
                     alt="Imagen del producto"
                     className="w-20 h-auto object-cover mr-4"
                   />
-                </button>
+                </div>
               ))}
         </div>
       </div>
