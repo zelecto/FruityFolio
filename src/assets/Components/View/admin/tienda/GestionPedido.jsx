@@ -364,7 +364,7 @@ const PedidoCard = ({ order, toggleOrderDetails, selectedOrder, orderDetails, re
                                 <h3 className="text-lg font-bold mb-2 text-center">Productos del Pedido</h3>
                                 <div className="grid grid-cols-4 gap-4">
                                     {orderDetails[order.id].map((venta) => (
-                                        <Tooltip color='primary' showArrow={true} placement='bottom' size='lg' 
+                                        <Tooltip key={venta.id} color='primary' showArrow={true} placement='bottom' size='lg' 
                                             content={ 
                                             <p className='flex'>{venta.subprecio} <CircleDollarSignIcon className='ml-2'></CircleDollarSignIcon></p>
                                             }>
@@ -417,7 +417,7 @@ PedidoCard.propTypes = {
 };
 
 const EnvioSection = ({ orderId, estado, precio, handelOrder, vista }) => {
-    const [envioPrice, setEnvioPrice] = useState(precio ? precio : null);
+    const [envioPrice, setEnvioPrice] = useState(precio);
 
     const handelEnvioPrice = (value) => {
         if (value > 0 && value < 1000000) {

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { GuardarUsuario } from "../../../Base/BdUsuarios.jsx";
 import { GetCiudades } from "../../../Base/bdCiudades.jsx";
 import { GuardarCliente } from "../../../Base/BdUsuarios copy.jsx";
 import { useFormik } from "formik";
@@ -18,11 +17,9 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalFooter,
   useDisclosure,
   Button,
   Select,
-  SelectSection,
   SelectItem,
 } from "@nextui-org/react";
 import GenericFrom from "../../Components/generic_From.jsx";

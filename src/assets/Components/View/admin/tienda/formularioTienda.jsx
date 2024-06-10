@@ -96,16 +96,6 @@ const TiendaFormulario = ({ handelshowReguistrarTienda }) => {
     },
   ];
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (validarFormulario()) {
-      
-    }
-  };
-  const handleChangeExternal = (newValue) => {
-    
-  };
-
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   return (

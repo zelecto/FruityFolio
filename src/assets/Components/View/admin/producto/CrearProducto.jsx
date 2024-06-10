@@ -204,7 +204,7 @@ export const TarjetaCrearProducto = ({
 
           <CardBody className="min-h-full">
             {inputConfigs.map((config) => (
-              <div className="">
+              <div key={config.id} className="">
                 <InputFieldForm
                   key={config.id}
                   config={config}
@@ -285,23 +285,23 @@ const Gallery = ({
   setImagenSeleccionada,
 }) => {
   const [imagenes, setImagenes] = useState(null);
-  const [showSelecionImaganes, setSelecionImaganes] = useState(true);
+  const [showSelecionImaganes, setShowSelecionImaganes] = useState(true);
   
 
   const ShowImagenes = (Show) => {
     const image = ImagenDefecto();
     if (Show) {
       setImagenes(image);
-      setSelecionImaganes(false);
+      setShowSelecionImaganes(false);
     } else {
       setImagenes(null);
-      setSelecionImaganes(true);
+      setShowSelecionImaganes(true);
     }
   };
 
   const handleOpenSeleccionImagen = (value) => {
     setImagenSeleccionada(value);
-    setSelecionImaganes(true);
+    setShowSelecionImaganes(true);
     setImagenes(null);
     handelImg(value);
   };

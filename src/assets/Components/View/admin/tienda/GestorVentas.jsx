@@ -3,9 +3,26 @@ import Header from "../../Header";
 import PropTypes from "prop-types";
 import { ActualizarDetallesFactura, ActualizarFactura, EliminarDetalleFactura, EliminarFactura, consultarDetallesFactura, consultarFactura,  guardarVentas } from "../../../Base/BdFactura";
 
-import { Button, Card, CardBody, CardFooter, CardHeader, Chip, DateRangePicker, Pagination, Spinner, getKeyValue } from "@nextui-org/react";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Chip,
+  DateRangePicker,
+  Pagination,
+  Spinner,
+  getKeyValue,
+  Table,
+  TableHeader,
+  TableBody,
+  TableColumn,
+  TableRow,
+  TableCell,
+} from "@nextui-org/react";
+
 import { CalendarCheck, CircleDollarSignIcon } from "lucide-react";
-import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/react";
 import { parseDate, getLocalTimeZone, today } from "@internationalized/date";
 import { formatearFecha } from "../../Reports/reportes";
 import { useDateFormatter } from "@react-aria/i18n";
@@ -77,7 +94,6 @@ const DetallesFactura = ({ factura, showDetallesFactura}) => {
 
     const consultaDetalle = async () => {
         setIsLoading(true);
-        setMensajeEmergente("Cargando factura...");
         const respuesta = await consultarDetallesFactura(factura.id);
         setIsLoading(false);
         if (respuesta.datos) {
@@ -93,16 +109,16 @@ const DetallesFactura = ({ factura, showDetallesFactura}) => {
 
 
 
-    const { numero: id, fecha, cliente } = factura;
-    const [ListaProductosVendidos, setListaProductosVendidos] = useState([]);
+    const { numero: fecha, cliente } = factura;
+    const [listaProductosVendidos, setListaProductosVendidos] = useState([]);
     const [totalPago, setTotalPago] = useState(factura.preciototal);
-    const [showActualizarVenta, setShowActualizarProducto] = useState(false);
+    const [showActualizarVenta, setShowActualizarVenta] = useState(false);
     const [showAgregarVenta, setShowAgregarVenta] = useState(false);
 
     const [productoActualizar, setProductoActualizar] = useState(null);
 
     const handelShowAgregarProducto = (mostrar) => {
-        setShowActualizarProducto(false);
+        setShowActualizarVenta(false);
         setShowAgregarVenta(mostrar);
 
     };
@@ -110,7 +126,7 @@ const DetallesFactura = ({ factura, showDetallesFactura}) => {
     const AgregarVenta = (Producto, Cantida, Total) => {
         // Crea una nueva copia del array listVentas y agrega el nuevo objeto de venta
         const nuevaListaVentas = [
-            ...ListaProductosVendidos,
+            ...listaProductosVendidos,
             {
                 producto: Producto,
                 cantidadvendida: parseFloat(Cantida),
@@ -128,14 +144,14 @@ const DetallesFactura = ({ factura, showDetallesFactura}) => {
 
     const handelShowActualizarVenta = (mostrar, producto) => {
         setShowAgregarVenta(false);
-        setShowActualizarProducto(mostrar);
+        setShowActualizarVenta(mostrar);
         setProductoActualizar(producto);
     };
 
     const [listaDetallesEliminados, setListaDetallesEliminados] = useState([]);
     const [listaDetallesActulizados, setListaDetallesActulizados] = useState([]);
     const actualizarOEliminarVenta = async (Producto, Cantidad, Total, isEliminacion) => {
-        const nuevaListaVentas = [...ListaProductosVendidos];
+        const nuevaListaVentas = [...listaProductosVendidos];
         let nuevoPrecio;
         const index = nuevaListaVentas.findIndex((venta) => venta.producto.id === Producto.id);
 
@@ -189,7 +205,6 @@ const DetallesFactura = ({ factura, showDetallesFactura}) => {
 
 
     const [isLoading, setIsLoading] = useState(false);
-    const [mensajeEmergente, setMensajeEmergente] = useState("");
 
 
     const GuardarCambios = async (detallesVentas) => {
@@ -230,7 +245,7 @@ const DetallesFactura = ({ factura, showDetallesFactura}) => {
         });
         setIsLoading(true);
 
-        setMensajeEmergente("Actualizando la factura.....")
+        
         // Esperamos a que se completen todas las promesas de guardado de ventas
         await Promise.all(promesasVentas);
         setIsLoading(false);
@@ -241,8 +256,8 @@ const DetallesFactura = ({ factura, showDetallesFactura}) => {
 
     const eliminarFactra = async (idFactura) => {
         setIsLoading(true)
-        setMensajeEmergente("Eliminando factura.....")
-        const respuesta = await EliminarFactura(idFactura);
+        
+        await EliminarFactura(idFactura);
         setIsLoading(false)
         showDetallesFactura(false)
         window.location.reload()
@@ -275,7 +290,7 @@ const DetallesFactura = ({ factura, showDetallesFactura}) => {
                                     ))}
                                 </div>
 
-                                <TablaDetalles listaFacturas={ListaProductosVendidos}
+                                <TablaDetalles listaFacturas={listaProductosVendidos}
                                     showActualizarVenta={handelShowActualizarVenta}
                                 >
                                 </TablaDetalles>
@@ -301,7 +316,7 @@ const DetallesFactura = ({ factura, showDetallesFactura}) => {
                                         <Button
                                             color="success"
                                             className=" font-bold text-white m-2 "
-                                            onClick={() => GuardarCambios(ListaProductosVendidos)}
+                                            onClick={() => GuardarCambios(listaProductosVendidos)}
                                         >
                                             CONFIRMAR ACTUALIZACION
                                         </Button>
@@ -341,7 +356,7 @@ const DetallesFactura = ({ factura, showDetallesFactura}) => {
 
                         )}
                         {showAgregarVenta && (
-                                <TarjetaVenta AgregarVenta={AgregarVenta} ListaProductosVendidos={ListaProductosVendidos}></TarjetaVenta>
+                                <TarjetaVenta AgregarVenta={AgregarVenta} ListaProductosVendidos={listaProductosVendidos}></TarjetaVenta>
                         )}
                     </div>
                     
@@ -357,7 +372,6 @@ const DetallesFactura = ({ factura, showDetallesFactura}) => {
 DetallesFactura.propTypes = {
   factura: PropTypes.object.isRequired,
   showDetallesFactura: PropTypes.func.isRequired,
-  consultarFactura: PropTypes.func.isRequired,
 };
 
 
@@ -366,9 +380,6 @@ const TablaFactura = ({ listaFacturas, isLoading, setFactura, fechaConsulta = {
     setFechaConsulta    
 }
     ) => {
-    
-    const filtroFacturas=()=>{
-    }
 
     const listaGrilla = listaFacturas.map(factura => {
         return {
@@ -391,7 +402,6 @@ const TablaFactura = ({ listaFacturas, isLoading, setFactura, fechaConsulta = {
         return listaGrilla.slice(start, end);
     }, [page, listaGrilla],
     );
-    let formatter = useDateFormatter({ dateStyle: "long" });
     return (
         <div className="bg-white min-h-full mt-5">
             <h1 className="text-xl font-bold text-center w-full">Lista Facturas</h1>
@@ -453,6 +463,16 @@ const TablaFactura = ({ listaFacturas, isLoading, setFactura, fechaConsulta = {
         </div>
     );
 }
+TablaFactura.propTypes = {
+  listaFacturas: PropTypes.array.isRequired,
+  isLoading: PropTypes.bool.isRequired,
+  setFactura: PropTypes.func.isRequired,
+  fechaConsulta: PropTypes.shape({
+    start: PropTypes.instanceOf(Date),
+    end: PropTypes.instanceOf(Date),
+  }),
+  setFechaConsulta: PropTypes.func.isRequired,
+};
 
 export const TablaDetalles = ({ listaFacturas: listaDetalles, showActualizarVenta }) => {
     const listaGrilla = listaDetalles.map(detalles => {

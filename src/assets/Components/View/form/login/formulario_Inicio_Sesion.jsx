@@ -26,7 +26,7 @@ export const FormularioLogin = ({setMensaje,setShowAlert}) => {
     validationSchema: userSchema,
     onSubmit: async (values) => {
       setIsLoading(true);
-      const { datos, error } = await GetCuentaUsuario(values.username, values.password);
+      const { datos } = await GetCuentaUsuario(values.username, values.password);
       if (datos!=null && values.password === datos.cuenta.password) {
         console.log(datos);
         localStorage.setItem("token", datos.token);
