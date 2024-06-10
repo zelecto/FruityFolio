@@ -52,6 +52,7 @@ export const ProductList = ({ products, onSelectProduct }) => {
             filtro.map((producto) => (
               <div
                 key={producto.id}
+                onKeyUp={""}
                 className="border bg-white p-2 cursor-pointer m-2 w-[400px] hover:bg-gray-200 shadow-md rounded-md flex justify-between items-center"
                 onClick={() => onSelectProduct(producto)}
               >
