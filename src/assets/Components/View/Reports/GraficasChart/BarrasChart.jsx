@@ -1,4 +1,5 @@
 import { Bar } from 'react-chartjs-2';
+import PropTypes from "prop-types";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -49,3 +50,6 @@ export default function GraficaBarra({data}) {
     return <Bar data={data} options={misoptions} />;
 }
 
+GraficaBarra.propTypes = {
+  data: PropTypes.object.isRequired,
+};
