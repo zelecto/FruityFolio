@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
-let validarNombre = (nombre) => {
+const validarNombre = (nombre) => {
   const onlyLetters = /^[A-Za-z]+$/;
   return onlyLetters.test(nombre);
 };
@@ -28,11 +28,10 @@ export const ErrorMensaje = (mensaje,w) => {
 
 
 
-export let MensajeAlert = ({
+export const MensajeAlert = ({
   message,
   title,
   onClose,
-  isError,
   buttonColor,
   textColor,
   buttonText,
