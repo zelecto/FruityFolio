@@ -281,7 +281,7 @@ const ViewReportFactura = () => {
   const usuario = JSON.parse(localStorage.getItem("user"));
 
   const [rangoFecha, setRangoFecha] = useState({
-    start: parseDate("2024-05-01"),
+    start: parseDate("2024-06-01"),
     end: parseDate(formatearFecha(new Date())),
   });
 
