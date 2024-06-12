@@ -32,7 +32,7 @@ function GestorVentasView() {
     const [listaFacturas, setListaFacturas] = useState([]);
     const [loading,setLoading] = useState(false);
     const [rangoFecha, setRangoFecha] = useState({
-        start: parseDate("2024-05-01"),
+        start: parseDate("2024-06-01"),
         end: parseDate(formatearFecha(new Date())),
     });
 
