@@ -24,6 +24,7 @@ import {
   getNumeroVentaProducto,
 } from "../../Base/BdReportes";
 import IconoGrafica from "../../Icons/IconoGrafica.png";
+import toast from "react-hot-toast/headless";
 
 export const ReportView = () => {
   const [selectedKeys, setSelectedKeys] = React.useState(new Set(["text"]));
@@ -122,7 +123,7 @@ export const ReportView = () => {
 const ViewReportPruduct = () => {
   const usuario = JSON.parse(localStorage.getItem("user"));
   const [rangoFecha, setRangoFecha] = useState({
-    start: parseDate("2024-05-01"),
+    start: parseDate("2024-06-01"),
     end: parseDate(formatearFecha(new Date())),
   });
 
@@ -168,11 +169,27 @@ const ViewReportPruduct = () => {
         fechaFinal,
         usuario.username
       );
-      console.clear()
-      console.log(respuesta)
-
+      
       if (respuesta.datos) {
         updateDataReporteProductos(respuesta.datos);
+      }else{
+        toast.success("No hay ventas en esta fecha");
+        console.log("No hay datos");
+        setDataReporteProductos({
+          labels: [],
+          datasets: [
+            {
+              label: "Cantidad vendida",
+              data: [],
+              backgroundColor: "#267bbc",
+            },
+            {
+              label: "Total ingresos",
+              data: [],
+              backgroundColor: "#95eb5e",
+            },
+          ],
+        });
       }
       setIsLoading(false);
     }
@@ -180,7 +197,6 @@ const ViewReportPruduct = () => {
   }, [rangoFecha]);
 
   const updateDataReporteProductos = (datos) => {
-    console.log(datos);
     const gananciaFormateada= formatNumbersWithMaxFormat(datos.map((item) => item.ingresoTotal));
     setFormatoGanacia(gananciaFormateada.format);
     const midata = {
